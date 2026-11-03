@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOJI TEST LAB // STATION-3100</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        lab: {
+                            bg: '#ffeed4',
+                            card: '#fbf0dd',
+                            paper: '#f5e4c8',
+                            dark: '#2b2118',
+                            muted: '#5c4e40',
+                            border: '#3d3024',
+                            terracotta: '#e05a47',
+                            green: '#4d7c0f',
+                            greenGlow: '#65a30d',
+                            amber: '#d97706',
+                            amberGlow: '#f59e0b',
+                            blue: '#1d4ed8',
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['"Share Tech Mono"', '"JetBrains Mono"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Base Background Grid Pattern */
+        body {
+            background-color: #ffeed4;
+            background-image: 
+                linear-gradient(rgba(61, 48, 36, 0.12) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(61, 48, 36, 0.12) 1px, transparent 1px),
+                linear-gradient(rgba(61, 48, 36, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(61, 48, 36, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+            color: #2b2118;
+            font-family: 'Share Tech Mono', 'JetBrains Mono', monospace;
+        }
+
+        /* Blueprint Card Frame & Shadows */
+        .blueprint-card {
+            background-color: #fbf0dd;
+            border: 2px solid #2b2118;
+            box-shadow: 4px 4px 0px #2b2118;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .blueprint-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #2b2118;
+        }
+
+        .blueprint-card-static {
+            background-color: #fbf0dd;
+            border: 2px solid #2b2118;
+            box-shadow: 4px 4px 0px #2b2118;
+            position: relative;
+        }
+
+        /* Registration Marks (+) */
+        .corner-mark {
+            position: absolute;
+            font-size: 11px;
+            line-height: 1;
+            font-weight: bold;
+            color: #3d3024;
+            user-select: none;
+            pointer-events: none;
+        }
+        .mark-tl { top: 3px; left: 5px; }
+        .mark-tr { top: 3px; right: 5px; }
+        .mark-bl { bottom: 3px; left: 5px; }
+        .mark-br { bottom: 3px; right: 5px; }
+
+        /* Terracotta Rubber Stamp Style */
+        .stamp-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            font-weight: 800;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: #e05a47;
+            border: 2px solid #e05a47;
+            border-radius: 3px;
+            text-transform: uppercase;
+            transform: rotate(-3deg);
+            box-shadow: 1px 1px 0px rgba(224, 90, 71, 0.3);
+            user-select: none;
+        }
+
+        /* LED Lamp Indicators */
+        .led-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid #1a140f;
+        }
+        .led-green {
+            background-color: #4d7c0f;
+            box-shadow: 0 0 6px #65a30d;
+            animation: pulse-led 2s infinite alternate;
+        }
+        .led-amber {
+            background-color: #d97706;
+            box-shadow: 0 0 6px #f59e0b;
+        }
+        .led-red {
+            background-color: #e05a47;
+            box-shadow: 0 0 6px #e05a47;
+        }
+
+        @keyframes pulse-led {
+            0% { opacity: 0.6; box-shadow: 0 0 2px #4d7c0f; }
+            100% { opacity: 1; box-shadow: 0 0 8px #65a30d; }
+        }
+
+        /* Digital LED 7-Segment Display Panel */
+        .led-display-panel {
+            background-color: #1a140f;
+            color: #f59e0b;
+            border: 2px solid #3d3024;
+            font-family: 'Share Tech Mono', monospace;
+            text-shadow: 0 0 5px rgba(245, 158, 11, 0.7);
+        }
+
+        /* CRT Overlay Effect */
+        #crt-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 999;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 6px 100%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #crt-overlay.active {
+            opacity: 1;
+        }
+
+        /* Vintage Knob Dial */
+        .dial-btn {
+            background: linear-gradient(145deg, #f5e4c8, #dcc8ab);
+            border: 2px solid #2b2118;
+            box-shadow: 2px 2px 0px #2b2118;
+            transition: all 0.15s ease;
+        }
+        .dial-btn:hover {
+            background: #2b2118;
+            color: #ffeed4;
+        }
+        .dial-btn.active {
+            background: #2b2118;
+            color: #ffeed4;
+            box-shadow: inset 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #ffeed4;
+            border-left: 1px solid #3d3024;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3d3024;
+            border-radius: 2px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e05a47;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative pb-16">
+
+    <!-- CRT Overlay Layer -->
+    <div id="crt-overlay"></div>
+
+    <!-- MAIN HEADER CONTROL PANEL -->
+    <header class="sticky top-0 z-40 bg-[#fbf0dd] border-b-2 border-[#2b2118] shadow-md px-4 py-2.5">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+            
+            <!-- Left: Station Identification -->
+            <div class="flex items-center space-x-3 w-full md:w-auto justify-between md:justify-start">
+                <div class="flex items-center space-x-2">
+                    <span class="led-indicator led-green"></span>
+                    <span class="font-extrabold tracking-wider text-base sm:text-lg text-[#2b2118]">
+                        NOJI TEST LAB // <span class="text-[#e05a47]">STATION-3100</span>
+                    </span>
+                </div>
+                <span class="text-xs bg-[#2b2118] text-[#ffeed4] px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                    WORKBENCH v3.8
+                </span>
+            </div>
+
+            <!-- Center: Status Display Panel -->
+            <div class="flex items-center space-x-4 text-xs">
+                <div class="hidden sm:flex items-center space-x-2 bg-[#1a140f] px-3 py-1 rounded border border-[#3d3024]">
+                    <span class="text-slate-400">LAB:</span>
+                    <span class="text-emerald-400 font-bold">ONLINE</span>
+                    <span class="text-slate-600">|</span>
+                    <span class="text-slate-400">UPTIME:</span>
+                    <span id="uptime-counter" class="text-amber-400 font-mono">00:00:00</span>
+                    <span class="text-slate-600">|</span>
+                    <span class="text-slate-400">PING:</span>
+                    <span id="ping-counter" class="text-amber-400 font-mono">11ms</span>
+                </div>
+            </div>
+
+            <!-- Right: Interactive Control Switches -->
+            <div class="flex items-center space-x-2 w-full md:w-auto justify-end">
+                <!-- Sound Toggle -->
+                <button id="sound-btn" onclick="toggleSound()" class="dial-btn px-2.5 py-1 text-xs font-bold flex items-center space-x-1">
+                    <i id="sound-icon" class="fas fa-volume-up text-[#4d7c0f]"></i>
+                    <span id="sound-label">SE: ON</span>
+                </button>
+
+                <!-- CRT Toggle -->
+                <button id="crt-btn" onclick="toggleCRT()" class="dial-btn px-2.5 py-1 text-xs font-bold flex items-center space-x-1">
+                    <i class="fas fa-tv text-[#d97706]"></i>
+                    <span id="crt-label">CRT: OFF</span>
+                </button>
+
+                <!-- Terminal Modal Trigger -->
+                <button onclick="openTerminalModal()" class="dial-btn px-3 py-1 text-xs font-bold flex items-center space-x-1 bg-[#2b2118] text-[#ffeed4]">
+                    <i class="fas fa-terminal text-amber-400"></i>
+                    <span>TERM [⌘K]</span>
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- MAIN WORKBENCH CONTENT -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-8">
+
+        <!-- HERO SECTION: SPEC SHEET & ANALOG OSCILLOSCOPE -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Left Column: OPERATOR SPECIFICATION SHEET -->
+            <div class="lg:col-span-6 blueprint-card-static p-5 rounded-sm">
+                <span class="corner-mark mark-tl">+</span>
+                <span class="corner-mark mark-tr">+</span>
+                <span class="corner-mark mark-bl">+</span>
+                <span class="corner-mark mark-br">+</span>
+
+                <!-- Card Header -->
+                <div class="flex items-center justify-between border-b-2 border-[#2b2118] pb-3 mb-4">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-id-card text-[#e05a47]"></i>
+                        <h2 class="text-lg font-extrabold uppercase tracking-wide">OPERATOR SPECIFICATION SHEET</h2>
+                    </div>
+                    <span class="stamp-badge">VERIFIED</span>
+                </div>
+
+                <!-- Operator Tech Spec Table -->
+                <div class="space-y-2 text-xs">
+                    <div class="grid grid-cols-3 border-b border-[#3d3024]/20 py-1.5">
+                        <span class="font-bold text-[#5c4e40]">OPERATOR ID:</span>
+                        <span class="col-span-2 font-mono font-bold">NOJI [LAB_STATION_3100]</span>
+                    </div>
+                    <div class="grid grid-cols-3 border-b border-[#3d3024]/20 py-1.5">
+                        <span class="font-bold text-[#5c4e40]">PRIMARY FIELDS:</span>
+                        <span class="col-span-2 font-mono">Infra, Gadget Modding, Moto Mechanic, Audio</span>
+                    </div>
+                    <div class="grid grid-cols-3 border-b border-[#3d3024]/20 py-1.5">
+                        <span class="font-bold text-[#5c4e40]">HOME INFRA:</span>
+                        <span class="col-span-2 font-mono text-[#4d7c0f] font-bold">Proxmox VE / K3s / Portainer / Tailscale</span>
+                    </div>
+                    <div class="grid grid-cols-3 border-b border-[#3d3024]/20 py-1.5">
+                        <span class="font-bold text-[#5c4e40]">MOBILE / HARDWARE:</span>
+                        <span class="col-span-2 font-mono">Android AOSP / ADB Dev / Surface Duo 2 / Nothing</span>
+                    </div>
+                    <div class="grid grid-cols-3 border-b border-[#3d3024]/20 py-1.5">
+                        <span class="font-bold text-[#5c4e40]">MOTO UNIT:</span>
+                        <span class="col-span-2 font-mono text-[#e05a47] font-bold">Suzuki GSX-S1000 EK1AA (Custom USD Swap)</span>
+                    </div>
+                    <div class="grid grid-cols-3 py-1.5">
+                        <span class="font-bold text-[#5c4e40]">AUDIO & SYNTH:</span>
+                        <span class="col-span-2 font-mono">Web Audio Synth / ACE-Step Lo-Fi / DSP</span>
+                    </div>
+                </div>
+
+                <!-- Footer Summary Note -->
+                <div class="mt-4 p-3 bg-[#f5e4c8] border border-[#3d3024] rounded text-xs text-[#3d3024] leading-relaxed">
+                    <span class="font-bold text-[#2b2118]">NOTE:</span> WordPressなどの大型CMSに依存せず、軽量な静的配信（Nginx / Docker）で運用する分散型リサーチ・ログ拠点。全システム稼働中。
+                </div>
+            </div>
+
+            <!-- Right Column: ANALOG OSCILLOSCOPE MONITOR -->
+            <div class="lg:col-span-6 blueprint-card-static p-5 rounded-sm flex flex-col justify-between">
+                <span class="corner-mark mark-tl">+</span>
+                <span class="corner-mark mark-tr">+</span>
+                <span class="corner-mark mark-bl">+</span>
+                <span class="corner-mark mark-br">+</span>
+
+                <!-- Oscilloscope Header -->
+                <div class="flex items-center justify-between border-b-2 border-[#2b2118] pb-2 mb-3">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-wave-square text-[#4d7c0f]"></i>
+                        <h2 class="text-lg font-extrabold uppercase tracking-wide">ANALOG OSCILLOSCOPE MODEL-70</h2>
+                    </div>
+                    <div class="flex items-center space-x-2 text-xs">
+                        <span class="led-indicator led-green"></span>
+                        <span class="font-bold text-[#4d7c0f]">SIGNAL: ACTIVE</span>
+                    </div>
+                </div>
+
+                <!-- Canvas Screen -->
+                <div class="relative w-full aspect-[2/1] bg-[#1a140f] border-2 border-[#3d3024] rounded overflow-hidden shadow-inner flex items-center justify-center">
+                    <canvas id="scope-canvas" class="w-full h-full block"></canvas>
+                    
+                    <!-- Oscilloscope Screen Grid Overlay -->
+                    <div class="absolute inset-0 pointer-events-none opacity-20" style="background-image: linear-gradient(#f59e0b 1px, transparent 1px), linear-gradient(90deg, #f59e0b 1px, transparent 1px); background-size: 20px 20px;"></div>
+                </div>
+
+                <!-- Oscilloscope Controls Panel -->
+                <div class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-[#5c4e40] mb-0.5">WAVE TYPE</label>
+                        <select id="wave-type" onchange="changeWaveType(this.value)" class="w-full bg-[#f5e4c8] border border-[#2b2118] font-mono text-xs px-1.5 py-1 rounded font-bold">
+                            <option value="sine">SINE WAVE</option>
+                            <option value="square">SQUARE WAVE</option>
+                            <option value="triangle">TRIANGLE</option>
+                            <option value="audio">SYNTH AUDIO</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-[#5c4e40] mb-0.5">FREQ: <span id="freq-val">5Hz</span></label>
+                        <input type="range" id="wave-freq" min="1" max="20" value="5" oninput="updateWaveFreq(this.value)" class="w-full accent-[#4d7c0f]">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-[#5c4e40] mb-0.5">AMP: <span id="amp-val">40</span></label>
+                        <input type="range" id="wave-amp" min="10" max="80" value="40" oninput="updateWaveAmp(this.value)" class="w-full accent-[#4d7c0f]">
+                    </div>
+
+                    <div class="flex items-end">
+                        <button onclick="triggerToneSweep()" class="w-full dial-btn py-1 font-bold text-xs flex items-center justify-center space-x-1">
+                            <i class="fas fa-play text-[#4d7c0f]"></i>
+                            <span>SWEEP</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- MODE SELECTOR DIAL / CATEGORY TABS -->
+        <section class="blueprint-card-static p-4 rounded-sm">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-[#2b2118]">
+                    <i class="fas fa-sliders-h text-[#e05a47]"></i>
+                    <span>SCHEMATIC CATEGORY SELECTOR:</span>
+                </div>
+
+                <!-- Dial Selector Buttons -->
+                <div class="flex flex-wrap gap-2 text-xs w-full md:w-auto" id="category-dials">
+                    <button onclick="selectCategory('all', this)" class="dial-btn active px-3 py-1.5 font-bold rounded-sm">[00: ALL PROJECTS]</button>
+                    <button onclick="selectCategory('infra', this)" class="dial-btn px-3 py-1.5 font-bold rounded-sm">[01: INFRA & SERVER]</button>
+                    <button onclick="selectCategory('gadget', this)" class="dial-btn px-3 py-1.5 font-bold rounded-sm">[02: MOBILE & GADGET]</button>
+                    <button onclick="selectCategory('moto', this)" class="dial-btn px-3 py-1.5 font-bold rounded-sm">[03: MOTO MECHANIC]</button>
+                    <button onclick="selectCategory('audio', this)" class="dial-btn px-3 py-1.5 font-bold rounded-sm">[04: AUDIO & SOUND]</button>
+                    <button onclick="selectCategory('logs', this)" class="dial-btn px-3 py-1.5 font-bold rounded-sm">[05: LAB LOGS]</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCHEMATIC PROJECTS GRID CONTAINER -->
+        <section id="schematic-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Dynamically populated blueprint cards -->
+        </section>
+
+        <!-- VINTAGE CASSETTE SYNTH PLAYER WIDGET -->
+        <section class="blueprint-card-static p-6 rounded-sm bg-[#fbf0dd]">
+            <span class="corner-mark mark-tl">+</span>
+            <span class="corner-mark mark-tr">+</span>
+            <span class="corner-mark mark-bl">+</span>
+            <span class="corner-mark mark-br">+</span>
+
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+                
+                <!-- Player Info -->
+                <div class="space-y-2 w-full lg:w-1/3">
+                    <div class="flex items-center space-x-2">
+                        <span class="led-indicator led-amber"></span>
+                        <span class="font-bold text-xs text-[#d97706] uppercase tracking-wider">SYNTHESIZER DECK M-3000</span>
+                    </div>
+                    <h3 class="text-xl font-extrabold text-[#2b2118]">REAL-TIME WEB AUDIO SYNTH DECK</h3>
+                    <p class="text-xs text-[#5c4e40] leading-relaxed">
+                        Web Audio APIを用いたリアルタイム音響合成エンジン。BGMとしてサイバーパンク調のシーケンスサウンドや環境ノイズを生成します。
+                    </p>
+                </div>
+
+                <!-- Center Cassette Reels / Track Selector -->
+                <div class="w-full lg:w-1/3 bg-[#1a140f] border-2 border-[#3d3024] p-4 rounded text-amber-400 space-y-3">
+                    <div class="flex items-center justify-between text-xs border-b border-[#3d3024] pb-2">
+                        <span id="synth-track-title" class="font-bold">TRACK 01: CYBER PATROL SEQUENCE</span>
+                        <span id="synth-status" class="text-xs bg-amber-950 px-2 py-0.5 rounded border border-amber-700">STOPPED</span>
+                    </div>
+
+                    <!-- Reel Animation Display -->
+                    <div class="flex items-center justify-center space-x-8 py-2">
+                        <div id="reel-1" class="w-12 h-12 rounded-full border-4 border-dashed border-amber-500 flex items-center justify-center">
+                            <div class="w-4 h-4 rounded-full bg-amber-500"></div>
+                        </div>
+                        <i class="fas fa-tape text-xl text-amber-600"></i>
+                        <div id="reel-2" class="w-12 h-12 rounded-full border-4 border-dashed border-amber-500 flex items-center justify-center">
+                            <div class="w-4 h-4 rounded-full bg-amber-500"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls & Synth Trigger Buttons -->
+                <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+                    <button id="synth-play-btn" onclick="toggleSynthAudio()" class="w-full sm:w-auto px-6 py-3 dial-btn text-xs font-bold flex items-center justify-center space-x-2 bg-[#2b2118] text-[#ffeed4]">
+                        <i id="synth-play-icon" class="fas fa-play text-amber-400"></i>
+                        <span id="synth-play-label">PLAY SYNTH BGM</span>
+                    </button>
+
+                    <button onclick="changeSynthTrack()" class="w-full sm:w-auto px-4 py-3 dial-btn text-xs font-bold flex items-center justify-center space-x-1">
+                        <i class="fas fa-forward"></i>
+                        <span>NEXT TRACK</span>
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER STICKY STATUS BAR -->
+    <footer class="mt-12 border-t-2 border-[#2b2118] bg-[#fbf0dd] py-4 px-4 text-xs font-mono">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-[#5c4e40]">
+            <div>
+                © 2026 NOJI TEST LAB // ALL SCHEMATIC BLUEPRINTS VERIFIED.
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="text-[#2b2118] font-bold">NODE: TOKYO-01</span>
+                <span>SYSTEM: <span class="text-[#4d7c0f] font-bold">NOMINAL</span></span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BLUEPRINT INSPECTOR MODAL -->
+    <div id="blueprint-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#2b2118]/80 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+        <div class="blueprint-card-static max-w-3xl w-full p-6 space-y-6 relative max-h-[90vh] overflow-y-auto">
+            <span class="corner-mark mark-tl">+</span>
+            <span class="corner-mark mark-tr">+</span>
+            <span class="corner-mark mark-bl">+</span>
+            <span class="corner-mark mark-br">+</span>
+
+            <!-- Close Button -->
+            <button onclick="closeBlueprintModal()" class="absolute top-4 right-4 dial-btn w-8 h-8 flex items-center justify-center font-bold text-sm">
+                ✕
+            </button>
+
+            <!-- Modal Header -->
+            <div class="border-b-2 border-[#2b2118] pb-3 space-y-2">
+                <div class="flex items-center space-x-3">
+                    <span id="modal-stamp" class="stamp-badge">STAMP</span>
+                    <span id="modal-category" class="text-xs font-bold text-[#5c4e40] uppercase">CATEGORY</span>
+                </div>
+                <h2 id="modal-title" class="text-2xl font-extrabold text-[#2b2118]">BLUEPRINT TITLE</h2>
+            </div>
+
+            <!-- Modal Body Content -->
+            <div class="space-y-4 text-xs text-[#2b2118] leading-relaxed">
+                <p id="modal-desc" class="text-sm font-mono">Detailed description...</p>
+
+                <!-- Technical Diagram Box -->
+                <div class="p-4 bg-[#1a140f] border-2 border-[#3d3024] rounded text-emerald-400 font-mono space-y-2 overflow-x-auto">
+                    <div class="text-[10px] text-amber-500 font-bold border-b border-[#3d3024] pb-1 uppercase">SYSTEM SCHEMATIC / ASCII ARCHITECTURE</div>
+                    <pre id="modal-ascii" class="text-[11px] leading-tight text-emerald-400"></pre>
+                </div>
+
+                <!-- Hardware/Tech Specifications Table -->
+                <div class="p-4 bg-[#f5e4c8] border border-[#3d3024] rounded space-y-2">
+                    <div class="font-bold uppercase text-[#5c4e40] text-[11px]">TECH & HARDWARE SPECIFICATIONS</div>
+                    <div id="modal-specs" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs"></div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="flex items-center justify-end border-t border-[#3d3024]/20 pt-4">
+                <button onclick="closeBlueprintModal()" class="dial-btn px-5 py-2 font-bold text-xs bg-[#2b2118] text-[#ffeed4]">
+                    CLOSE INSPECTOR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- COMMAND PALETTE / TERMINAL MODAL -->
+    <div id="terminal-modal" class="fixed inset-0 z-50 flex items-start justify-center pt-16 p-4 bg-[#2b2118]/80 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-200">
+        <div class="bg-[#1a140f] border-2 border-[#3d3024] rounded-sm max-w-2xl w-full p-4 space-y-3 shadow-2xl text-amber-400 font-mono text-xs">
+            
+            <!-- Terminal Header Bar -->
+            <div class="flex items-center justify-between border-b border-[#3d3024] pb-2 text-slate-400">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-yellow-500 inline-block"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span>
+                    <span class="font-bold text-amber-500 ml-2">NOJI-LAB TERMINAL // STATION-3100</span>
+                </div>
+                <button onclick="closeTerminalModal()" class="text-xs hover:text-white">ESC</button>
+            </div>
+
+            <!-- Terminal Output History Area -->
+            <div id="terminal-output" class="h-64 overflow-y-auto space-y-1 pr-2 text-emerald-400 font-mono leading-relaxed">
+                <div class="text-amber-400">NOJI TEST LAB Interactive Command Terminal v3.8</div>
+                <div class="text-slate-400">Type <span class="text-white font-bold">'help'</span> for available lab diagnostic commands.</div>
+            </div>
+
+            <!-- Terminal Command Prompt Input -->
+            <div class="flex items-center space-x-2 border-t border-[#3d3024] pt-2">
+                <span class="text-emerald-400 font-bold">operator@noji-lab:~$</span>
+                <input type="text" id="terminal-input" onkeydown="handleTerminalKey(event)" class="w-full bg-transparent text-amber-300 focus:outline-none font-mono text-xs" autofocus placeholder="command here...">
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC ENGINE -->
+    <script>
+        // ==========================================
+        // 1. DATA: SCHEMATICS & LAB PROJECTS
+        // ==========================================
+        const SCHEMATICS_DATA = [
+            {
+                id: 'infra-k3s',
+                title: 'Docker & K3s Home Server Cluster',
+                category: 'infra',
+                categoryLabel: '01: INFRA & SERVER',
+                stamp: 'DEPLOYED',
+                summary: 'Proxmox VE上で稼働するDocker & K3s統合ホームサーバー環境。',
+                description: '自宅のメイン機（Ryzen 7900X）および省電力サブノードで構築したプライベートクラスタ。ArgoCDによるGitOpsデプロイメントとNginx Reverse Proxyを完備。',
+                ascii: `
++-------------------------------------------------------+
+|  Proxmox VE 8.1 (Host Node: 64GB DDR5)               |
+|  +-------------------+   +-------------------------+  |
+|  | K3s Master (VM)   |   | Docker Compose (Container)|
+|  | - ArgoCD          |   | - Portainer             |  |
+|  | - Cloudflare Tun  |   | - Nginx Reverse Proxy   |  |
+|  +-------------------+   +-------------------------+  |
++-------------------------------------------------------+
+                `,
+                specs: [
+                    { key: 'CPU / RAM', val: 'Ryzen 9 7900X / 64GB DDR5' },
+                    { key: 'Hypervisor', val: 'Proxmox VE 8.1' },
+                    { key: 'Container Engine', val: 'Docker Compose & K3s' },
+                    { key: 'Network Ingress', val: 'Cloudflare Tunnels' }
+                ]
+            },
+            {
+                id: 'infra-rtx',
+                title: 'Yamaha RTX1300 & Tailscale Network',
+                category: 'infra',
+                categoryLabel: '01: INFRA & SERVER',
+                stamp: 'VERIFIED',
+                summary: '10GbE対応ルーターYamaha RTX1300とTailscaleによるメッシュSDN。',
+                description: '自宅内10GbEバックボーンLANのルーティング管理。TailscaleメッシュVPNと連携し、外出先のスマホやノートPCから自宅ラボへ暗号化直通アクセス。',
+                ascii: `
+[WAN Internet] ---> [Yamaha RTX1300 (10GbE Router)]
+                           |
+            +--------------+--------------+
+            |                             |
+    [10GbE Switch]              [Tailscale Subnet]
+            |                             |
+    [Proxmox Cluster]          [Remote Mobile Devices]
+                `,
+                specs: [
+                    { key: 'Core Router', val: 'Yamaha RTX1300' },
+                    { key: 'Backbone Speed', val: '10GbE SFP+' },
+                    { key: 'VPN Protocol', val: 'Tailscale (WireGuard)' },
+                    { key: 'Security', val: 'VLAN Segmentation' }
+                ]
+            },
+            {
+                id: 'gadget-aosp',
+                title: 'Android AOSP & Fastboot Auto-Scripting',
+                category: 'gadget',
+                categoryLabel: '02: MOBILE & GADGET',
+                stamp: 'EXPERIMENTAL',
+                summary: 'Android端末のカスタムROM焼付とADB/Fastbootの自動化。',
+                description: '複数の検証用Android端末（Nothing Phone, Pixel等）に対し、カスタムAOSPイメージのビルドおよびFastbootコマンドによるスクリプト自動焼き付け環境の構築。',
+                ascii: `
+[Host Dev Terminal] ---> [ADB / Fastboot Daemon]
+                                |
+             +------------------+------------------+
+             |                                     |
+     [Nothing Phone (1)]                  [Pixel Test Node]
+     (AOSP Custom Kernel)                 (Vendor Firmware Test)
+                `,
+                specs: [
+                    { key: 'Target OS', val: 'Android 14 / LineageOS' },
+                    { key: 'Scripting', val: 'Python + ADB / Fastboot' },
+                    { key: 'Tools', val: 'Magisk / KernelSU' },
+                    { key: 'Build Env', val: 'Ubuntu 22.04 LTS' }
+                ]
+            },
+            {
+                id: 'moto-gsx',
+                title: 'GSX-S1000 Front-End & Wiring Harness Swap',
+                category: 'moto',
+                categoryLabel: '03: MOTO MECHANIC',
+                stamp: 'IN TESTING',
+                summary: 'Suzuki GSX-S1000 (EK1AA) フロント周り移植と配線カスタム。',
+                description: '倒立フォークおよびブレーキシステムの強化、メータハーネス加工。社外LEDライトおよび車体メーター通信プロトコル（CAN-BUS）の動作検証。',
+                ascii: `
+[GSX-S1000 Main Harness] <---> [Custom Relay Control Box]
+                                       |
+                   +-------------------+-------------------+
+                   |                                       |
+          [USD Fork Assembly]                    [Digital Meter Unit]
+          (Brembo Monobloc)                      (LED & Signal Sensors)
+                `,
+                specs: [
+                    { key: 'Base Machine', val: 'Suzuki GSX-S1000 (EK1AA)' },
+                    { key: 'Front Suspension', val: 'Showa USD Fork Swap' },
+                    { key: 'Brake System', val: 'Brembo Radial Calipers' },
+                    { key: 'Electrical', val: 'Custom LED Harness' }
+                ]
+            },
+            {
+                id: 'audio-synth',
+                title: 'ACE-Step AI Lo-Fi & Synthesizer Engine',
+                category: 'audio',
+                categoryLabel: '04: AUDIO & SOUND',
+                stamp: 'VERIFIED',
+                summary: 'AI生成BGMとWeb Audio API音響プロセッサの実験。',
+                description: 'ローカル生成したLo-Fi / Synthwaveトラックの音響特性プロセッシング。ブラウザ上のWeb Audio APIオシレーターによるダイナミック音響合成。',
+                ascii: `
+[AI Audio Generator] ---> [Web Audio DSP Node] ---> [Equalizer / Filter]
+                                                            |
+                                                   [Visualizer Output]
+                `,
+                specs: [
+                    { key: 'Audio Engine', val: 'Web Audio API Synth' },
+                    { key: 'DSP Features', val: 'Low-pass Filter / Gain' },
+                    { key: 'Visualization', val: 'HTML5 Canvas Wave' },
+                    { key: 'Output', val: 'Realtime Audio Nodes' }
+                ]
+            },
+            {
+                id: 'gadget-surface',
+                title: 'Surface Duo 2 Dual-Display Command Terminal',
+                category: 'gadget',
+                categoryLabel: '02: MOBILE & GADGET',
+                stamp: 'DEPLOYED',
+                summary: '2画面端末をポータブルサーバー監視コンソールとして活用。',
+                description: 'Surface Duo 2のデュアル画面を利用し、左画面にPortainer/K3sメトリクス、右画面にSSHターミナルを常時表示するモバイルインフラ監視環境。',
+                ascii: `
++-----------------------+-----------------------+
+|  LEFT SCREEN          |  RIGHT SCREEN         |
+|  - Grafana Metrics    |  - SSH Terminal       |
+|  - Container Status   |  - Tailscale Status   |
++-----------------------+-----------------------+
+                `,
+                specs: [
+                    { key: 'Device', val: 'Microsoft Surface Duo 2' },
+                    { key: 'App Stack', val: 'Termux + Tailscale' },
+                    { key: 'Display Mode', val: 'Dual-screen Span' },
+                    { key: 'Use Case', val: 'Portable Server Monitor' }
+                ]
+            }
+        ];
+
+        const LAB_LOGS = [
+            { date: '2026.10.28', category: 'INFRA', title: 'Nginx設定の最適化とキャッシュルールの更新', text: '本ポートフォリオ配信コンテナのNginxキャッシュヘッダーとSPAルーティング設定を完了。' },
+            { date: '2026.10.18', category: 'MOTO', title: 'GSX-S1000 フロントフォークオイル交換とシール刷新', text: '倒立フォークのダンパー清掃と規定値油面調整。ステアリングヘッドベアリングのグリスアップ実施。' },
+            { date: '2026.10.05', category: 'GADGET', title: 'Surface Duo 2 への Termux ＋ SSH キーペア自動展開', text: '外出先からの自宅サーバー緊急復旧用端末として環境構築。' },
+            { date: '2026.09.22', category: 'AUDIO', title: 'Web Audio API によるデジタルオシロスコープ描写エンジンの作成', text: 'Canvas上での波形追従速度とオシレーター同期を最適化。' }
+        ];
+
+        // ==========================================
+        // 2. WEB AUDIO API SYNTHESIZER ENGINE
+        // ==========================================
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playRelayClick() {
+            if (!soundEnabled) return;
+            initAudioContext();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(600, now);
+            osc.frequency.exponentialRampToValueAtTime(120, now + 0.03);
+
+            gain.gain.setValueAtTime(0.08, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.03);
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('sound-btn');
+            const icon = document.getElementById('sound-icon');
+            const label = document.getElementById('sound-label');
+
+            if (soundEnabled) {
+                icon.className = 'fas fa-volume-up text-[#4d7c0f]';
+                label.textContent = 'SE: ON';
+                playRelayClick();
+            } else {
+                icon.className = 'fas fa-volume-mute text-[#5c4e40]';
+                label.textContent = 'SE: OFF';
+            }
+        }
+
+        function toggleCRT() {
+            playRelayClick();
+            const overlay = document.getElementById('crt-overlay');
+            const label = document.getElementById('crt-label');
+            overlay.classList.toggle('active');
+
+            if (overlay.classList.contains('active')) {
+                label.textContent = 'CRT: ON';
+            } else {
+                label.textContent = 'CRT: OFF';
+            }
+        }
+
+        // ==========================================
+        // 3. ANALOG CANVAS OSCILLOSCOPE ENGINE
+        // ==========================================
+        const scopeCanvas = document.getElementById('scope-canvas');
+        const scopeCtx = scopeCanvas.getContext('2d');
+
+        let waveType = 'sine';
+        let waveFreq = 5;
+        let waveAmp = 40;
+        let wavePhase = 0;
+
+        function resizeCanvas() {
+            if (!scopeCanvas) return;
+            scopeCanvas.width = scopeCanvas.parentElement.clientWidth;
+            scopeCanvas.height = scopeCanvas.parentElement.clientHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        function drawOscilloscope() {
+            if (!scopeCanvas) return;
+            const w = scopeCanvas.width;
+            const h = scopeCanvas.height;
+            const centerY = h / 2;
+
+            scopeCtx.clearRect(0, 0, w, h);
+
+            // Draw Wave Line
+            scopeCtx.beginPath();
+            scopeCtx.lineWidth = 2;
+            scopeCtx.strokeStyle = '#65a30d';
+            scopeCtx.shadowBlur = 8;
+            scopeCtx.shadowColor = '#65a30d';
+
+            for (let x = 0; x < w; x++) {
+                let y = centerY;
+                let t = (x / w) * waveFreq * Math.PI * 2 + wavePhase;
+
+                if (waveType === 'sine') {
+                    y += Math.sin(t) * waveAmp;
+                } else if (waveType === 'square') {
+                    y += Math.sign(Math.sin(t)) * waveAmp;
+                } else if (waveType === 'triangle') {
+                    y += (Math.asin(Math.sin(t)) / (Math.PI / 2)) * waveAmp;
+                } else if (waveType === 'audio') {
+                    let noise = (Math.random() - 0.5) * 15;
+                    y += (Math.sin(t) * 0.7 + Math.sin(t * 2.5) * 0.3) * waveAmp + noise;
+                }
+
+                if (x === 0) scopeCtx.moveTo(x, y);
+                else scopeCtx.lineTo(x, y);
+            }
+
+            scopeCtx.stroke();
+            wavePhase += 0.08;
+
+            requestAnimationFrame(drawOscilloscope);
+        }
+
+        function changeWaveType(val) {
+            playRelayClick();
+            waveType = val;
+        }
+
+        function updateWaveFreq(val) {
+            waveFreq = parseInt(val);
+            document.getElementById('freq-val').textContent = val + 'Hz';
+        }
+
+        function updateWaveAmp(val) {
+            waveAmp = parseInt(val);
+            document.getElementById('amp-val').textContent = val;
+        }
+
+        function triggerToneSweep() {
+            playRelayClick();
+            initAudioContext();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = waveType === 'square' ? 'square' : 'sine';
+            osc.frequency.setValueAtTime(220, now);
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.3);
+
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.3);
+
+            // Animate Oscilloscope Frequency Boost
+            const origFreq = waveFreq;
+            waveFreq = 18;
+            setTimeout(() => { waveFreq = origFreq; }, 300);
+        }
+
+        // ==========================================
+        // 4. RENDER SCHEMATICS & CATEGORIES
+        // ==========================================
+        function renderSchematics(category = 'all') {
+            const grid = document.getElementById('schematic-grid');
+            grid.innerHTML = '';
+
+            if (category === 'logs') {
+                // Render Lab Logs Timeline
+                const logsContainer = document.createElement('div');
+                logsContainer.className = 'col-span-full blueprint-card-static p-6 rounded-sm space-y-4';
+                logsContainer.innerHTML = `
+                    <div class="flex items-center justify-between border-b-2 border-[#2b2118] pb-3">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-stream text-[#e05a47]"></i>
+                            <h2 class="text-lg font-extrabold uppercase">CHRONOLOGICAL LAB LOGS</h2>
+                        </div>
+                        <span class="stamp-badge">TIMELINE</span>
+                    </div>
+                    <div class="space-y-4 border-l-2 border-[#2b2118] pl-4 ml-2">
+                        ${LAB_LOGS.map(log => `
+                            <div class="relative group">
+                                <div class="absolute -left-[23px] top-1.5 w-3 h-3 bg-[#ffeed4] border-2 border-[#2b2118] rounded-full"></div>
+                                <div class="p-3 bg-[#f5e4c8] border border-[#3d3024] rounded text-xs space-y-1">
+                                    <div class="flex items-center justify-between font-mono text-[10px] text-[#5c4e40]">
+                                        <span>${log.date}</span>
+                                        <span class="px-1.5 py-0.5 bg-[#2b2118] text-[#ffeed4] font-bold rounded">${log.category}</span>
+                                    </div>
+                                    <h4 class="font-bold text-[#2b2118] text-sm">${log.title}</h4>
+                                    <p class="text-[#3d3024] leading-relaxed">${log.text}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                grid.appendChild(logsContainer);
+                return;
+            }
+
+            const filtered = category === 'all' 
+                ? SCHEMATICS_DATA 
+                : SCHEMATICS_DATA.filter(item => item.category === category);
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'blueprint-card p-5 rounded-sm flex flex-col justify-between cursor-pointer';
+                card.onclick = () => openBlueprintModal(item.id);
+
+                card.innerHTML = `
+                    <span class="corner-mark mark-tl">+</span>
+                    <span class="corner-mark mark-tr">+</span>
+                    <span class="corner-mark mark-bl">+</span>
+                    <span class="corner-mark mark-br">+</span>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-bold text-[#5c4e40] uppercase">${item.categoryLabel}</span>
+                            <span class="stamp-badge">${item.stamp}</span>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-extrabold text-[#2b2118] leading-tight hover:text-[#e05a47] transition-colors">${item.title}</h3>
+                            <p class="text-xs text-[#5c4e40] mt-2 leading-relaxed">${item.summary}</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 mt-4 border-t border-[#3d3024]/20 flex items-center justify-between text-xs font-bold text-[#2b2118]">
+                        <span>INSPECT SCHEMATIC</span>
+                        <i class="fas fa-[#2b2118] fa-chevron-right text-[10px]"></i>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function selectCategory(cat, btn) {
+            playRelayClick();
+            document.querySelectorAll('#category-dials .dial-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderSchematics(cat);
+        }
+
+        // ==========================================
+        // 5. MODAL INSPECTOR LOGIC
+        // ==========================================
+        function openBlueprintModal(id) {
+            playRelayClick();
+            const item = SCHEMATICS_DATA.find(s => s.id === id);
+            if (!item) return;
+
+            document.getElementById('modal-title').textContent = item.title;
+            document.getElementById('modal-category').textContent = item.categoryLabel;
+            document.getElementById('modal-stamp').textContent = item.stamp;
+            document.getElementById('modal-desc').textContent = item.description;
+            document.getElementById('modal-ascii').textContent = item.ascii.trim();
+
+            const specsContainer = document.getElementById('modal-specs');
+            specsContainer.innerHTML = item.specs.map(s => `
+                <div class="flex justify-between border-b border-[#3d3024]/20 pb-1">
+                    <span class="font-bold text-[#5c4e40]">${s.key}:</span>
+                    <span class="font-mono text-[#2b2118]">${s.val}</span>
+                </div>
+            `).join('');
+
+            const modal = document.getElementById('blueprint-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeBlueprintModal() {
+            playRelayClick();
+            const modal = document.getElementById('blueprint-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        // ==========================================
+        // 6. REAL-TIME SYNTHESIZER DECK BGM ENGINE
+        // ==========================================
+        let synthPlaying = false;
+        let synthInterval = null;
+        let trackIndex = 0;
+
+        const SYNTH_TRACKS = [
+            "TRACK 01: CYBER PATROL SEQUENCE",
+            "TRACK 02: 19U SERVER FAN AMBIENT",
+            "TRACK 03: LO-FI MECHANICAL LAB"
+        ];
+
+        function toggleSynthAudio() {
+            playRelayClick();
+            initAudioContext();
+            
+            synthPlaying = !synthPlaying;
+            const btn = document.getElementById('synth-play-btn');
+            const icon = document.getElementById('synth-play-icon');
+            const label = document.getElementById('synth-play-label');
+            const status = document.getElementById('synth-status');
+
+            const reel1 = document.getElementById('reel-1');
+            const reel2 = document.getElementById('reel-2');
+
+            if (synthPlaying) {
+                icon.className = 'fas fa-stop text-amber-400';
+                label.textContent = 'STOP SYNTH BGM';
+                status.textContent = 'PLAYING';
+                status.className = 'text-xs bg-amber-500 text-black font-bold px-2 py-0.5 rounded';
+
+                reel1.classList.add('animate-spin');
+                reel2.classList.add('animate-spin');
+
+                startSynthLoop();
+            } else {
+                icon.className = 'fas fa-play text-amber-400';
+                label.textContent = 'PLAY SYNTH BGM';
+                status.textContent = 'STOPPED';
+                status.className = 'text-xs bg-amber-950 text-amber-400 px-2 py-0.5 rounded border border-amber-700';
+
+                reel1.classList.remove('animate-spin');
+                reel2.classList.remove('animate-spin');
+
+                if (synthInterval) clearInterval(synthInterval);
+            }
+        }
+
+        function changeSynthTrack() {
+            playRelayClick();
+            trackIndex = (trackIndex + 1) % SYNTH_TRACKS.length;
+            document.getElementById('synth-track-title').textContent = SYNTH_TRACKS[trackIndex];
+        }
+
+        function startSynthLoop() {
+            if (!audioCtx) return;
+            const notes = [110, 130.81, 146.83, 164.81, 196.00]; // Pentatonic A minor
+
+            synthInterval = setInterval(() => {
+                if (!synthPlaying || !audioCtx) return;
+
+                const freq = notes[Math.floor(Math.random() * notes.length)];
+                const now = audioCtx.currentTime;
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = trackIndex === 1 ? 'sawtooth' : 'triangle';
+                osc.frequency.setValueAtTime(freq, now);
+
+                gain.gain.setValueAtTime(0.04, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }, 300);
+        }
+
+        // ==========================================
+        // 7. TERMINAL MODAL & COMMAND LOGIC
+        // ==========================================
+        function openTerminalModal() {
+            playRelayClick();
+            const modal = document.getElementById('terminal-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            document.getElementById('terminal-input').focus();
+        }
+
+        function closeTerminalModal() {
+            playRelayClick();
+            const modal = document.getElementById('terminal-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function handleTerminalKey(e) {
+            if (e.key === 'Enter') {
+                const input = document.getElementById('terminal-input');
+                const cmd = input.value.trim().toLowerCase();
+                input.value = '';
+
+                const output = document.getElementById('terminal-output');
+                
+                const cmdLine = document.createElement('div');
+                cmdLine.className = 'text-amber-300';
+                cmdLine.textContent = `operator@noji-lab:~$ ${cmd}`;
+                output.appendChild(cmdLine);
+
+                // Command Executor
+                let resp = '';
+                if (cmd === 'help') {
+                    resp = 'Available Commands: status, docker ps, bike, audio, projects, ping, clear, exit';
+                } else if (cmd === 'status') {
+                    resp = 'ALL LAB SYSTEMS OPERATIONAL // Proxmox Node UP // Yamaha Router 10GbE UP';
+                } else if (cmd === 'docker ps') {
+                    resp = 'CONTAINER ID   IMAGE             STATUS          PORTS\na1b2c3d4       k3s-master        Up 14 days      80/443\ne5f6g7h8       portainer/ce      Up 14 days      9000\ni9j0k1l2       nginx-static      Up 14 days      3100->80';
+                } else if (cmd === 'bike') {
+                    resp = 'SUZUKI GSX-S1000 (EK1AA) // Status: USD Fork Swap Complete // Harness Verified';
+                } else if (cmd === 'audio') {
+                    resp = 'Synthesizer Engine Active // Type: Web Audio API Oscillator // Mode: Realtime';
+                } else if (cmd === 'projects') {
+                    resp = 'Loaded 6 Blueprint Schematics across Infra, Mobile Gadgets, Moto, and Audio.';
+                } else if (cmd === 'ping') {
+                    resp = 'PING 127.0.0.1: 64 bytes time=11.2ms TTL=64';
+                } else if (cmd === 'clear') {
+                    output.innerHTML = '';
+                    return;
+                } else if (cmd === 'exit') {
+                    closeTerminalModal();
+                    return;
+                } else if (cmd === '') {
+                    return;
+                } else {
+                    resp = `Command not recognized: '${cmd}'. Type 'help' for available diagnostic commands.`;
+                }
+
+                const respLine = document.createElement('div');
+                respLine.className = 'text-[#65a30d] whitespace-pre-wrap';
+                respLine.textContent = resp;
+                output.appendChild(respLine);
+
+                output.scrollTop = output.scrollHeight;
+            }
+        }
+
+        // Global Shortcut Handler (Cmd+K / Esc)
+        window.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                openTerminalModal();
+            }
+            if (e.key === 'Escape') {
+                closeBlueprintModal();
+                closeTerminalModal();
+            }
+        });
+
+        // Realtime Uptime Counter
+        let secondsElapsed = 0;
+        setInterval(() => {
+            secondsElapsed++;
+            const hrs = String(Math.floor(secondsElapsed / 3600)).padStart(2, '0');
+            const mins = String(Math.floor((secondsElapsed % 3600) / 60)).padStart(2, '0');
+            const secs = String(secondsElapsed % 60).padStart(2, '0');
+            document.getElementById('uptime-counter').textContent = `${hrs}:${mins}:${secs}`;
+            
+            // Jitter ping simulation
+            const ping = 10 + Math.floor(Math.random() * 4);
+            document.getElementById('ping-counter').textContent = `${ping}ms`;
+        }, 1000);
+
+        // ==========================================
+        // 8. ONLOAD INITIALIZATION
+        // ==========================================
+        window.onload = function() {
+            resizeCanvas();
+            drawOscilloscope();
+            renderSchematics('all');
+        };
+    </script>
+</body>
+</html>

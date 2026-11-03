@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARCHITECTURAL NOISE // TEST LAB & PORTFOLIO</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        lab: {
+                            bg: '#f8fafc',
+                            card: '#ffffff',
+                            border: '#e2e8f0',
+                            accent: '#4f46e5', // Indigo 600
+                            emerald: '#059669', // Emerald 600
+                            amber: '#d97706',
+                            dark: '#0f172a',
+                            subtext: '#64748b'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Ambient Subtraction Grid */
+        .grid-bg {
+            background-image: 
+                linear-gradient(to right, rgba(226, 232, 240, 0.6) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(226, 232, 240, 0.6) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-panel:hover {
+            box-shadow: 0 12px 30px -4px rgba(79, 70, 229, 0.12);
+            border-color: rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Image Crossfade Slide */
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out, transform 8s ease-out;
+            transform: scale(1.05);
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Dynamic Text Cursor Effect */
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 1s step-start infinite;
+            color: #4f46e5;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="grid-bg min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <!-- TOP STICKY NAVIGATION BAR -->
+    <header class="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-200/80 px-4 md:px-8 py-3 flex items-center justify-between transition-all">
+        <!-- Logo & Status -->
+        <div class="flex items-center space-x-4">
+            <a href="#" class="flex items-center space-x-2 font-extrabold text-slate-900 tracking-tight text-base hover:text-indigo-600 transition">
+                <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-200">
+                    <i class="fas fa-microchip text-sm"></i>
+                </div>
+                <span>ARCHITECTURAL NOISE</span>
+            </a>
+            <span class="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200/80">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>LAB ONLINE</span>
+            </span>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600">
+            <a href="#projects" class="hover:text-indigo-600 transition">Projects</a>
+            <a href="#telemetry" class="hover:text-indigo-600 transition">Telemetry</a>
+            <a href="#audio-deck" class="hover:text-indigo-600 transition">Audio Studio</a>
+            <a href="#terminal" onclick="openCommandPalette()" class="hover:text-indigo-600 transition">Console (⌘K)</a>
+        </nav>
+
+        <!-- Right Quick Controls -->
+        <div class="flex items-center space-x-3">
+            <button onclick="toggleAudioSFX()" id="sfx-btn" class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold flex items-center space-x-1.5 transition">
+                <i id="sfx-icon" class="fas fa-volume-up text-indigo-600"></i>
+                <span id="sfx-label" class="hidden xs:inline">SFX: ON</span>
+            </button>
+            <button onclick="openCommandPalette()" class="px-3 py-1.5 rounded-lg bg-slate-900 text-white hover:bg-indigo-600 text-xs font-semibold shadow-sm flex items-center space-x-2 transition">
+                <i class="fas fa-search text-xs"></i>
+                <span class="hidden sm:inline">Search</span>
+                <kbd class="hidden md:inline px-1.5 py-0.5 text-[10px] bg-slate-800 text-slate-300 rounded font-mono">⌘K</kbd>
+            </button>
+        </div>
+    </header>
+
+    <!-- FULL-WIDTH DYNAMIC HERO SECTION WITH IMAGE SLIDESHOW -->
+    <section class="relative w-full h-[85vh] min-h-[580px] max-h-[850px] bg-slate-950 overflow-hidden flex items-center">
+        <!-- Background Image Slideshow Containers -->
+        <div id="hero-slideshow" class="absolute inset-0 pointer-events-none z-0">
+            <!-- Slide 1: Tokyo Architecture (Matching User Photo Style) -->
+            <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=2000&q=80');"></div>
+            <!-- Slide 2: Server Infrastructure / Data Center -->
+            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=2000&q=80');"></div>
+            <!-- Slide 3: Motorcycle Mechanics / Precision Engineering -->
+            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=2000&q=80');"></div>
+            <!-- Slide 4: Audio Workstation / Synthesizer -->
+            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=2000&q=80');"></div>
+            <!-- Slide 5: High-Tech Mobile / Hardware -->
+            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=2000&q=80');"></div>
+        </div>
+
+        <!-- Atmospheric Gradient Scrim (Cool Blue/Cyan Tint Overlay like Screenshot) -->
+        <div class="absolute inset-0 z-10 bg-gradient-to-r from-slate-950/85 via-slate-900/60 to-cyan-950/30"></div>
+        <div class="absolute inset-0 z-10 bg-gradient-to-t from-slate-950/90 via-transparent to-slate-950/40"></div>
+
+        <!-- Middle-Left Aligned Text Overlay -->
+        <div class="relative z-20 w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-16 py-12 flex flex-col justify-center items-start text-left">
+            <!-- Domain Tag Badge -->
+            <div class="mb-4 inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-cyan-300 text-xs font-mono font-medium">
+                <i class="fas fa-layer-group text-xs text-cyan-400"></i>
+                <span id="hero-slide-category">ARCHITECTURE & SYSTEMS LAB</span>
+            </div>
+
+            <!-- Dynamic Changing Heading (Matching 'Architecting ~') -->
+            <h1 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-none mb-6">
+                Architecting <br class="block sm:hidden"/>
+                <span id="dynamic-hero-text" class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-indigo-300 to-emerald-300 typing-cursor">systems.</span>
+            </h1>
+
+            <!-- Subtitle Description -->
+            <p class="text-base sm:text-lg md:text-xl text-slate-200 max-w-2xl font-normal leading-relaxed mb-8 drop-shadow">
+                自宅インフラサーバー、Android AOSPカスタム、バイク整備（GSX-S1000）、DTM音響制作。アイデアをシステムとハードウェアへ具現化するラボノート。
+            </p>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap items-center gap-4">
+                <a href="#projects" class="px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 flex items-center space-x-2 transition transform hover:-translate-y-0.5">
+                    <span>Explore Schematics</span>
+                    <i class="fas fa-arrow-down text-xs"></i>
+                </a>
+                <a href="#telemetry" class="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white font-semibold text-sm flex items-center space-x-2 transition">
+                    <i class="fas fa-chart-line text-cyan-400"></i>
+                    <span>Live Telemetry</span>
+                </a>
+            </div>
+
+            <!-- Slideshow Navigation Dots & Slide Indicator -->
+            <div class="mt-12 flex items-center space-x-6">
+                <div class="flex items-center space-x-2" id="hero-dots-container">
+                    <button onclick="setHeroSlide(0)" class="w-3 h-3 rounded-full bg-white transition-all shadow" aria-label="Slide 1"></button>
+                    <button onclick="setHeroSlide(1)" class="w-2.5 h-2.5 rounded-full bg-white/40 hover:bg-white/70 transition-all" aria-label="Slide 2"></button>
+                    <button onclick="setHeroSlide(2)" class="w-2.5 h-2.5 rounded-full bg-white/40 hover:bg-white/70 transition-all" aria-label="Slide 3"></button>
+                    <button onclick="setHeroSlide(3)" class="w-2.5 h-2.5 rounded-full bg-white/40 hover:bg-white/70 transition-all" aria-label="Slide 4"></button>
+                    <button onclick="setHeroSlide(4)" class="w-2.5 h-2.5 rounded-full bg-white/40 hover:bg-white/70 transition-all" aria-label="Slide 5"></button>
+                </div>
+                <span class="text-xs font-mono text-slate-300/80" id="hero-slide-counter">01 / 05</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20 w-full">
+
+        <!-- 1. FILTERABLE SCHEMATIC PROJECTS GRID -->
+        <section id="projects" class="space-y-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6">
+                <div>
+                    <span class="text-xs font-mono font-bold text-indigo-600 tracking-wider uppercase">01 // PROJECT MATRIX</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Schematics & Engineering Logs</h2>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="flex flex-wrap gap-2" id="project-filters">
+                    <button onclick="filterProjects('all', this)" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm">[All Projects]</button>
+                    <button onclick="filterProjects('infra', this)" class="px-3.5 py-1.5 rounded-lg text-xs font-medium transition bg-white border border-slate-200 text-slate-600 hover:border-indigo-300">Infra & Server</button>
+                    <button onclick="filterProjects('gadget', this)" class="px-3.5 py-1.5 rounded-lg text-xs font-medium transition bg-white border border-slate-200 text-slate-600 hover:border-indigo-300">Mobile & AOSP</button>
+                    <button onclick="filterProjects('moto', this)" class="px-3.5 py-1.5 rounded-lg text-xs font-medium transition bg-white border border-slate-200 text-slate-600 hover:border-indigo-300">Moto Mechanic</button>
+                    <button onclick="filterProjects('audio', this)" class="px-3.5 py-1.5 rounded-lg text-xs font-medium transition bg-white border border-slate-200 text-slate-600 hover:border-indigo-300">Audio & Music</button>
+                </div>
+            </div>
+
+            <!-- Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="projects-container">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </section>
+
+        <!-- 2. LIVE SYSTEM TELEMETRY / NODE DASHBOARD -->
+        <section id="telemetry" class="space-y-8">
+            <div class="border-b border-slate-200 pb-6">
+                <span class="text-xs font-mono font-bold text-emerald-600 tracking-wider uppercase">02 // LIVE TELEMETRY</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Server Cluster & Node Metrics</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Metrics Gauges -->
+                <div class="glass-panel p-6 rounded-2xl space-y-6">
+                    <h3 class="text-sm font-bold text-slate-800 flex items-center space-x-2">
+                        <i class="fas fa-server text-indigo-600"></i>
+                        <span>Proxmox Node Status</span>
+                    </h3>
+
+                    <div class="space-y-4 font-mono text-xs">
+                        <div>
+                            <div class="flex justify-between text-slate-600 mb-1">
+                                <span>CPU Load (Ryzen 7900X)</span>
+                                <span class="font-bold text-indigo-600" id="metric-cpu">18.4%</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                <div id="bar-cpu" class="h-full bg-indigo-600 rounded-full transition-all duration-500" style="width: 18.4%;"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-slate-600 mb-1">
+                                <span>Memory (DDR5 64GB)</span>
+                                <span class="font-bold text-emerald-600" id="metric-ram">42.1%</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                <div id="bar-ram" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 42.1%;"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-slate-600 mb-1">
+                                <span>Storage NVMe Pool</span>
+                                <span class="font-bold text-slate-800">1.2 TB / 4.0 TB</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-slate-700 rounded-full" style="width: 30%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100 grid grid-cols-2 gap-4 text-center">
+                        <div class="p-3 bg-slate-50 rounded-xl">
+                            <div class="text-[10px] text-slate-400 font-mono">ACTIVE CONTAINERS</div>
+                            <div class="text-xl font-extrabold text-slate-800 font-mono mt-0.5">14 Stack</div>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-xl">
+                            <div class="text-[10px] text-slate-400 font-mono">NETWORK PING</div>
+                            <div class="text-xl font-extrabold text-emerald-600 font-mono mt-0.5">11.4 ms</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scope Visualizer Canvas -->
+                <div class="lg:col-span-2 glass-panel p-6 rounded-2xl flex flex-col justify-between space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-bold text-slate-800 flex items-center space-x-2">
+                            <i class="fas fa-wave-square text-emerald-600"></i>
+                            <span>Real-Time Spectrum Visualizer</span>
+                        </h3>
+                        <div class="flex space-x-1 text-xs">
+                            <button onclick="setCanvasMode('scope')" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono">SCOPE</button>
+                            <button onclick="setCanvasMode('spectrum')" class="px-2.5 py-1 rounded bg-indigo-50 text-indigo-600 font-mono font-bold">SPECTRUM</button>
+                        </div>
+                    </div>
+
+                    <div class="relative w-full h-48 bg-slate-900 rounded-xl overflow-hidden flex items-center justify-center">
+                        <canvas id="telemetry-canvas" class="w-full h-full block"></canvas>
+                    </div>
+
+                    <div class="flex justify-between items-center text-xs text-slate-500 font-mono">
+                        <span>SAMPLING: 44.1 kHz</span>
+                        <span class="text-emerald-600 font-bold">● LIVE STREAMING</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. AUDIO SYNTHESIZER & WORKSTATION -->
+        <section id="audio-deck" class="space-y-8">
+            <div class="border-b border-slate-200 pb-6">
+                <span class="text-xs font-mono font-bold text-amber-600 tracking-wider uppercase">03 // AUDIO STUDIO</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Web Audio API Synthesizer Deck</h2>
+            </div>
+
+            <div class="glass-panel p-8 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="space-y-3 max-w-xl">
+                    <span class="px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 text-xs font-mono font-bold border border-amber-200">DSP SYNTHESIZER</span>
+                    <h3 class="text-xl font-bold text-slate-900">Real-Time Waveform Generator</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        ブラウザ上で動作するWeb Audio APIのオシレーターノード。音響信号を動的に生成し、オシロスコープに波形を描画します。
+                    </p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+                    <button onclick="toggleSynthEngine()" id="synth-play-btn" class="w-full sm:w-auto px-6 py-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2 transition">
+                        <i id="synth-play-icon" class="fas fa-play"></i>
+                        <span id="synth-play-text">PLAY SYNTH DECK</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-8 px-6 mt-12">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+            <div class="flex items-center space-x-2">
+                <span class="font-bold text-slate-800">ARCHITECTURAL NOISE</span>
+                <span>© 2026 NOJI. All rights reserved.</span>
+            </div>
+            <div class="flex items-center space-x-6">
+                <span>Docker & Nginx Stack</span>
+                <span>Tailscale Node</span>
+                <a href="#" onclick="openCommandPalette()" class="hover:text-indigo-600 font-mono">⌘K Terminal</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCHEMATIC INSPECTOR MODAL -->
+    <div id="inspector-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-200">
+        <div class="bg-white max-w-2xl w-full p-6 sm:p-8 rounded-2xl shadow-2xl border border-slate-200 relative space-y-6">
+            <button onclick="closeInspectorModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold transition">✕</button>
+
+            <div class="space-y-2 border-b border-slate-100 pb-4">
+                <div class="flex items-center space-x-2">
+                    <span id="inspect-stamp" class="px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-xs font-mono font-bold border border-emerald-200">ONLINE</span>
+                    <span id="inspect-cat" class="text-xs text-slate-400 font-mono">CATEGORY</span>
+                </div>
+                <h3 id="inspect-title" class="text-2xl font-extrabold text-slate-900">Project Title</h3>
+            </div>
+
+            <p id="inspect-desc" class="text-sm text-slate-600 leading-relaxed font-sans"></p>
+
+            <div class="p-4 bg-slate-950 rounded-xl text-emerald-400 font-mono text-xs overflow-x-auto">
+                <div class="text-[10px] text-slate-500 border-b border-slate-800 pb-1 mb-2">SYSTEM SCHEMATIC ARCHITECTURE</div>
+                <pre id="inspect-ascii" class="leading-tight"></pre>
+            </div>
+
+            <div id="inspect-specs" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono p-4 bg-slate-50 rounded-xl border border-slate-200"></div>
+
+            <div class="flex justify-end pt-2">
+                <button onclick="closeInspectorModal()" class="px-5 py-2.5 rounded-xl bg-slate-900 text-white font-semibold text-xs hover:bg-slate-800 transition">Close Inspector</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- COMMAND PALETTE (⌘K MODAL) -->
+    <div id="command-modal" class="fixed inset-0 z-50 flex items-start justify-center pt-20 p-4 bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-200">
+        <div class="bg-white max-w-xl w-full rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex items-center space-x-3">
+                <i class="fas fa-search text-slate-400"></i>
+                <input type="text" id="command-input" oninput="handleCommandSearch()" class="w-full text-sm text-slate-800 placeholder-slate-400 focus:outline-none" placeholder="Search projects or type command...">
+                <kbd class="px-2 py-1 text-[10px] bg-slate-100 text-slate-500 rounded font-mono">ESC</kbd>
+            </div>
+            <div class="p-3 max-h-80 overflow-y-auto space-y-1" id="command-results">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC ENGINE -->
+    <script>
+        // ==========================================
+        // 1. DATA: HERO SLIDESHOW & PROJECTS
+        // ==========================================
+        const HERO_SLIDES = [
+            { category: "ARCHITECTURE & SYSTEMS LAB", text: "systems." },
+            { category: "INFRASTRUCTURE & DOCKER", text: "networks." },
+            { category: "MOTORCYCLE MECHANICS", text: "mobility." },
+            { category: "AUDIO & DSP SYNTHESIS", text: "soundscapes." },
+            { category: "AOSP & CUSTOM HARDWARE", text: "solutions." }
+        ];
+
+        let currentHeroSlide = 0;
+        let heroSlideInterval = null;
+
+        function setHeroSlide(index) {
+            currentHeroSlide = index;
+            const slides = document.querySelectorAll('.hero-slide');
+            const dots = document.querySelectorAll('#hero-dots-container button');
+            const catLabel = document.getElementById('hero-slide-category');
+            const dynamicText = document.getElementById('dynamic-hero-text');
+            const counter = document.getElementById('hero-slide-counter');
+
+            slides.forEach((slide, i) => {
+                if (i === index) slide.classList.add('active');
+                else slide.classList.remove('active');
+            });
+
+            dots.forEach((dot, i) => {
+                if (i === index) {
+                    dot.className = 'w-3 h-3 rounded-full bg-white transition-all shadow';
+                } else {
+                    dot.className = 'w-2.5 h-2.5 rounded-full bg-white/40 hover:bg-white/70 transition-all';
+                }
+            });
+
+            if (HERO_SLIDES[index]) {
+                catLabel.textContent = HERO_SLIDES[index].category;
+                dynamicText.textContent = HERO_SLIDES[index].text;
+            }
+
+            counter.textContent = `0${index + 1} / 05`;
+        }
+
+        function startHeroAutoplay() {
+            if (heroSlideInterval) clearInterval(heroSlideInterval);
+            heroSlideInterval = setInterval(() => {
+                currentHeroSlide = (currentHeroSlide + 1) % HERO_SLIDES.length;
+                setHeroSlide(currentHeroSlide);
+            }, 5000);
+        }
+
+        const SCHEMATIC_PROJECTS = [
+            {
+                id: 'infra-k3s',
+                title: 'Docker & K3s Home Cluster',
+                category: 'infra',
+                categoryLabel: '01: INFRASTRUCTURE',
+                stamp: 'ONLINE',
+                summary: 'Proxmox VE上で稼働するK3s & Docker統合ホームサーバー環境。',
+                description: 'Ryzen 7900Xをメインノードに構築したプライベートクラスタ。ArgoCDによるGitOps自動デプロイメントとNginx Reverse Proxyを完備。',
+                ascii: `
++-------------------------------------------------------+
+| Proxmox VE 8.1 (Host Node: 64GB DDR5)                 |
+| +-------------------+   +--------------------------+  |
+| | K3s Master (VM)   |   | Docker Compose           |  |
+| | - ArgoCD          |   | - Portainer              |  |
+| | - Cloudflare Tun  |   | - Nginx Static           |  |
+| +-------------------+   +--------------------------+  |
++-------------------------------------------------------+
+                `,
+                specs: [
+                    { key: 'CPU / RAM', val: 'Ryzen 9 7900X / 64GB DDR5' },
+                    { key: 'Hypervisor', val: 'Proxmox VE 8.1' },
+                    { key: 'Engine', val: 'Docker Compose & K3s' },
+                    { key: 'Network', val: 'Cloudflare Tunnels' }
+                ]
+            },
+            {
+                id: 'infra-yamaha',
+                title: 'Yamaha RTX1300 & Tailscale SDN',
+                category: 'infra',
+                categoryLabel: '01: INFRASTRUCTURE',
+                stamp: 'VERIFIED',
+                summary: '10GbEルーターYamaha RTX1300とTailscaleによる暗号化網。',
+                description: '自宅10GbEバックボーンLANのVLAN設計。Tailscale VPNにより外出先のスマホ・ノートPCから暗号化アクセス可能。',
+                ascii: `
+[WAN Internet] ---> [Yamaha RTX1300 (10GbE Router)]
+                           |
+            +--------------+--------------+
+            |                             |
+    [10GbE Switch]              [Tailscale Subnet]
+            |                             |
+    [Proxmox Cluster]          [Remote Field Mobile]
+                `,
+                specs: [
+                    { key: 'Core Router', val: 'Yamaha RTX1300' },
+                    { key: 'Backbone', val: '10GbE SFP+' },
+                    { key: 'VPN Mesh', val: 'Tailscale (WireGuard)' },
+                    { key: 'Security', val: 'VLAN Segmentation' }
+                ]
+            },
+            {
+                id: 'gadget-aosp',
+                title: 'Nothing Phone (1) AOSP & Fastboot',
+                category: 'gadget',
+                categoryLabel: '02: GADGET / AOSP',
+                stamp: 'STAGING',
+                summary: 'カスタムAOSPイメージのビルドとFastboot自動制御。',
+                description: 'Nothing Phone (1)のカーネル調整、Glyph Interface制御ライブラリのデバッグ、Fastbootパーティション焼き付けスクリプト。',
+                ascii: `
+[Host Dev Terminal] ---> [ADB / Fastboot Daemon]
+                                |
+             +------------------+------------------+
+             |                                     |
+     [Nothing Phone (1)]                  [Pixel Test Node]
+     (AOSP Custom Kernel)                 (Vendor Firmware Test)
+                `,
+                specs: [
+                    { key: 'Target OS', val: 'Android 14 / Custom AOSP' },
+                    { key: 'Scripting', val: 'Python + ADB / Fastboot' },
+                    { key: 'Privilege', val: 'KernelSU / Shizuku' },
+                    { key: 'Build Node', val: 'Ubuntu 22.04 LTS' }
+                ]
+            },
+            {
+                id: 'moto-gsx',
+                title: 'GSX-S1000 Front USD Fork Swap',
+                category: 'moto',
+                categoryLabel: '03: MOTO MECHANIC',
+                stamp: 'TESTING',
+                summary: 'Suzuki GSX-S1000 (EK1AA) 足回り移植と電装ハーネス加工。',
+                description: '倒立フォークおよびBremboモノブロックキャリパーの換装、メーター通信プロトコルの動作確認。',
+                ascii: `
+[GSX-S1000 Main Harness] <---> [Custom Relay Control Box]
+                                       |
+                   +-------------------+-------------------+
+                   |                                       |
+          [USD Fork Assembly]                    [Digital Meter Unit]
+          (Brembo Monobloc)                      (LED & Signal Sensors)
+                `,
+                specs: [
+                    { key: 'Base Machine', val: 'Suzuki GSX-S1000 (EK1AA)' },
+                    { key: 'Front Suspension', val: 'Showa USD Fork Swap' },
+                    { key: 'Brakes', val: 'Brembo Radial Calipers' },
+                    { key: 'Wiring', val: 'Custom LED Harness' }
+                ]
+            },
+            {
+                id: 'audio-dsp',
+                title: 'Web Audio DSP & Modular Synthesizer',
+                category: 'audio',
+                categoryLabel: '04: AUDIO / DSP',
+                stamp: 'VERIFIED',
+                summary: 'ブラウザでのオシレーター周波数合成とイコライザー。',
+                description: 'Web Audio APIのオシレーターノード、ゲインノード、アナライザーノードを組み合わせたオシロスコープ音響生成。',
+                ascii: `
+[Oscillator Node] ---> [Gain / Filter Node] ---> [Analyser Node]
+                                                        |
+                                              [Canvas Scope Output]
+                `,
+                specs: [
+                    { key: 'Audio Engine', val: 'Web Audio API' },
+                    { key: 'Synthesis', val: 'Sawtooth / Square Wave' },
+                    { key: 'Visualization', val: 'HTML5 Canvas 60fps' },
+                    { key: 'Output', val: 'Realtime Audio Nodes' }
+                ]
+            }
+        ];
+
+        // ==========================================
+        // 2. RENDER & FILTER PROJECTS
+        // ==========================================
+        function renderProjects(cat = 'all') {
+            const container = document.getElementById('projects-container');
+            container.innerHTML = '';
+
+            const filtered = cat === 'all' 
+                ? SCHEMATIC_PROJECTS 
+                : SCHEMATIC_PROJECTS.filter(p => p.category === cat);
+
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'glass-panel p-6 rounded-2xl flex flex-col justify-between space-y-4 cursor-pointer';
+                card.onclick = () => openInspectorModal(p.id);
+
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-mono text-slate-400 font-bold">${p.categoryLabel}</span>
+                            <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-mono font-bold border border-emerald-200 text-[10px]">${p.stamp}</span>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-lg group-hover:text-indigo-600 transition">${p.title}</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">${p.summary}</p>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-indigo-600">
+                        <span>Inspect Schematic</span>
+                        <i class="fas fa-arrow-right text-[10px]"></i>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterProjects(cat, btn) {
+            playSfx('click');
+            document.querySelectorAll('#project-filters button').forEach(b => {
+                b.className = 'px-3.5 py-1.5 rounded-lg text-xs font-medium transition bg-white border border-slate-200 text-slate-600 hover:border-indigo-300';
+            });
+            btn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm';
+            renderProjects(cat);
+        }
+
+        function openInspectorModal(id) {
+            playSfx('click');
+            const item = SCHEMATIC_PROJECTS.find(p => p.id === id);
+            if (!item) return;
+
+            document.getElementById('inspect-title').textContent = item.title;
+            document.getElementById('inspect-cat').textContent = item.categoryLabel;
+            document.getElementById('inspect-stamp').textContent = item.stamp;
+            document.getElementById('inspect-desc').textContent = item.description;
+            document.getElementById('inspect-ascii').textContent = item.ascii.trim();
+
+            const specsContainer = document.getElementById('inspect-specs');
+            specsContainer.innerHTML = item.specs.map(s => `
+                <div class="flex justify-between border-b border-slate-200 pb-1">
+                    <span class="text-slate-500">${s.key}:</span>
+                    <span class="text-slate-800 font-bold">${s.val}</span>
+                </div>
+            `).join('');
+
+            const modal = document.getElementById('inspector-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeInspectorModal() {
+            playSfx('click');
+            const modal = document.getElementById('inspector-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        // ==========================================
+        // 3. TELEMETRY CANVAS & AUDIO
+        // ==========================================
+        let audioCtx = null;
+        let sfxEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSfx(type) {
+            if (!sfxEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, now);
+            osc.frequency.exponentialRampToValueAtTime(300, now + 0.03);
+
+            gain.gain.setValueAtTime(0.04, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.03);
+        }
+
+        function toggleAudioSFX() {
+            sfxEnabled = !sfxEnabled;
+            const icon = document.getElementById('sfx-icon');
+            const label = document.getElementById('sfx-label');
+
+            if (sfxEnabled) {
+                icon.className = 'fas fa-volume-up text-indigo-600';
+                label.textContent = 'SFX: ON';
+                playSfx('click');
+            } else {
+                icon.className = 'fas fa-volume-mute text-slate-400';
+                label.textContent = 'SFX: OFF';
+            }
+        }
+
+        let synthActive = false;
+        let synthInterval = null;
+
+        function toggleSynthEngine() {
+            playSfx('click');
+            initAudio();
+
+            synthActive = !synthActive;
+            const icon = document.getElementById('synth-play-icon');
+            const text = document.getElementById('synth-play-text');
+
+            if (synthActive) {
+                icon.className = 'fas fa-stop';
+                text.textContent = 'STOP SYNTH DECK';
+
+                const freqs = [130.81, 164.81, 196.00, 220.00];
+                synthInterval = setInterval(() => {
+                    if (!audioCtx) return;
+                    const f = freqs[Math.floor(Math.random() * freqs.length)];
+                    const now = audioCtx.currentTime;
+
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(f, now);
+
+                    gain.gain.setValueAtTime(0.02, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                }, 300);
+            } else {
+                icon.className = 'fas fa-play';
+                text.textContent = 'PLAY SYNTH DECK';
+                if (synthInterval) clearInterval(synthInterval);
+            }
+        }
+
+        // Canvas Visualizer
+        const canvas = document.getElementById('telemetry-canvas');
+        const ctx = canvas.getContext('2d');
+        let canvasMode = 'spectrum';
+        let phase = 0;
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+
+        function drawCanvas() {
+            if (!canvas) return;
+            const w = canvas.width;
+            const h = canvas.height;
+
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, w, h);
+
+            if (canvasMode === 'spectrum') {
+                const bars = 24;
+                const barW = w / bars - 3;
+                for (let i = 0; i < bars; i++) {
+                    const barH = Math.abs(Math.sin(phase + i * 0.4) * (h * 0.75)) + 8;
+                    const x = i * (barW + 3) + 2;
+                    const y = h - barH;
+
+                    ctx.fillStyle = i % 2 === 0 ? '#4f46e5' : '#10b981';
+                    ctx.fillRect(x, y, barW, barH);
+                }
+            } else {
+                ctx.strokeStyle = '#10b981';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                for (let x = 0; x < w; x += 3) {
+                    const y = h / 2 + Math.sin(x * 0.04 + phase) * 35;
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+
+            phase += 0.05;
+            requestAnimationFrame(drawCanvas);
+        }
+
+        function setCanvasMode(mode) {
+            playSfx('click');
+            canvasMode = mode;
+        }
+
+        // COMMAND PALETTE
+        function openCommandPalette() {
+            playSfx('click');
+            const modal = document.getElementById('command-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            document.getElementById('command-input').focus();
+            handleCommandSearch();
+        }
+
+        function closeCommandPalette() {
+            const modal = document.getElementById('command-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function handleCommandSearch() {
+            const query = document.getElementById('command-input').value.toLowerCase();
+            const resultsContainer = document.getElementById('command-results');
+            resultsContainer.innerHTML = '';
+
+            const items = [
+                { label: 'Explore Infra Projects', action: () => { window.location.href = '#projects'; filterProjects('infra', document.querySelectorAll('#project-filters button')[1]); closeCommandPalette(); } },
+                { label: 'Explore Mobile & AOSP', action: () => { window.location.href = '#projects'; filterProjects('gadget', document.querySelectorAll('#project-filters button')[2]); closeCommandPalette(); } },
+                { label: 'Explore Moto Mechanic', action: () => { window.location.href = '#projects'; filterProjects('moto', document.querySelectorAll('#project-filters button')[3]); closeCommandPalette(); } },
+                { label: 'View Live Telemetry', action: () => { window.location.href = '#telemetry'; closeCommandPalette(); } },
+                { label: 'Open Audio Synth Deck', action: () => { window.location.href = '#audio-deck'; closeCommandPalette(); } }
+            ];
+
+            const filtered = items.filter(i => i.label.toLowerCase().includes(query));
+            filtered.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'p-2.5 rounded-lg hover:bg-slate-50 flex items-center justify-between text-xs cursor-pointer font-medium text-slate-700';
+                div.innerHTML = `<span>${item.label}</span><i class="fas fa-chevron-right text-[10px] text-slate-400"></i>`;
+                div.onclick = item.action;
+                resultsContainer.appendChild(div);
+            });
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                openCommandPalette();
+            } else if (e.key === 'Escape') {
+                closeCommandPalette();
+                closeInspectorModal();
+            }
+        });
+
+        // Initialize on Load
+        window.onload = function() {
+            renderProjects('all');
+            startHeroAutoplay();
+
+            resizeCanvas();
+            drawCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            // CPU & RAM Simulation
+            setInterval(() => {
+                const cpu = (12 + Math.random() * 15).toFixed(1);
+                const ram = (40 + Math.random() * 5).toFixed(1);
+                document.getElementById('metric-cpu').textContent = `${cpu}%`;
+                document.getElementById('bar-cpu').style.width = `${cpu}%`;
+                document.getElementById('metric-ram').textContent = `${ram}%`;
+                document.getElementById('bar-ram').style.width = `${ram}%`;
+            }, 3000);
+        };
+    </script>
+</body>
+</html>

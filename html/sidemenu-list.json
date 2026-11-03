@@ -1,0 +1,69 @@
+{
+  "sectionTitle": "QUICK NAVIGATION & SOCIALS",
+  "items": [
+    {
+      "id": "misskey",
+      "label": "Misskey",
+      "description": "ねるる鯖で動いているみすきー鯖",
+      "icon": "/icons/misskey.svg",
+      "url": "https://misskey.architectural-n.net",
+      "target": "_blank"
+    },
+    {
+      "id": "mastodon",
+      "label": "Mastodon",
+      "description": "ねるる鯖で動いているますとどん鯖",
+      "icon": "/icons/mastodon.svg",
+      "url": "https://mastodon.architectural-n.net",
+      "target": "_blank"
+    },
+    {
+      "id": "pixelfed",
+      "label": "Pixelfed - 休止中",
+      "description": "ねるる鯖で動いているますぴくせるふぇっど鯖",
+      "icon": "/icons/pixelfed.svg",
+      "url": "https://pixelfed.architectural-n.net",
+      "target": "_blank"
+    },
+    {
+      "id": "Mattermost",
+      "label": "Mattermost",
+      "description": "ねるる鯖で動いているまったーもすと鯖",
+      "icon": "/icons/mattermost.svg",
+      "url": "https://mattermost.architectural-n.net",
+      "target": "_blank"
+    },
+    {
+      "id": "bookstack",
+      "label": "BookStack",
+      "description": "ねるる鯖で動いているぶっくすたっく鯖",
+      "icon": "/icons/bookstack.svg",
+      "url": "https://wiki.architectural-n.net",
+      "target": "_blank"
+    },
+    {
+      "id": "nextcloud",
+      "label": "NextCloud - 休止中",
+      "description": "ねるる鯖で動いているねくすとくらうど鯖",
+      "icon": "/icons/nextcloud.svg",
+      "url": "https://cloud.architectural-n.net",
+      "target": "_blank"
+    },
+    {
+      "id": "owncast",
+      "label": "OwnCast",
+      "description": "ねるる鯖で動いているすとりーみんぐ鯖",
+      "icon": "/icons/owncast-dark.svg",
+      "url": "https://stream.architectural-n.net",
+      "target": "_blank"
+    },
+    {
+      "id": "azuracast",
+      "label": "AzuraCast",
+      "description": "ねるる鯖で動いているらじお鯖",
+      "icon": "/icons/azuracast.svg",
+      "url": "https://cast.architectural-n.net",
+      "target": "_blank"
+    }
+  ]
+}

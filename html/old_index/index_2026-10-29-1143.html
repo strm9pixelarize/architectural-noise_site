@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOJI LAB // ARCHITECT WORKBENCH</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        /* Glassmorphism subtle effects */
+        .glass-header {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        /* Image Slideshow Crossfade Animation */
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out, transform 8s ease-out;
+            transform: scale(1.05);
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Subtle grid pattern background */
+        .bg-grid-pattern {
+            background-size: 32px 32px;
+            background-image: 
+                linear-gradient(to right, rgba(203, 213, 225, 0.3) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(203, 213, 225, 0.3) 1px, transparent 1px);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen flex flex-col selection:bg-slate-900 selection:text-white">
+
+    <!-- FIXED TOP HEADER OVER HERO IMAGE AREA (Crisp White Text & Dark Glass) -->
+    <header class="fixed top-0 left-0 right-0 h-16 glass-header z-50 px-4 sm:px-8 flex items-center justify-between text-white transition-all duration-300">
+        <!-- Brand & Live Indicator -->
+        <div class="flex items-center space-x-3">
+            <a href="#" class="flex items-center space-x-2.5 text-white font-extrabold tracking-wider text-sm sm:text-base group">
+                <span class="w-3 h-3 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399] animate-pulse"></span>
+                <span class="font-mono text-white group-hover:text-emerald-300 transition-colors">NOJI LAB // ARCHITECT</span>
+            </a>
+            <span class="hidden md:inline-flex items-center px-2.5 py-0.5 rounded-full bg-white/10 border border-white/20 text-[11px] font-mono text-white">
+                STATION-3100 :: ONLINE
+            </span>
+        </div>
+
+        <!-- Navigation Links (High contrast white with pill hovers) -->
+        <nav class="hidden lg:flex items-center space-x-1 text-xs font-semibold">
+            <a href="#telemetry" class="text-white hover:text-white hover:bg-white/15 px-3 py-1.5 rounded-lg transition-all">SYSTEMS</a>
+            <a href="#schematics" class="text-white hover:text-white hover:bg-white/15 px-3 py-1.5 rounded-lg transition-all">SCHEMATICS</a>
+            <a href="#audio-deck" class="text-white hover:text-white hover:bg-white/15 px-3 py-1.5 rounded-lg transition-all">AUDIO DSP</a>
+            <a href="#logs" class="text-white hover:text-white hover:bg-white/15 px-3 py-1.5 rounded-lg transition-all">LOGS</a>
+        </nav>
+
+        <!-- Right Quick Controls -->
+        <div class="flex items-center space-x-3">
+            <button onclick="toggleAudioSFX()" id="sfx-btn" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-3 py-1.5 rounded-lg text-xs font-mono flex items-center space-x-2 transition-all">
+                <i id="sfx-icon" class="fas fa-volume-up text-emerald-400"></i>
+                <span id="sfx-label" class="hidden sm:inline font-bold">SFX: ON</span>
+            </button>
+            <button onclick="toggleCommandPalette()" class="bg-white/15 hover:bg-white/25 text-white border border-white/30 px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center space-x-1.5 transition-all shadow-sm">
+                <i class="fas fa-search text-xs"></i>
+                <span>⌘K</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO SECTION: DYNAMIC IMAGE SLIDESHOW WITH MIDDLE-LEFT DYNAMIC TEXT -->
+    <section class="relative w-full h-[88vh] min-h-[580px] bg-slate-950 overflow-hidden flex items-center">
+        <!-- Background Image Slideshow -->
+        <div id="hero-slideshow-container" class="absolute inset-0 w-full h-full">
+            <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=2000&q=80" class="hero-slide active" alt="Tokyo Architecture & City">
+            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=2000&q=80" class="hero-slide" alt="Server Datacenter Infrastructure">
+            <img src="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=2000&q=80" class="hero-slide" alt="Custom Motorcycle & Mechanical">
+            <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=2000&q=80" class="hero-slide" alt="Audio Production & DSP">
+        </div>
+
+        <!-- Vignette & Dark Gradient Overlay for Maximum Contrast -->
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-slate-950/20 z-10"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40 z-10"></div>
+
+        <!-- HERO CONTENT: MIDDLE-LEFT ALIGNED TEXT -->
+        <div class="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 pt-16">
+            <div class="max-w-2xl space-y-6">
+                <!-- Status Tag -->
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 backdrop-blur-md text-emerald-300 font-mono text-xs font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span>ENGINEERING WORKBENCH v4.2</span>
+                </div>
+
+                <!-- Dynamic Heading: "Architecting ~" -->
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-tight">
+                    Architecting <br>
+                    <span id="hero-dynamic-text" class="text-emerald-400 font-mono underline decoration-emerald-400/50 decoration-wavy underline-offset-8">systems.</span>
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="text-base sm:text-lg text-slate-300 font-normal leading-relaxed max-w-xl">
+                    自宅サーバーインフラ、Android/AOSPカスタム、バイク（GSX-S1000）整備、そしてWeb Audio DSPを統合公開する実験型プラットフォーム。
+                </p>
+
+                <!-- Action Buttons -->
+                <div class="pt-4 flex flex-wrap items-center gap-4 font-semibold text-sm">
+                    <a href="#schematics" class="px-6 py-3 rounded-xl bg-white text-slate-950 hover:bg-slate-100 transition-all font-bold shadow-lg shadow-white/10 flex items-center space-x-2">
+                        <span>仕様書を閲覧する</span>
+                        <i class="fas fa-arrow-right text-xs"></i>
+                    </a>
+                    <a href="#telemetry" class="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-md transition-all flex items-center space-x-2">
+                        <i class="fas fa-server text-emerald-400"></i>
+                        <span>システム状態</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Carousel Indicators -->
+        <div class="absolute bottom-6 right-8 z-20 flex items-center space-x-2">
+            <button onclick="setHeroSlide(0)" class="slide-indicator w-8 h-1.5 rounded-full bg-white transition-all"></button>
+            <button onclick="setHeroSlide(1)" class="slide-indicator w-2.5 h-1.5 rounded-full bg-white/40 transition-all"></button>
+            <button onclick="setHeroSlide(2)" class="slide-indicator w-2.5 h-1.5 rounded-full bg-white/40 transition-all"></button>
+            <button onclick="setHeroSlide(3)" class="slide-indicator w-2.5 h-1.5 rounded-full bg-white/40 transition-all"></button>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT AREA (Clean Off-White Workbench) -->
+    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-12 space-y-16 bg-grid-pattern">
+
+        <!-- SECTION 1: SYSTEM TELEMETRY GRID -->
+        <section id="telemetry" class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                        <i class="fas fa-chart-line text-slate-700"></i>
+                        <span>System Telemetry & Nodes</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 font-mono mt-1">リアルタイム・クラスター稼働状態モニタ</p>
+                </div>
+                <div class="flex items-center space-x-2 text-xs font-mono text-slate-600">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span>Proxmox VE Cluster: READY</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass-card p-5 rounded-2xl space-y-2 shadow-sm">
+                    <div class="flex items-center justify-between text-xs font-mono text-slate-500">
+                        <span>CPU LOAD (Ryzen 7900X)</span>
+                        <i class="fas fa-microchip text-slate-400"></i>
+                    </div>
+                    <div class="text-3xl font-extrabold text-slate-900 font-mono" id="metric-cpu">14.2%</div>
+                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                        <div id="bar-cpu" class="bg-slate-900 h-full w-[14%] transition-all duration-500"></div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl space-y-2 shadow-sm">
+                    <div class="flex items-center justify-between text-xs font-mono text-slate-500">
+                        <span>RAM USAGE (DDR5)</span>
+                        <i class="fas fa-memory text-slate-400"></i>
+                    </div>
+                    <div class="text-3xl font-extrabold text-slate-900 font-mono" id="metric-ram">28.4 GB</div>
+                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                        <div id="bar-ram" class="bg-indigo-600 h-full w-[44%] transition-all duration-500"></div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl space-y-2 shadow-sm">
+                    <div class="flex items-center justify-between text-xs font-mono text-slate-500">
+                        <span>NETWORK BANDWIDTH</span>
+                        <i class="fas fa-network-wired text-slate-400"></i>
+                    </div>
+                    <div class="text-3xl font-extrabold text-slate-900 font-mono" id="metric-net">1.2 Gbps</div>
+                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                        <div id="bar-net" class="bg-emerald-500 h-full w-[60%] transition-all duration-500"></div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl space-y-2 shadow-sm">
+                    <div class="flex items-center justify-between text-xs font-mono text-slate-500">
+                        <span>CLUSTER UPTIME</span>
+                        <i class="fas fa-clock text-slate-400"></i>
+                    </div>
+                    <div class="text-3xl font-extrabold text-slate-900 font-mono" id="metric-uptime">99.98%</div>
+                    <div class="text-[11px] text-emerald-600 font-semibold font-mono">38 days, 14 hours active</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: SCHEMATIC MATRIX & PROJECTS -->
+        <section id="schematics" class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                        <i class="fas fa-cubes text-slate-700"></i>
+                        <span>Schematic Matrix & Projects</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 font-mono mt-1">検証プロジェクトおよび構築仕様書一覧</p>
+                </div>
+
+                <!-- Filter Tabs -->
+                <div class="flex flex-wrap gap-1.5 bg-slate-200/70 p-1 rounded-xl text-xs font-medium" id="category-filters">
+                    <button onclick="filterCategory('all', this)" class="px-3 py-1.5 rounded-lg bg-white text-slate-900 font-bold shadow-sm transition-all">ALL</button>
+                    <button onclick="filterCategory('infra', this)" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all">INFRA</button>
+                    <button onclick="filterCategory('gadget', this)" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all">GADGET/AOSP</button>
+                    <button onclick="filterCategory('moto', this)" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all">MOTO</button>
+                    <button onclick="filterCategory('audio', this)" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all">AUDIO</button>
+                </div>
+            </div>
+
+            <!-- Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="projects-grid">
+                <!-- Cards will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- SECTION 3: AUDIO DSP SYNTHESIZER DECK -->
+        <section id="audio-deck" class="glass-card p-6 sm:p-8 rounded-3xl space-y-6 shadow-sm border border-slate-200">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fas fa-wave-square text-indigo-600"></i>
+                        <span>Web Audio DSP Synthesizer</span>
+                    </h3>
+                    <p class="text-xs text-slate-500 font-mono mt-1">Web Audio API オシレーター & イコライザー波形</p>
+                </div>
+                <button onclick="toggleSynthEngine()" id="synth-deck-btn" class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold font-mono transition-all shadow-md flex items-center space-x-2">
+                    <i id="synth-deck-icon" class="fas fa-play text-emerald-400"></i>
+                    <span id="synth-deck-text">START SYNTHESIZER</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+                <div class="lg:col-span-2 relative bg-slate-950 rounded-2xl h-48 overflow-hidden border border-slate-800 flex items-center justify-center">
+                    <canvas id="synth-canvas" class="w-full h-full block"></canvas>
+                    <div class="absolute top-3 left-3 text-[10px] font-mono text-emerald-400 bg-slate-900/80 px-2 py-1 rounded border border-emerald-500/30">
+                        SCOPE: 44.1kHz REALTIME WAVEFORM
+                    </div>
+                </div>
+
+                <div class="space-y-4 font-mono text-xs">
+                    <div class="space-y-1">
+                        <label class="text-slate-500 font-bold">WAVEFORM TYPE</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="setWaveType('sine')" class="wave-type-btn px-2 py-1.5 rounded-lg bg-slate-900 text-white font-bold text-center">SINE</button>
+                            <button onclick="setWaveType('sawtooth')" class="wave-type-btn px-2 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-center hover:bg-slate-200">SAW</button>
+                            <button onclick="setWaveType('square')" class="wave-type-btn px-2 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-center hover:bg-slate-200">SQUARE</button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-slate-600">
+                            <span>FREQUENCY (Hz)</span>
+                            <span id="freq-val-label" class="font-bold text-slate-900">220 Hz</span>
+                        </div>
+                        <input type="range" min="100" max="880" value="220" oninput="updateFreq(this.value)" class="w-full accent-slate-900">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-200 bg-white py-8 px-4 sm:px-8 text-xs font-mono text-slate-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+                <span class="font-bold text-slate-900">NOJI LAB</span> &copy; 2026 :: TOKYO STATION FIELD NODE
+            </div>
+            <div class="flex items-center space-x-4">
+                <span>STACK: DOCKER / NGINX / PORTAINER</span>
+                <span>•</span>
+                <span>PRESS <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-slate-800 font-bold">⌘K</kbd> FOR COMMANDS</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INSPECTOR MODAL -->
+    <div id="inspector-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-200">
+        <div class="bg-white max-w-2xl w-full p-6 sm:p-8 rounded-3xl space-y-6 relative shadow-2xl border border-slate-100">
+            <button onclick="closeInspectorModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center font-bold transition-all">✕</button>
+
+            <div class="border-b border-slate-100 pb-4 space-y-2">
+                <div class="flex items-center space-x-2 text-xs font-mono">
+                    <span id="modal-stamp" class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">STATUS</span>
+                    <span id="modal-cat" class="text-slate-400">CATEGORY</span>
+                </div>
+                <h3 id="modal-title" class="text-2xl font-bold text-slate-900">Project Title</h3>
+            </div>
+
+            <p id="modal-desc" class="text-sm text-slate-600 leading-relaxed">Description...</p>
+
+            <div class="p-4 bg-slate-950 rounded-2xl text-emerald-400 font-mono text-xs overflow-x-auto">
+                <div class="text-[10px] text-slate-500 border-b border-slate-800 pb-1 mb-2">SYSTEM SCHEMATIC ARCHITECTURE</div>
+                <pre id="modal-ascii" class="leading-tight"></pre>
+            </div>
+
+            <div id="modal-specs" class="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs p-4 bg-slate-50 rounded-2xl border border-slate-200"></div>
+
+            <div class="flex justify-end pt-2">
+                <button onclick="closeInspectorModal()" class="px-5 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-slate-800 transition-all">閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- COMMAND PALETTE (⌘K) -->
+    <div id="command-palette" class="fixed inset-0 z-50 flex items-start justify-center pt-20 p-4 bg-slate-950/60 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-200">
+        <div class="bg-white max-w-lg w-full rounded-2xl shadow-2xl border border-slate-200 overflow-hidden font-mono text-xs space-y-2 p-3">
+            <div class="flex items-center px-3 py-2 border-b border-slate-100 space-x-2">
+                <i class="fas fa-search text-slate-400"></i>
+                <input type="text" id="cmd-input" onkeyup="handleCmdSearch(this.value)" class="w-full bg-transparent focus:outline-none text-slate-900 font-bold placeholder-slate-400 text-sm" placeholder="検索またはコマンドを入力..." autofocus>
+                <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-[10px] text-slate-500">ESC</kbd>
+            </div>
+            <div id="cmd-results" class="max-h-64 overflow-y-auto space-y-1 p-1">
+                <div onclick="executeCmd('telemetry')" class="p-2.5 rounded-lg hover:bg-slate-100 cursor-pointer flex justify-between items-center text-slate-800">
+                    <span>> System Telemetry (システム状態)</span>
+                    <span class="text-slate-400 text-[10px]">Jump</span>
+                </div>
+                <div onclick="executeCmd('schematics')" class="p-2.5 rounded-lg hover:bg-slate-100 cursor-pointer flex justify-between items-center text-slate-800">
+                    <span>> Schematic Matrix (構築仕様書)</span>
+                    <span class="text-slate-400 text-[10px]">Jump</span>
+                </div>
+                <div onclick="executeCmd('audio')" class="p-2.5 rounded-lg hover:bg-slate-100 cursor-pointer flex justify-between items-center text-slate-800">
+                    <span>> Audio DSP Synthesizer (音響デック)</span>
+                    <span class="text-slate-400 text-[10px]">Jump</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT SYSTEM ENGINE -->
+    <script>
+        // ==========================================
+        // 1. SCHEMATIC PROJECTS DATA
+        // ==========================================
+        const PROJECTS = [
+            {
+                id: 'infra-k3s',
+                title: 'Docker & K3s Home Cluster',
+                category: 'infra',
+                categoryLabel: 'INFRASTRUCTURE',
+                stamp: 'DEPLOYED',
+                summary: 'Proxmox VE上で稼働するK3s & Docker統合ホームサーバー。',
+                description: 'Ryzen 7900Xノード上に構成した本番運用クラスタ。ArgoCDによるGitOps自動デプロイメントとNginx Reverse Proxy。',
+                ascii: `
++-------------------------------------------------------+
+|  Proxmox VE 8.1 (Host Node: 64GB DDR5)               |
+|  +-------------------+   +-------------------------+  |
+|  | K3s Master (VM)   |   | Docker Compose          |  |
+|  | - ArgoCD          |   | - Portainer             |  |
+|  | - Cloudflare Tun  |   | - Nginx Static          |  |
+|  +-------------------+   +-------------------------+  |
++-------------------------------------------------------+
+                `,
+                specs: [
+                    { key: 'CPU / RAM', val: 'Ryzen 9 7900X / 64GB DDR5' },
+                    { key: 'Hypervisor', val: 'Proxmox VE 8.1' },
+                    { key: 'Engine', val: 'Docker Compose & K3s' },
+                    { key: 'Network', val: 'Cloudflare Tunnels' }
+                ]
+            },
+            {
+                id: 'infra-yamaha',
+                title: 'Yamaha RTX1300 & Tailscale SDN',
+                category: 'infra',
+                categoryLabel: 'INFRASTRUCTURE',
+                stamp: 'VERIFIED',
+                summary: '10GbEルーターYamaha RTX1300とTailscaleによる暗号化網。',
+                description: '自宅10GbEバックボーンLANのVLAN設計。Tailscale VPNにより外出先のスマホ・ノートPCから暗号化アクセス可能。',
+                ascii: `
+[WAN Internet] ---> [Yamaha RTX1300 (10GbE Router)]
+                           |
+            +--------------+--------------+
+            |                             |
+    [10GbE Switch]              [Tailscale Subnet]
+            |                             |
+    [Proxmox Cluster]          [Remote Field Mobile]
+                `,
+                specs: [
+                    { key: 'Core Router', val: 'Yamaha RTX1300' },
+                    { key: 'Backbone', val: '10GbE SFP+' },
+                    { key: 'VPN Mesh', val: 'Tailscale (WireGuard)' },
+                    { key: 'Security', val: 'VLAN Segmentation' }
+                ]
+            },
+            {
+                id: 'gadget-aosp',
+                title: 'Nothing Phone (1) AOSP & Fastboot',
+                category: 'gadget',
+                categoryLabel: 'GADGET / AOSP',
+                stamp: 'STAGING',
+                summary: 'カスタムAOSPイメージのビルドとFastboot自動制御。',
+                description: 'Nothing Phone (1)のカーネル調整、Glyph Interface制御ライブラリのデバッグ、Fastbootパーティション焼き付けスクリプト。',
+                ascii: `
+[Host Dev Terminal] ---> [ADB / Fastboot Daemon]
+                                |
+             +------------------+------------------+
+             |                                     |
+     [Nothing Phone (1)]                  [Pixel Test Node]
+     (AOSP Custom Kernel)                 (Vendor Firmware Test)
+                `,
+                specs: [
+                    { key: 'Target OS', val: 'Android 14 / Custom AOSP' },
+                    { key: 'Scripting', val: 'Python + ADB / Fastboot' },
+                    { key: 'Privilege', val: 'KernelSU / Shizuku' },
+                    { key: 'Build Node', val: 'Ubuntu 22.04 LTS' }
+                ]
+            },
+            {
+                id: 'gadget-surface',
+                title: 'Surface Duo 2 Dual-Display Console',
+                category: 'gadget',
+                categoryLabel: 'GADGET / AOSP',
+                stamp: 'ONLINE',
+                summary: '2画面Android端末によるリアルタイム・フィールド監視。',
+                description: 'Surface Duo 2の画面スパン機能を使い、左画面にPortainerメトリクス、右画面にSSHターミナルを展開。',
+                ascii: `
++-----------------------+-----------------------+
+|  LEFT SCREEN          |  RIGHT SCREEN         |
+|  - Grafana Metrics    |  - SSH Terminal       |
+|  - Container Status   |  - Tailscale Status   |
++-----------------------+-----------------------+
+                `,
+                specs: [
+                    { key: 'Device', val: 'Microsoft Surface Duo 2' },
+                    { key: 'Tool Stack', val: 'Termux + Tailscale' },
+                    { key: 'Display Mode', val: 'Dual-screen Span' },
+                    { key: 'Use Case', val: 'Portable Server Console' }
+                ]
+            },
+            {
+                id: 'moto-gsx',
+                title: 'GSX-S1000 Front USD Fork & Harness Swap',
+                category: 'moto',
+                categoryLabel: 'MOTO MECHANIC',
+                stamp: 'TESTING',
+                summary: 'Suzuki GSX-S1000 (EK1AA) 足回り移植と電装ハーネス加工。',
+                description: '倒立フォークおよびBremboモノブロックキャリパーの換装、メーター通信プロトコルの動作確認。',
+                ascii: `
+[GSX-S1000 Main Harness] <---> [Custom Relay Control Box]
+                                       |
+                   +-------------------+-------------------+
+                   |                                       |
+          [USD Fork Assembly]                    [Digital Meter Unit]
+          (Brembo Monobloc)                      (LED & Signal Sensors)
+                `,
+                specs: [
+                    { key: 'Base Machine', val: 'Suzuki GSX-S1000 (EK1AA)' },
+                    { key: 'Front Suspension', val: 'Showa USD Fork Swap' },
+                    { key: 'Brakes', val: 'Brembo Radial Calipers' },
+                    { key: 'Wiring', val: 'Custom LED Harness' }
+                ]
+            },
+            {
+                id: 'audio-dsp',
+                title: 'Web Audio DSP & Modular Synthesizer',
+                category: 'audio',
+                categoryLabel: 'AUDIO / DSP',
+                stamp: 'VERIFIED',
+                summary: 'ブラウザでのオシレーター周波数合成とイコライザー。',
+                description: 'Web Audio APIのオシレーターノード、ゲインノード、アナライザーノードを組み合わせたオシロスコープ音響生成。',
+                ascii: `
+[Oscillator Node] ---> [Gain / Filter Node] ---> [Analyser Node]
+                                                        |
+                                              [Canvas Scope Output]
+                `,
+                specs: [
+                    { key: 'Audio Engine', val: 'Web Audio API' },
+                    { key: 'Synthesis', val: 'Sawtooth / Square Wave' },
+                    { key: 'Visualization', val: 'HTML5 Canvas 60fps' },
+                    { key: 'Output', val: 'Realtime Audio Nodes' }
+                ]
+            }
+        ];
+
+        // ==========================================
+        // 2. HERO SLIDESHOW & DYNAMIC TEXT
+        // ==========================================
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.hero-slide');
+        const slideIndicators = document.querySelectorAll('.slide-indicator');
+
+        function setHeroSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            slideIndicators.forEach((ind, i) => {
+                if (i === index) {
+                    ind.className = 'slide-indicator w-8 h-1.5 rounded-full bg-white transition-all';
+                } else {
+                    ind.className = 'slide-indicator w-2.5 h-1.5 rounded-full bg-white/40 transition-all';
+                }
+            });
+            currentSlide = index;
+        }
+
+        setInterval(() => {
+            const next = (currentSlide + 1) % slides.length;
+            setHeroSlide(next);
+        }, 5000);
+
+        // Dynamic Text Typing Effect
+        const dynamicWords = ['systems.', 'networks.', 'mobility.', 'soundscapes.', 'solutions.'];
+        let wordIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const dynamicTextEl = document.getElementById('hero-dynamic-text');
+
+        function typeDynamicText() {
+            const currentWord = dynamicWords[wordIndex];
+            if (isDeleting) {
+                charIndex--;
+            } else {
+                charIndex++;
+            }
+
+            dynamicTextEl.textContent = currentWord.substring(0, charIndex);
+
+            let typeSpeed = isDeleting ? 40 : 80;
+
+            if (!isDeleting && charIndex === currentWord.length) {
+                typeSpeed = 2200; // Pause at end
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % dynamicWords.length;
+                typeSpeed = 400;
+            }
+
+            setTimeout(typeDynamicText, typeSpeed);
+        }
+
+        // ==========================================
+        // 3. RENDER CARDS & MODAL
+        // ==========================================
+        function renderCards(category = 'all') {
+            const grid = document.getElementById('projects-grid');
+            grid.innerHTML = '';
+
+            const filtered = category === 'all' 
+                ? PROJECTS 
+                : PROJECTS.filter(p => p.category === category);
+
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'glass-card rounded-2xl p-6 space-y-4 shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between';
+                card.onclick = () => openInspectorModal(p.id);
+
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between text-xs font-mono">
+                            <span class="text-slate-500 font-bold">${p.categoryLabel}</span>
+                            <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">${p.stamp}</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">${p.title}</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">${p.summary}</p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-mono font-bold text-slate-900">
+                        <span>VIEW SPECIFICATION</span>
+                        <i class="fas fa-chevron-right text-xs group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterCategory(cat, btn) {
+            playSfx('click');
+            document.querySelectorAll('#category-filters button').forEach(b => {
+                b.className = 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all';
+            });
+            btn.className = 'px-3 py-1.5 rounded-lg bg-white text-slate-900 font-bold shadow-sm transition-all';
+            renderCards(cat);
+        }
+
+        function openInspectorModal(id) {
+            playSfx('click');
+            const item = PROJECTS.find(p => p.id === id);
+            if (!item) return;
+
+            document.getElementById('modal-title').textContent = item.title;
+            document.getElementById('modal-cat').textContent = item.categoryLabel;
+            document.getElementById('modal-stamp').textContent = item.stamp;
+            document.getElementById('modal-desc').textContent = item.description;
+            document.getElementById('modal-ascii').textContent = item.ascii.trim();
+
+            const specsEl = document.getElementById('modal-specs');
+            specsEl.innerHTML = item.specs.map(s => `
+                <div class="flex justify-between border-b border-slate-200 pb-1">
+                    <span class="text-slate-500">${s.key}:</span>
+                    <span class="font-bold text-slate-900">${s.val}</span>
+                </div>
+            `).join('');
+
+            const modal = document.getElementById('inspector-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeInspectorModal() {
+            playSfx('click');
+            const modal = document.getElementById('inspector-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        // ==========================================
+        // 4. WEB AUDIO SYNTHESIZER & SFX
+        // ==========================================
+        let audioCtx = null;
+        let sfxEnabled = true;
+        let synthOsc = null;
+        let synthGain = null;
+        let synthActive = false;
+        let waveType = 'sine';
+        let currentFreq = 220;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSfx(type) {
+            if (!sfxEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(200, now + 0.03);
+                gain.gain.setValueAtTime(0.04, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(now); osc.stop(now + 0.03);
+            }
+        }
+
+        function toggleAudioSFX() {
+            sfxEnabled = !sfxEnabled;
+            const icon = document.getElementById('sfx-icon');
+            const label = document.getElementById('sfx-label');
+
+            if (sfxEnabled) {
+                icon.className = 'fas fa-volume-up text-emerald-400';
+                label.textContent = 'SFX: ON';
+                playSfx('click');
+            } else {
+                icon.className = 'fas fa-volume-mute text-slate-400';
+                label.textContent = 'SFX: OFF';
+            }
+        }
+
+        function toggleSynthEngine() {
+            playSfx('click');
+            initAudio();
+
+            const btn = document.getElementById('synth-deck-btn');
+            const icon = document.getElementById('synth-deck-icon');
+            const txt = document.getElementById('synth-deck-text');
+
+            if (!synthActive) {
+                synthOsc = audioCtx.createOscillator();
+                synthGain = audioCtx.createGain();
+
+                synthOsc.type = waveType;
+                synthOsc.frequency.setValueAtTime(currentFreq, audioCtx.currentTime);
+
+                synthGain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+
+                synthOsc.connect(synthGain);
+                synthGain.connect(audioCtx.destination);
+                synthOsc.start();
+
+                synthActive = true;
+                icon.className = 'fas fa-stop text-red-400';
+                txt.textContent = 'STOP SYNTHESIZER';
+            } else {
+                if (synthOsc) {
+                    synthOsc.stop();
+                    synthOsc.disconnect();
+                }
+                synthActive = false;
+                icon.className = 'fas fa-play text-emerald-400';
+                txt.textContent = 'START SYNTHESIZER';
+            }
+        }
+
+        function setWaveType(type) {
+            playSfx('click');
+            waveType = type;
+            if (synthOsc) synthOsc.type = type;
+
+            document.querySelectorAll('.wave-type-btn').forEach(btn => {
+                btn.className = 'wave-type-btn px-2 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-center hover:bg-slate-200';
+            });
+            event.target.className = 'wave-type-btn px-2 py-1.5 rounded-lg bg-slate-900 text-white font-bold text-center';
+        }
+
+        function updateFreq(val) {
+            currentFreq = val;
+            document.getElementById('freq-val-label').textContent = `${val} Hz`;
+            if (synthOsc) {
+                synthOsc.frequency.setValueAtTime(val, audioCtx.currentTime);
+            }
+        }
+
+        // Synth Canvas Oscilloscope Visualization
+        const synthCanvas = document.getElementById('synth-canvas');
+        const sCtx = synthCanvas.getContext('2d');
+        let phase = 0;
+
+        function renderSynthCanvas() {
+            if (!synthCanvas) return;
+            const w = synthCanvas.width = synthCanvas.parentElement.clientWidth;
+            const h = synthCanvas.height = synthCanvas.parentElement.clientHeight;
+
+            sCtx.fillStyle = '#020617';
+            sCtx.fillRect(0, 0, w, h);
+
+            sCtx.strokeStyle = '#34d399';
+            sCtx.lineWidth = 2;
+            sCtx.beginPath();
+
+            const freqFactor = currentFreq / 200;
+            for (let x = 0; x < w; x += 2) {
+                let y = h / 2;
+                if (synthActive) {
+                    if (waveType === 'sine') {
+                        y += Math.sin(x * 0.02 * freqFactor + phase) * 35;
+                    } else if (waveType === 'sawtooth') {
+                        y += (((x * 0.02 * freqFactor + phase) % (Math.PI * 2)) / Math.PI - 1) * 35;
+                    } else if (waveType === 'square') {
+                        y += Math.sin(x * 0.02 * freqFactor + phase) >= 0 ? 30 : -30;
+                    }
+                } else {
+                    y += Math.sin(x * 0.01 + phase) * 4; // Idle wave
+                }
+
+                if (x === 0) sCtx.moveTo(x, y);
+                else sCtx.lineTo(x, y);
+            }
+            sCtx.stroke();
+            phase += 0.08;
+
+            requestAnimationFrame(renderSynthCanvas);
+        }
+
+        // ==========================================
+        // 5. COMMAND PALETTE (⌘K)
+        // ==========================================
+        function toggleCommandPalette() {
+            playSfx('click');
+            const palette = document.getElementById('command-palette');
+            const isHidden = palette.classList.contains('opacity-0');
+
+            if (isHidden) {
+                palette.classList.remove('opacity-0', 'pointer-events-none');
+                document.getElementById('cmd-input').focus();
+            } else {
+                palette.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function executeCmd(secId) {
+            toggleCommandPalette();
+            const el = document.getElementById(secId);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                toggleCommandPalette();
+            } else if (e.key === 'Escape') {
+                document.getElementById('command-palette').classList.add('opacity-0', 'pointer-events-none');
+                closeInspectorModal();
+            }
+        });
+
+        // ==========================================
+        // 6. INITIALIZATION & METRICS TICKER
+        // ==========================================
+        setInterval(() => {
+            const cpu = (10 + Math.random() * 12).toFixed(1);
+            document.getElementById('metric-cpu').textContent = `${cpu}%`;
+            document.getElementById('bar-cpu').style.width = `${cpu}%`;
+
+            const net = (0.8 + Math.random() * 0.6).toFixed(2);
+            document.getElementById('metric-net').textContent = `${net} Gbps`;
+        }, 3000);
+
+        window.onload = function() {
+            renderCards('all');
+            typeDynamicText();
+            renderSynthCanvas();
+        };
+    </script>
+</body>
+</html>

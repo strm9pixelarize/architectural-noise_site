@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARCHITECTURAL NOISE // WORKBENCH</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .bg-grid-pattern {
+            background-size: 32px 32px;
+            background-image: 
+                linear-gradient(to right, rgba(226, 232, 240, 0.6) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(226, 232, 240, 0.6) 1px, transparent 1px);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+        .glass-card:hover {
+            border-color: rgba(148, 163, 184, 0.6);
+            box-shadow: 0 12px 24px -10px rgba(15, 23, 42, 0.08);
+        }
+        .hero-slide {
+            transition: opacity 1000ms ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans bg-grid-pattern antialiased selection:bg-indigo-500 selection:text-white flex flex-col min-h-screen">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 w-full bg-slate-950/60 backdrop-blur-md border-b border-white/10 text-white shadow-lg transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-cube text-sm"></i>
+                </div>
+                <div>
+                    <span id="header-title" class="font-bold tracking-tight text-white font-mono text-sm block">--</span>
+                    <span id="header-status" class="text-[10px] text-slate-300 font-mono tracking-wider block">--</span>
+                </div>
+            </a>
+
+            <nav id="header-nav" class="hidden md:flex items-center gap-1 text-sm font-medium text-slate-200"></nav>
+
+            <div class="flex items-center gap-3">
+                <button onclick="toggleCommandPalette()" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 border border-white/15 text-xs text-slate-200 hover:bg-white/20 hover:text-white transition font-mono">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>Search</span>
+                    <kbd id="header-shortcut" class="px-1.5 py-0.5 rounded bg-white/20 text-[10px] text-white">⌘K</kbd>
+                </button>
+                <div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-mono">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="header-operator">--</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Full-Width Dynamic Hero Section -->
+    <section class="relative w-full h-[480px] sm:h-[560px] overflow-hidden bg-slate-900 border-b border-slate-200">
+        <div id="hero-slides-container" class="absolute inset-0"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-900/60 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent"></div>
+
+        <div class="relative max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+            <div class="max-w-2xl text-left space-y-4">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-slate-200 text-xs font-mono">
+                    <i class="fa-solid fa-code-branch text-emerald-400"></i>
+                    <span>Dynamic Domain Architecture</span>
+                </div>
+                
+                <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white font-sans drop-shadow-md">
+                    Architecting <br>
+                    <span id="typing-text" class="text-indigo-400 font-mono border-b-4 border-indigo-400 pb-1">systems.</span>
+                </h1>
+                
+                <p class="text-slate-300 text-base sm:text-lg leading-relaxed font-normal max-w-xl">
+                    インフラ設計、カスタムROM/AOSP検証、メカニックカスタマイズ、AI音響実験の記録を統合管理するワークベンチ。
+                </p>
+
+                <div class="pt-2 flex items-center gap-4">
+                    <a href="#projects" class="px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition shadow-lg shadow-indigo-600/30 flex items-center gap-2">
+                        <span>Explore Projects</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 space-y-16 flex-grow">
+
+        <section id="projects" class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold tracking-tight text-slate-900">Domains & Projects</h2>
+                    <p class="text-slate-500 text-sm mt-1">設定ファイル群（JSON）から動的に読み込まれたプロジェクト</p>
+                </div>
+                <div id="category-filters" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- Live Telemetry Section -->
+        <section id="telemetry" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></div>
+                    <h2 class="text-lg font-bold text-slate-900 font-mono">SYSTEM TELEMETRY</h2>
+                </div>
+                <span id="footer-node-tag" class="text-xs font-mono text-slate-500">Node: Local cluster</span>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono">
+                <div class="p-4 rounded-xl bg-slate-100 border border-slate-200">
+                    <span class="text-xs text-slate-500 block">ACTIVE CONTAINERS</span>
+                    <span id="metric-containers" class="text-2xl font-bold text-slate-800">--</span>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-100 border border-slate-200">
+                    <span class="text-xs text-slate-500 block">CPU LOAD</span>
+                    <span id="metric-cpu" class="text-2xl font-bold text-slate-800">12.4%</span>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-100 border border-slate-200">
+                    <span class="text-xs text-slate-500 block">NETWORK</span>
+                    <span id="metric-net" class="text-2xl font-bold text-indigo-600">128 KB/s</span>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-100 border border-slate-200">
+                    <span class="text-xs text-slate-500 block">PING</span>
+                    <span class="text-2xl font-bold text-emerald-600">8 ms</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Web Audio Synthesizer Deck -->
+        <section id="synth" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold text-slate-900 font-mono flex items-center gap-2">
+                    <i class="fa-solid fa-wave-square text-indigo-500"></i>
+                    <span>AUDIO DSP SYNTHESIZER</span>
+                </h2>
+                <span class="text-xs font-mono text-slate-400">Web Audio API</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <button id="synth-play-btn" onclick="toggleSynth()" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-mono text-xs font-medium transition flex items-center gap-2">
+                    <i class="fa-solid fa-play"></i>
+                    <span>PLAY DSP WAVE</span>
+                </button>
+                <div class="text-xs font-mono text-slate-500" id="synth-status">Status: Idle</div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Navigation -->
+    <footer class="mt-20 border-t border-slate-200 bg-white/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-mono">
+            <div>
+                <span id="footer-copyright">© 2026 ARCHITECTURAL NOISE</span>
+                <span id="footer-tech" class="block text-[10px] text-slate-400 mt-0.5">--</span>
+            </div>
+            <div id="footer-links" class="flex items-center gap-4"></div>
+        </div>
+    </footer>
+
+    <!-- Project Inspector Modal -->
+    <div id="inspector-modal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-card bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl relative">
+            <button onclick="closeInspector()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <!-- Command Palette (⌘K) -->
+    <div id="command-palette" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-start justify-center pt-20 p-4">
+        <div class="bg-white border border-slate-200 rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden space-y-4 p-4">
+            <div class="flex items-center gap-3 border-b border-slate-200 pb-3">
+                <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+                <input id="command-input" type="text" oninput="filterCommandProjects(this.value)" placeholder="Search projects or tags..." class="w-full text-sm font-mono focus:outline-none text-slate-800">
+                <kbd class="text-[10px] font-mono px-2 py-0.5 bg-slate-100 rounded text-slate-500">ESC</kbd>
+            </div>
+            <div id="command-results" class="max-h-60 overflow-y-auto space-y-1 font-mono text-xs"></div>
+        </div>
+    </div>
+
+<!-- NginxのSSIでJSONデータを埋め込み -->
+<script type="application/json" id="data-main"><!--# include file="config.json" --></script>
+<script type="application/json" id="data-header"><!--# include file="config_header.json" --></script>
+<script type="application/json" id="data-footer"><!--# include file="config_footer.json" --></script>
+<script type="application/json" id="docker-containers"><!--# include virtual="/docker-api/containers/json" --></script>
+
+<script>
+    let configMain = null;
+    let configHeader = null;
+    let configFooter = null;
+    let dockerContainers = null;
+
+    let activeCategory = 'all';
+    let synthOsc = null;
+    let synthCtx = null;
+    let isSynthPlaying = false;
+
+    window.addEventListener('DOMContentLoaded', () => {
+        // 安全にJSONパースするヘルパー関数
+        function safeParseJSON(elementId, label) {
+            const el = document.getElementById(elementId);
+            if (!el) return null;
+            
+            const text = el.textContent.trim();
+            
+            // HTMLが紛れ込んでいないかチェック
+            if (text.startsWith('<') || text.includes('<!DOCTYPE')) {
+                console.error(`[SSI Error] ${label} (${elementId}) の中身がJSONではなくHTMLになっています:`, text.substring(0, 100));
+                return null;
+            }
+
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error(`[JSON Parse Error] ${label} のパースに失敗しました:`, e);
+                return null;
+            }
+        }
+
+        configMain   = safeParseJSON('data-main', 'config.json');
+        configHeader = safeParseJSON('data-header', 'config_header.json');
+        configFooter = safeParseJSON('data-footer', 'config_footer.json');
+        dockerContainers = safeParseJSON('docker-containers', '/docker-api/containers/json');
+
+        if (dockerContainers) renderDockerStatus();
+        if (configHeader) renderHeader();
+        if (configFooter) renderFooter();
+        if (configMain) renderMainContent();
+    });
+
+    // コンテナ状態をUIに反映する関数
+    function renderDockerStatus() {
+        if (!dockerContainers) return;
+
+        const runningCount = dockerContainers.filter(c => c.State === 'running').length;
+        const totalCount   = dockerContainers.length;
+
+        // テレメトリー領域の表示更新
+        const containersEl = document.getElementById('metric-containers');
+        if (containersEl) {
+            containersEl.innerText = `${runningCount} / ${totalCount}`;
+        }
+
+        const nodeTag = document.getElementById('footer-node-tag');
+        if (nodeTag) {
+            nodeTag.innerText = `Docker Nodes: ${runningCount} / ${totalCount} RUNNING`;
+        }
+    }
+
+    function renderHeader() {
+        if (!configHeader) return;
+
+        if (configHeader.favicon) {
+            let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+            link.type = 'image/x-icon';
+            link.rel = 'shortcut icon';
+            link.href = configHeader.favicon;
+            document.getElementsByTagName('head')[0].appendChild(link);
+        }
+
+        document.getElementById('header-title').innerText = configHeader.title;
+        document.getElementById('header-status').innerText = configHeader.statusText;
+        document.getElementById('header-operator').innerText = configHeader.operator;
+        document.getElementById('header-shortcut').innerText = configHeader.searchShortcut || '⌘K';
+
+        const navContainer = document.getElementById('header-nav');
+        navContainer.innerHTML = configHeader.navLinks.map(link => 
+            `<a href="${link.href}" class="px-3 py-1.5 rounded-md hover:text-white hover:bg-white/10 transition">${link.label}</a>`
+        ).join('');
+    }
+
+    function renderFooter() {
+        if (!configFooter) return;
+        document.getElementById('footer-copyright').innerText = configFooter.copyright;
+        document.getElementById('footer-tech').innerText = configFooter.techStack || '';
+        document.getElementById('footer-node-tag').innerText = configFooter.statusNode || 'Node: Active';
+
+        const linksContainer = document.getElementById('footer-links');
+        linksContainer.innerHTML = configFooter.socialLinks.map(link => 
+            `<a href="${link.url}" target="_blank" class="hover:text-slate-900 transition flex items-center gap-1.5">
+                ${link.icon ? `<i class="${link.icon}"></i>` : ''}
+                <span>${link.label}</span>
+            </a>`
+        ).join('');
+    }
+
+    function renderMainContent() {
+        if (!configMain) return;
+        setupHeroSlides(configMain.site.heroImages);
+        setupTypingEffect(configMain.site.typingTexts);
+        renderCategories(configMain.categories);
+        renderProjects();
+        startTelemetry();
+    }
+
+    function setupHeroSlides(images) {
+        const container = document.getElementById('hero-slides-container');
+        container.innerHTML = '';
+        images.forEach((imgUrl, index) => {
+            const div = document.createElement('div');
+            div.className = `hero-slide absolute inset-0 bg-cover bg-center ${index === 0 ? 'opacity-100' : 'opacity-0'}`;
+            div.style.backgroundImage = `url('${imgUrl}')`;
+            container.appendChild(div);
+        });
+
+        let currentIndex = 0;
+        const slides = container.querySelectorAll('.hero-slide');
+        setInterval(() => {
+            slides[currentIndex].classList.replace('opacity-100', 'opacity-0');
+            currentIndex = (currentIndex + 1) % slides.length;
+            slides[currentIndex].classList.replace('opacity-0', 'opacity-100');
+        }, 5000);
+    }
+
+    function setupTypingEffect(texts) {
+        let textIdx = 0;
+        let charIdx = 0;
+        let isDeleting = false;
+        const target = document.getElementById('typing-text');
+
+        function type() {
+            const currentText = texts[textIdx];
+            if (isDeleting) {
+                target.innerText = currentText.substring(0, charIdx - 1);
+                charIdx--;
+            } else {
+                target.innerText = currentText.substring(0, charIdx + 1);
+                charIdx++;
+            }
+
+            let speed = isDeleting ? 50 : 100;
+            if (!isDeleting && charIdx === currentText.length) {
+                speed = 2000;
+                isDeleting = true;
+            } else if (isDeleting && charIdx === 0) {
+                isDeleting = false;
+                textIdx = (textIdx + 1) % texts.length;
+                speed = 500;
+            }
+            setTimeout(type, speed);
+        }
+        type();
+    }
+
+    function renderCategories(categories) {
+        const container = document.getElementById('category-filters');
+        container.innerHTML = '';
+        categories.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = `px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition flex items-center gap-2 ${cat.id === activeCategory ? 'bg-slate-900 text-white shadow-md' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}`;
+            btn.innerHTML = `<i class="fa-solid ${cat.icon}"></i><span>${cat.label}</span>`;
+            btn.onclick = () => {
+                activeCategory = cat.id;
+                renderCategories(categories);
+                renderProjects();
+            };
+            container.appendChild(btn);
+        });
+    }
+
+    function renderProjects() {
+        const grid = document.getElementById('projects-grid');
+        grid.innerHTML = '';
+
+        const filtered = activeCategory === 'all' 
+            ? configMain.projects 
+            : configMain.projects.filter(p => p.category === activeCategory);
+
+        filtered.forEach(p => {
+            const card = document.createElement('div');
+            card.className = "glass-card rounded-2xl overflow-hidden cursor-pointer transition group";
+            card.onclick = () => openInspector(p.id);
+
+            card.innerHTML = `
+                <div class="h-44 bg-slate-200 relative overflow-hidden">
+                    <img src="${p.image}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="${p.title}">
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded bg-slate-950/70 backdrop-blur-md text-white text-[10px] font-mono border border-white/20">
+                        ${p.status}
+                    </div>
+                </div>
+                <div class="p-5 space-y-3">
+                    <div class="flex items-center justify-between text-xs text-slate-400 font-mono">
+                        <span>${p.category.toUpperCase()}</span>
+                        <span>${p.date}</span>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition">${p.title}</h3>
+                    <p class="text-slate-500 text-xs line-clamp-2">${p.description}</p>
+                    <div class="flex flex-wrap gap-1.5 pt-2">
+                        ${p.tags.map(t => `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-mono border border-slate-200">${t}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function openInspector(id) {
+        const p = configMain.projects.find(item => item.id === id);
+        if (!p) return;
+
+        const content = document.getElementById('modal-content');
+        content.innerHTML = `
+            <div class="space-y-4">
+                <span class="text-xs font-mono text-indigo-600 font-bold">${p.category.toUpperCase()} // ${p.date}</span>
+                <h2 class="text-2xl font-bold text-slate-900">${p.title}</h2>
+                <p class="text-slate-600 text-sm leading-relaxed">${p.description}</p>
+                <div class="bg-slate-900 text-slate-200 rounded-xl p-4 font-mono text-xs space-y-2">
+                    <span class="text-slate-400 block border-b border-slate-800 pb-1">// SPECIFICATIONS</span>
+                    ${Object.entries(p.specs || {}).map(([k, v]) => `<div><span class="text-indigo-400">${k}:</span> ${v}</div>`).join('')}
+                </div>
+                ${p.schematic ? `<pre class="bg-slate-950 text-emerald-400 p-4 rounded-xl font-mono text-xs overflow-x-auto">${p.schematic}</pre>` : ''}
+            </div>
+        `;
+        document.getElementById('inspector-modal').classList.remove('hidden');
+    }
+
+    function closeInspector() {
+        document.getElementById('inspector-modal').classList.add('hidden');
+    }
+
+    function toggleCommandPalette() {
+        const modal = document.getElementById('command-palette');
+        modal.classList.toggle('hidden');
+        if (!modal.classList.contains('hidden')) {
+            document.getElementById('command-input').focus();
+            filterCommandProjects('');
+        }
+    }
+
+    function filterCommandProjects(q) {
+        const results = document.getElementById('command-results');
+        results.innerHTML = '';
+        if (!configMain) return;
+
+        const filtered = configMain.projects.filter(p => 
+            p.title.toLowerCase().includes(q.toLowerCase()) || 
+            p.tags.some(t => t.toLowerCase().includes(q.toLowerCase()))
+        );
+
+        filtered.forEach(p => {
+            const item = document.createElement('div');
+            item.className = "p-2 hover:bg-slate-100 rounded cursor-pointer flex items-center justify-between";
+            item.onclick = () => {
+                toggleCommandPalette();
+                openInspector(p.id);
+            };
+            item.innerHTML = `<span>${p.title}</span><span class="text-slate-400 text-[10px]">${p.category}</span>`;
+            results.appendChild(item);
+        });
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            e.preventDefault();
+            toggleCommandPalette();
+        }
+        if (e.key === 'Escape') {
+            closeInspector();
+            document.getElementById('command-palette').classList.add('hidden');
+        }
+    });
+
+    function startTelemetry() {
+        setInterval(() => {
+            document.getElementById('metric-cpu').innerText = (Math.random() * 20 + 5).toFixed(1) + '%';
+            document.getElementById('metric-net').innerText = Math.floor(Math.random() * 300 + 50) + ' KB/s';
+        }, 2000);
+    }
+
+    function toggleSynth() {
+        if (isSynthPlaying) {
+            if (synthOsc) synthOsc.stop();
+            isSynthPlaying = false;
+            document.getElementById('synth-status').innerText = "Status: Idle";
+        } else {
+            synthCtx = new (window.AudioContext || window.webkitAudioContext)();
+            synthOsc = synthCtx.createOscillator();
+            synthOsc.type = 'sine';
+            synthOsc.frequency.setValueAtTime(440, synthCtx.currentTime);
+            synthOsc.connect(synthCtx.destination);
+            synthOsc.start();
+            isSynthPlaying = true;
+            document.getElementById('synth-status').innerText = "Status: Playing 440Hz Sine";
+        }
+    }
+</script>
+</body>
+</html>

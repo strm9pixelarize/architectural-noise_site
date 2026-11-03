@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS // Personal Activity Hub & Lab</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#070a12',
+                            card: '#0e1526',
+                            accent: '#00f3ff',
+                            purple: '#a855f7',
+                            emerald: '#10b981',
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['JetBrains Mono', 'Menlo', 'monospace'],
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 3s infinite alternate',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%': { boxShadow: '0 0 15px rgba(0, 243, 255, 0.2)' },
+                            '100%': { boxShadow: '0 0 35px rgba(168, 85, 247, 0.5)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #050811;
+            color: #e2e8f0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Canvas Layer */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Modern Glassmorphic style */
+        .glass-panel {
+            background: rgba(14, 21, 38, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-panel-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-panel-hover:hover {
+            border-color: rgba(0, 243, 255, 0.4);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.15);
+            transform: translateY(-4px);
+        }
+
+        /* 3D Tilt Card Glow Effect */
+        .tilt-card {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.15s ease-out, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .tilt-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 243, 255, 0.35), transparent 40%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .tilt-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050811;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f3ff;
+        }
+
+        /* Custom Cursor Ring */
+        #custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(0, 243, 255, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.08s ease-out, width 0.2s ease, height 0.2s ease, background 0.2s ease;
+            mix-blend-mode: difference;
+        }
+
+        /* Text Gradient Effect */
+        .text-gradient {
+            background: linear-gradient(135deg, #00f3ff 0%, #a855f7 50%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .text-gradient-emerald {
+            background: linear-gradient(135deg, #34d399 0%, #00f3ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Pulse Dot */
+        .status-pulse {
+            width: 10px;
+            height: 10px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse-ring 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
+        }
+        @keyframes pulse-ring {
+            to {
+                box-shadow: 0 0 0 12px rgba(16, 185, 129, 0);
+            }
+        }
+    </style>
+</head>
+<body class="relative min-h-screen selection:bg-cyan-500 selection:text-black">
+
+    <!-- Interactive Canvas Background -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Custom Floating Cursor Effect -->
+    <div id="custom-cursor" class="hidden md:block"></div>
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 w-full glass-panel border-b border-white/10 px-4 lg:px-8 py-3 transition-all duration-300">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            
+            <!-- Logo Brand -->
+            <a href="#" onclick="playSfx('click')" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center font-mono font-bold text-lg text-black shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+                    NX
+                </div>
+                <div>
+                    <span class="font-mono text-lg font-extrabold tracking-wider text-white flex items-center">
+                        NEXUS<span class="text-cyan-400">.LOG</span>
+                    </span>
+                    <span class="text-[10px] text-slate-400 font-mono tracking-widest uppercase block -mt-1">Digital Activity Hub</span>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 font-mono text-sm">
+                <a href="#projects" onclick="playSfx('click')" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-cyan-400 hover:bg-white/5 transition">/PROJECTS</a>
+                <a href="#activity" onclick="playSfx('click')" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-cyan-400 hover:bg-white/5 transition">/TIMELINE</a>
+                <a href="#skills" onclick="playSfx('click')" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-cyan-400 hover:bg-white/5 transition">/TECH-MATRIX</a>
+                <a href="#setup" onclick="playSfx('click')" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-cyan-400 hover:bg-white/5 transition">/SYSTEM</a>
+            </nav>
+
+            <!-- Action Controls -->
+            <div class="flex items-center space-x-3">
+                <!-- SFX Toggle Button -->
+                <button id="sfx-toggle" onclick="toggleAudio()" title="Sound Effects Toggle" class="px-3 py-2 rounded-xl glass-panel text-slate-300 hover:text-cyan-400 hover:border-cyan-500/40 transition flex items-center space-x-1.5 text-xs font-mono">
+                    <i id="sfx-icon" class="fas fa-volume-up text-cyan-400"></i>
+                    <span class="hidden sm:inline">SFX: ON</span>
+                </button>
+
+                <!-- Command Palette Trigger -->
+                <button onclick="openCommandPalette()" class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 transition flex items-center space-x-2 text-xs font-mono group">
+                    <i class="fas fa-search text-cyan-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="hidden sm:inline text-slate-400">Search...</span>
+                    <kbd class="hidden md:inline-block px-1.5 py-0.5 text-[10px] bg-slate-800 border border-slate-700 rounded text-slate-400">⌘K</kbd>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24 pt-8 pb-20">
+
+        <!-- SECTION: HERO HEADER -->
+        <section class="relative pt-8 pb-12 md:pt-16 md:pb-20">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                
+                <!-- Left Column: Title & Dynamic Status -->
+                <div class="lg:col-span-7 space-y-6 text-left">
+                    
+                    <!-- Live Status Badge -->
+                    <div class="inline-flex items-center space-x-3 px-4 py-2 rounded-full glass-panel border border-emerald-500/30 text-xs font-mono text-emerald-300">
+                        <span class="status-pulse"></span>
+                        <span class="tracking-wide uppercase font-semibold">Live Activity Status: Home Lab & AI Agent Dev</span>
+                    </div>
+
+                    <!-- Main Dynamic Header -->
+                    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight leading-none">
+                        モノづくりと検証の<br>
+                        <span class="text-gradient">全記録をここに集約。</span>
+                    </h1>
+
+                    <!-- Description -->
+                    <p class="text-base sm:text-lg text-slate-300 font-normal leading-relaxed max-w-2xl">
+                        WordPress不要の超高速スタティック構成。自宅サーバー構築、Webアプリ開発、ガジェット電子工作、UIデザイン実験など、進行中のプロジェクトや日々の検証ログをインタラクティブに公開しています。
+                    </p>
+
+                    <!-- Stat Counter Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
+                        <div class="p-4 rounded-2xl glass-panel border border-white/5">
+                            <div class="text-2xl sm:text-3xl font-extrabold font-mono text-cyan-400 counter" data-target="28">0</div>
+                            <div class="text-xs text-slate-400 font-mono mt-1">Total Projects</div>
+                        </div>
+                        <div class="p-4 rounded-2xl glass-panel border border-white/5">
+                            <div class="text-2xl sm:text-3xl font-extrabold font-mono text-purple-400 counter" data-target="142">0</div>
+                            <div class="text-xs text-slate-400 font-mono mt-1">Activity Logs</div>
+                        </div>
+                        <div class="p-4 rounded-2xl glass-panel border border-white/5">
+                            <div class="text-2xl sm:text-3xl font-extrabold font-mono text-emerald-400 counter" data-target="99">0</div>
+                            <div class="text-xs text-slate-400 font-mono mt-1">% Uptime (Lab)</div>
+                        </div>
+                        <div class="p-4 rounded-2xl glass-panel border border-white/5">
+                            <div class="text-2xl sm:text-3xl font-extrabold font-mono text-blue-400 counter" data-target="850">0</div>
+                            <div class="text-xs text-slate-400 font-mono mt-1">Commits / Year</div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-wrap gap-4 pt-2">
+                        <a href="#projects" onclick="playSfx('click')" class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-bold font-mono text-sm tracking-wide shadow-lg shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5 flex items-center space-x-2">
+                            <span>Explore Projects</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <a href="#activity" onclick="playSfx('click')" class="px-6 py-3.5 rounded-xl glass-panel border border-white/10 hover:border-cyan-500/40 text-slate-200 font-mono text-sm tracking-wide transition-all flex items-center space-x-2">
+                            <i class="fas fa-stream text-cyan-400"></i>
+                            <span>View Live Feed</span>
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- Right Column: Interactive Terminal Preview Widget -->
+                <div class="lg:col-span-5">
+                    <div class="rounded-2xl glass-panel border border-white/10 shadow-2xl overflow-hidden font-mono text-xs">
+                        
+                        <!-- Terminal Bar -->
+                        <div class="bg-slate-900/90 px-4 py-3 border-b border-white/10 flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+                                <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
+                                <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span>
+                            </div>
+                            <span class="text-slate-400 text-[11px]">nexus-core ~ node_v20.11</span>
+                            <i class="fas fa-terminal text-slate-500"></i>
+                        </div>
+
+                        <!-- Terminal Body -->
+                        <div class="p-5 space-y-3 bg-black/40 min-h-[260px] text-slate-300">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-emerald-400">visitor@nexus:~$</span>
+                                <span class="text-cyan-300">fetch --current-status</span>
+                            </div>
+                            <div class="text-slate-400 pl-4 border-l-2 border-cyan-500/30 space-y-1">
+                                <p><span class="text-slate-500">OS:</span> HomeLab Linux / K3s Cluster</p>
+                                <p><span class="text-slate-500">Current Task:</span> Fine-tuning local LLM agents</p>
+                                <p><span class="text-slate-500">Hardware:</span> Dual RTX 4090 Workstation + Raspberry Pi Cluster</p>
+                                <p><span class="text-slate-500">Location:</span> Tokyo, Japan</p>
+                            </div>
+
+                            <div class="flex items-center space-x-2 pt-2">
+                                <span class="text-emerald-400">visitor@nexus:~$</span>
+                                <span class="text-purple-300">cat latest_note.md</span>
+                            </div>
+                            <div class="text-slate-300 pl-4 bg-slate-900/50 p-2.5 rounded border border-white/5">
+                                「WordPressのような大型CMSに頼らずとも、Webの最新仕様（Tailwind, Canvas API, Dynamic Modals）を使えば高速で自由度無限大のポートフォリオが完成する。」
+                            </div>
+
+                            <div class="flex items-center space-x-2 pt-1 text-slate-500">
+                                <span>_ Cursor blinking...</span>
+                                <span class="animate-pulse text-cyan-400">█</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION: PROJECTS & ACTIVITIES GRID -->
+        <section id="projects" class="space-y-8 scroll-mt-24">
+            
+            <!-- Section Title & Filter Tabs -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-white/10 pb-6">
+                <div>
+                    <div class="flex items-center space-x-2 text-cyan-400 font-mono text-xs uppercase tracking-widest">
+                        <i class="fas fa-folder-open"></i>
+                        <span>Work & Experiments</span>
+                    </div>
+                    <h2 class="text-3xl font-bold tracking-tight text-white mt-1">プロジェクト &amp; 検証ラボ</h2>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="flex flex-wrap gap-2 font-mono text-xs" id="project-filters">
+                    <button onclick="filterProjects('all', this)" class="filter-btn active px-3.5 py-2 rounded-xl bg-cyan-500 text-black font-semibold shadow-md transition">ALL</button>
+                    <button onclick="filterProjects('server', this)" class="filter-btn px-3.5 py-2 rounded-xl glass-panel text-slate-300 hover:text-white hover:border-cyan-500/40 transition">サーバー/インフラ</button>
+                    <button onclick="filterProjects('webapp', this)" class="filter-btn px-3.5 py-2 rounded-xl glass-panel text-slate-300 hover:text-white hover:border-cyan-500/40 transition">Webアプリ</button>
+                    <button onclick="filterProjects('gadget', this)" class="filter-btn px-3.5 py-2 rounded-xl glass-panel text-slate-300 hover:text-white hover:border-cyan-500/40 transition">ガジェット/ハード</button>
+                    <button onclick="filterProjects('lab', this)" class="filter-btn px-3.5 py-2 rounded-xl glass-panel text-slate-300 hover:text-white hover:border-cyan-500/40 transition">クリエイティブ/実験</button>
+                </div>
+            </div>
+
+            <!-- Projects Grid Container -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="projects-container">
+                <!-- Cards injected dynamically by JavaScript -->
+            </div>
+
+        </section>
+
+        <!-- SECTION: TIMELINE / ACTIVITY FEED -->
+        <section id="activity" class="space-y-8 scroll-mt-24">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-white/10 pb-6">
+                <div>
+                    <div class="flex items-center space-x-2 text-purple-400 font-mono text-xs uppercase tracking-widest">
+                        <i class="fas fa-stream"></i>
+                        <span>Continuous Log</span>
+                    </div>
+                    <h2 class="text-3xl font-bold tracking-tight text-white mt-1">アクティビティ・タイムライン</h2>
+                </div>
+                
+                <!-- Quick Search Input inside Activity -->
+                <div class="relative max-w-xs w-full">
+                    <input type="text" id="timeline-search" placeholder="ログ内容を検索..." oninput="searchTimeline()" class="w-full bg-slate-900/80 border border-white/10 rounded-xl px-3.5 py-2 pl-9 text-xs font-mono text-slate-200 focus:outline-none focus:border-purple-500 transition">
+                    <i class="fas fa-search absolute left-3 top-3 text-slate-500 text-xs"></i>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Timeline Feed List -->
+                <div class="lg:col-span-8 relative border-l-2 border-slate-800 ml-4 lg:ml-6 pl-6 space-y-8" id="timeline-feed">
+                    <!-- Dynamic timeline items -->
+                </div>
+
+                <!-- Right Sidebar: Interactive Log Creator Simulator -->
+                <div class="lg:col-span-4">
+                    <div class="glass-panel p-6 rounded-2xl border border-white/10 sticky top-24 space-y-4">
+                        <div class="flex items-center space-x-2 text-xs font-mono text-cyan-400">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>QUICK LOG SIMULATOR</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">ログ投稿のテスト動作</h3>
+                        <p class="text-xs text-slate-400">
+                            WordPressを使わずに静的サイトで動作させるサンプルとして、ブラウザ上でリアルタイムにログを追加・検証できます。
+                        </p>
+
+                        <form id="quick-log-form" onsubmit="addSimulatedLog(event)" class="space-y-3 pt-2">
+                            <div>
+                                <label class="block text-[11px] font-mono text-slate-400 mb-1">カテゴリー</label>
+                                <select id="log-category" class="w-full bg-slate-900 border border-white/10 rounded-lg p-2 text-xs text-slate-200 font-mono focus:border-cyan-400 outline-none">
+                                    <option value="Server">Server / Infra</option>
+                                    <option value="WebDev">Web App</option>
+                                    <option value="Hardware">Gadgets</option>
+                                    <option value="Creative">Creative / Lab</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-mono text-slate-400 mb-1">タイトル / 実施内容</label>
+                                <input type="text" id="log-title" required placeholder="例: Dockerコンテナ群のメモリ最適化" class="w-full bg-slate-900 border border-white/10 rounded-lg p-2 text-xs text-slate-200 focus:border-cyan-400 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-mono text-slate-400 mb-1">詳細メモ</label>
+                                <textarea id="log-detail" rows="3" required placeholder="実施した結果やメモ..." class="w-full bg-slate-900 border border-white/10 rounded-lg p-2 text-xs text-slate-200 focus:border-cyan-400 outline-none"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono text-xs font-bold transition flex items-center justify-center space-x-2 shadow-lg shadow-purple-600/20">
+                                <i class="fas fa-paper-plane"></i>
+                                <span>タイムラインに追加</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION: TECH MATRIX & RADAR -->
+        <section id="skills" class="space-y-8 scroll-mt-24">
+            <div class="border-b border-white/10 pb-6">
+                <div class="flex items-center space-x-2 text-emerald-400 font-mono text-xs uppercase tracking-widest">
+                    <i class="fas fa-microchip"></i>
+                    <span>Skills & Architecture</span>
+                </div>
+                <h2 class="text-3xl font-bold tracking-tight text-white mt-1">技術スタック &amp; パフォーマンス</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
+                <!-- Radar Chart Canvas Box -->
+                <div class="lg:col-span-6 glass-panel p-6 rounded-2xl border border-white/10 text-center flex flex-col items-center justify-center">
+                    <div class="flex items-center justify-between w-full mb-4">
+                        <span class="font-mono text-xs text-slate-400">SKILL RADAR CHART</span>
+                        <span class="font-mono text-[11px] text-cyan-400 bg-cyan-950/60 px-2.5 py-1 rounded-full border border-cyan-800">Interactive Canvas</span>
+                    </div>
+                    <div class="relative w-full max-w-[360px] aspect-square">
+                        <canvas id="radar-canvas" class="w-full h-full"></canvas>
+                    </div>
+                    <p class="text-xs text-slate-400 font-mono mt-2">※各ノードにホバーでスキルバランスを確認できます</p>
+                </div>
+
+                <!-- Skill Cards Categories -->
+                <div class="lg:col-span-6 space-y-4">
+                    
+                    <!-- Skill Group 1 -->
+                    <div class="p-5 rounded-2xl glass-panel border border-white/10 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-mono text-sm text-cyan-400 font-bold flex items-center gap-2">
+                                <i class="fas fa-server"></i> インフラ &amp; 自宅サーバー
+                            </span>
+                            <span class="text-xs font-mono text-slate-400">Pro / Main Focus</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300">Linux (Debian/Ubuntu)</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300">Docker / Compose</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300">Kubernetes (K3s)</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300">Proxmox VE</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300">Nginx / Cloudflare</span>
+                        </div>
+                    </div>
+
+                    <!-- Skill Group 2 -->
+                    <div class="p-5 rounded-2xl glass-panel border border-white/10 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-mono text-sm text-purple-400 font-bold flex items-center gap-2">
+                                <i class="fas fa-code"></i> Frontend &amp; Web App
+                            </span>
+                            <span class="text-xs font-mono text-slate-400">Advanced</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300">TypeScript / JS</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300">React / Next.js</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300">Tailwind CSS</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300">HTML5 Canvas API</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300">REST / WebSockets</span>
+                        </div>
+                    </div>
+
+                    <!-- Skill Group 3 -->
+                    <div class="p-5 rounded-2xl glass-panel border border-white/10 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-mono text-sm text-emerald-400 font-bold flex items-center gap-2">
+                                <i class="fas fa-microchip"></i> ハードウェア &amp; AI実験
+                            </span>
+                            <span class="text-xs font-mono text-slate-400">Hobbyist / Explorer</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300">Raspberry Pi</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300">ESP32 / MicroPython</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300">Ollama / Local LLM</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300">Python / PyTorch</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION: HARDWARE & SYSTEM SETUP -->
+        <section id="setup" class="space-y-8 scroll-mt-24">
+            <div class="border-b border-white/10 pb-6">
+                <div class="flex items-center space-x-2 text-blue-400 font-mono text-xs uppercase tracking-widest">
+                    <i class="fas fa-desktop"></i>
+                    <span>Workstation & Environment</span>
+                </div>
+                <h2 class="text-3xl font-bold tracking-tight text-white mt-1">開発・検証環境（デスク環境）</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <div class="p-6 rounded-2xl glass-panel border border-white/10 space-y-4">
+                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+                        <i class="fas fa-server text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Main Home Lab Node</h3>
+                    <ul class="text-xs font-mono text-slate-300 space-y-2">
+                        <li class="flex items-center justify-between border-b border-slate-800 pb-1">
+                            <span class="text-slate-500">CPU:</span>
+                            <span>AMD Ryzen 9 7900X</span>
+                        </li>
+                        <li class="flex items-center justify-between border-b border-slate-800 pb-1">
+                            <span class="text-slate-500">RAM:</span>
+                            <span>64GB DDR5 ECC</span>
+                        </li>
+                        <li class="flex items-center justify-between border-b border-slate-800 pb-1">
+                            <span class="text-slate-500">Storage:</span>
+                            <span>4TB NVMe RAID1</span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span class="text-slate-500">OS:</span>
+                            <span>Proxmox VE 8.1</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="p-6 rounded-2xl glass-panel border border-white/10 space-y-4">
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
+                        <i class="fas fa-laptop text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Dev Workstation</h3>
+                    <ul class="text-xs font-mono text-slate-300 space-y-2">
+                        <li class="flex items-center justify-between border-b border-slate-800 pb-1">
+                            <span class="text-slate-500">Machine:</span>
+                            <span>MacBook Pro M3 Max</span>
+                        </li>
+                        <li class="flex items-center justify-between border-b border-slate-800 pb-1">
+                            <span class="text-slate-500">Display:</span>
+                            <span>4K 32inch Ultrawide</span>
+                        </li>
+                        <li class="flex items-center justify-between border-b border-slate-800 pb-1">
+                            <span class="text-slate-500">Editor:</span>
+                            <span>VS Code + Cursor AI</span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span class="text-slate-500">Terminal:</span>
+                            <span>Ghostty + zsh / tmux</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="p-6 rounded-2xl glass-panel border border-white/10 space-y-4">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                        <i class="fas fa-network-wired text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Edge & IoT Nodes</h3>
+                    <ul class="text-xs font-mono text-slate-300 space-y-2">
+                        <li class="flex items-center justify-between border-b border-slate-800 pb-1">
+                            <span class="text-slate-500">Cluster:</span>
+                            <span>4x Raspberry Pi 5 (8GB)</span>
+                        </li>
+                        <li class="flex items-center justify-between border-b border-slate-800 pb-1">
+                            <span class="text-slate-500">Network:</span>
+                            <span>10GbE Switch / Tailscale</span>
+                        </li>
+                        <li class="flex items-center justify-between border-b border-slate-800 pb-1">
+                            <span class="text-slate-500">Sensors:</span>
+                            <span>ESP32 Temperature/CO2</span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span class="text-slate-500">Power:</span>
+                            <span>UPS Battery Backup</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION: FOOTER & CONTACT -->
+        <section class="pt-8 border-t border-white/10">
+            <div class="glass-panel rounded-3xl p-8 lg:p-12 border border-white/10 relative overflow-hidden">
+                
+                <!-- Background Ambient Glow -->
+                <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-8 space-y-4">
+                        <span class="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-xs uppercase">Get in Touch</span>
+                        <h2 class="text-3xl font-extrabold text-white">プロジェクトについての質問や交流はこちら</h2>
+                        <p class="text-sm text-slate-300 max-w-xl">
+                            静的サイト生成（SSG）や自宅サーバー構築、アプリ開発の技術的意見交換などお気軽にご連絡ください。
+                        </p>
+                    </div>
+
+                    <div class="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3">
+                        <button onclick="copyEmail()" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-mono text-xs transition flex items-center justify-center space-x-2">
+                            <i class="fas fa-envelope text-cyan-400"></i>
+                            <span id="email-text">contact@nexus-lab.dev</span>
+                            <i class="fas fa-copy text-slate-400 text-[10px]"></i>
+                        </button>
+                        <a href="https://github.com" target="_blank" onclick="playSfx('click')" class="px-5 py-3 rounded-xl glass-panel hover:border-cyan-500/50 text-slate-200 font-mono text-xs transition flex items-center justify-center space-x-2">
+                            <i class="fab fa-github text-lg text-white"></i>
+                            <span>GitHub Profile</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-slate-500 gap-4">
+                    <div>© 2026 NEXUS HUB. Handcrafted with HTML/CSS/JS (No Frameworks required).</div>
+                    <div class="flex items-center space-x-4">
+                        <span>STATUS: <span class="text-emerald-400">ALL SYSTEMS OPERATIONAL</span></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL: PROJECT DETAIL -->
+    <div id="project-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+        <div class="glass-panel border border-white/20 rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 relative transform scale-95 transition-transform duration-300" id="modal-box">
+            
+            <!-- Close Button -->
+            <button onclick="closeModal()" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <!-- Modal Content Header -->
+            <div class="space-y-2">
+                <div class="flex items-center space-x-3">
+                    <span id="modal-category" class="px-2.5 py-1 rounded-md text-[11px] font-mono uppercase bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Category</span>
+                    <span id="modal-status" class="px-2.5 py-1 rounded-md text-[11px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Status</span>
+                </div>
+                <h3 id="modal-title" class="text-2xl font-bold text-white">Project Title</h3>
+            </div>
+
+            <!-- Modal Content Body -->
+            <div class="space-y-4 text-sm text-slate-300 leading-relaxed">
+                <p id="modal-description">Detailed description will load here...</p>
+                
+                <div class="p-4 rounded-xl bg-slate-900/80 border border-white/10 space-y-2">
+                    <h4 class="font-mono text-xs text-cyan-400 font-bold uppercase">使用技術・アーキテクチャ</h4>
+                    <div id="modal-tech" class="flex flex-wrap gap-2 pt-1"></div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-900/50 border border-white/5 space-y-2">
+                    <h4 class="font-mono text-xs text-purple-400 font-bold uppercase">検証のポイント / 成果</h4>
+                    <ul id="modal-highlights" class="list-disc list-inside space-y-1 text-xs text-slate-300"></ul>
+                </div>
+            </div>
+
+            <!-- Modal Footer Links -->
+            <div class="flex items-center justify-end space-x-3 pt-2">
+                <button onclick="closeModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs transition">閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: COMMAND PALETTE (⌘K) -->
+    <div id="command-modal" class="fixed inset-0 z-50 flex items-start justify-center pt-20 p-4 bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-200">
+        <div class="glass-panel border border-white/20 rounded-2xl max-w-xl w-full p-4 space-y-4 shadow-2xl relative">
+            <div class="flex items-center space-x-3 border-b border-white/10 pb-3 px-2">
+                <i class="fas fa-search text-cyan-400"></i>
+                <input type="text" id="cmd-input" placeholder="ページ内を検索（プロジェクト、技術、ログ...）" oninput="handleCmdSearch()" class="w-full bg-transparent text-sm font-mono text-white placeholder-slate-500 focus:outline-none">
+                <kbd class="text-[10px] font-mono bg-slate-800 text-slate-400 px-2 py-1 rounded">ESC</kbd>
+            </div>
+
+            <div id="cmd-results" class="max-h-60 overflow-y-auto space-y-1 font-mono text-xs">
+                <!-- Search results injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // ==========================================
+        // 1. DATA: Projects & Activities Data
+        // ==========================================
+        const PROJECTS_DATA = [
+            {
+                id: 'home-k3s',
+                title: 'Proxmox + K3s 自宅サーバー構築',
+                category: 'server',
+                categoryLabel: 'サーバー/インフラ',
+                status: 'Active Lab',
+                summary: 'Ryzen CPU機とRaspberry Pi群で構築したハイブリッドKubernetesクラスタ。ArgoCDによるGitOps運用。',
+                description: '自宅環境に高信頼なプライベートクラウドを構築するため、Proxmox VE上にK3sクラスタをプロビジョニング。Cloudflare Tunnelsを介して外部からセキュアにアクセス可能にしています。',
+                tech: ['Proxmox VE', 'K3s', 'Docker', 'Ansible', 'ArgoCD', 'Cloudflare'],
+                highlights: [
+                    'Gitへのプッシュで自動デプロイされるGitOpsパイプラインの実現',
+                    '自動バックアップおよび電源障害時のUPS連携制御',
+                    '電気代・静音性を意識した省電力ファンコントロール'
+                ]
+            },
+            {
+                id: 'ai-copilot',
+                title: 'ローカルLLM検索アシスタント',
+                category: 'webapp',
+                categoryLabel: 'Webアプリ',
+                status: 'Completed',
+                summary: 'OllamaとLangChainを活用し、ローカルMarkdown文書を高速RAG検索するデスクトップアプリ。',
+                description: '外部APIに依存せず、完全ローカル環境で過去の開発メモやQiita下書きをベクトル検索・要約するUIツール。TailwindとWebSocketsでリアルタイムストリーミング表示に対応。',
+                tech: ['TypeScript', 'Ollama', 'Vector DB (Chroma)', 'Tailwind CSS', 'Python'],
+                highlights: [
+                    'オフラインでも秒速で自作ドキュメントから回答を抽出',
+                    'GPUメモリ消費量を動的に調整するロードバランサー実装',
+                    'ダークモード対応のモダンGUI'
+                ]
+            },
+            {
+                id: 'eink-display',
+                title: 'E-Ink 卓上スマートモニター',
+                category: 'gadget',
+                categoryLabel: 'ガジェット/ハード',
+                status: 'Prototype',
+                summary: 'ESP32と電子ペーパーを組み合わせ、自作サーバーの負荷率や天気を表示する卓上ガジェット。',
+                description: 'デスクに常時置いておける省電力ディスプレイ。Wi-Fi経由で自作Prometheusから毎分メトリクスを取得し、電子ペーパーに美しいグラフィックで描画します。',
+                tech: ['ESP32', 'MicroPython', 'E-Paper SPI Display', 'Prometheus API', '3D Printing'],
+                highlights: [
+                    'バッテリー駆動で約1ヶ月動作する超低消費電力設計',
+                    'Fusion 360で専用ケースを3Dプリント作成',
+                    '画面のリフレッシュ時のチラつきを抑える波形制御'
+                ]
+            },
+            {
+                id: 'canvas-visualizer',
+                title: 'Web Audio 3Dスペクトラムアナライザ',
+                category: 'lab',
+                categoryLabel: 'クリエイティブ/実験',
+                status: 'Active Lab',
+                summary: 'Web Audio APIとCanvas APIを利用したインタラクティブな周波数ビジュアライザ。',
+                description: 'マイク入力または音楽ファイルからリアルタイムに周波数帯域を解析し、パーティクルと3Dメッシュが音楽に合わせて躍動する実験Webコンポーネント。',
+                tech: ['HTML5 Canvas API', 'Web Audio API', 'Vanilla JS', 'Math Physics'],
+                highlights: [
+                    '外部ライブラリなしで60fps描画を維持する軽量設計',
+                    '重低音のビートに反応するショックウェーブ効果',
+                    'ネオン・サイバーパンク調のカスタムカラーテーマ'
+                ]
+            },
+            {
+                id: 'static-generator',
+                title: '超軽量 Markdown ブログジェネレーター',
+                category: 'webapp',
+                categoryLabel: 'Webアプリ',
+                status: 'Completed',
+                summary: 'Node.jsで動作するミリ秒単位の超高速SSG（静的サイトジェネレーター）。',
+                description: 'WordPressなどの重いCMSを廃し、GitレポジトリとMarkdownファイルのみで高速Webサイトを出力する開発用ビルドツール。',
+                tech: ['Node.js', 'Marked', 'Tailwind CSS', 'GitHub Actions'],
+                highlights: [
+                    'Lighthouse スコア ALL 100点を達成',
+                    'ビルド時間わずか0.4秒（100記事時）',
+                    'RSSフィードおよびOGP画像の自動生成'
+                ]
+            },
+            {
+                id: 'home-power-monitor',
+                title: 'IoT リアルタイム消費電力モニター',
+                category: 'gadget',
+                categoryLabel: 'ガジェット/ハード',
+                status: 'Active Lab',
+                summary: 'スマートメーターのBルート通信を解析し、部屋の電気使用量を可視化。',
+                description: 'Wi-SUNモジュールをRaspberry Piに接続し、電力会社スマートメーターから瞬時電力データを取得。Grafanaダッシュボードでグラフ表示。',
+                tech: ['Raspberry Pi', 'Wi-SUN Module', 'Python', 'InfluxDB', 'Grafana'],
+                highlights: [
+                    '電気代が一定を超えた際にDiscordへ警告通知',
+                    'エアコン稼働と室温データの相関関係をログ解析',
+                    '月間の電気代予測アルゴリズム搭載'
+                ]
+            }
+        ];
+
+        let TIMELINE_DATA = [
+            {
+                date: '2026.10.24',
+                category: 'Server',
+                title: 'Raspberry Pi 5 クラスタの冷却ファン静音化カスタム',
+                text: 'K3sノードの温度が50℃を超えたため、PWMファン制御スクリプトを自作。40℃以下ではファンを完全停止させるパッシブ制御に変更。',
+                tagColor: 'border-cyan-500/40 text-cyan-300'
+            },
+            {
+                date: '2026.10.15',
+                category: 'WebDev',
+                title: 'ポートフォリオサイトに Canvas パーティクル & SFX を組み込み',
+                text: 'WordPress非依存の静的ポートフォリオをアップグレード。Web Audio APIを使用した効果音機能と3Dチルトカードを追加。',
+                tagColor: 'border-purple-500/40 text-purple-300'
+            },
+            {
+                date: '2026.09.28',
+                category: 'Hardware',
+                title: 'ESP32 電子ペーパー端末のファームウェア更新',
+                text: 'Prometheusからのデータ取得タイムアウト処理を非同期化し、Wi-Fi接続失敗時の自動リカバリ処理を実装。',
+                tagColor: 'border-emerald-500/40 text-emerald-300'
+            },
+            {
+                date: '2026.09.10',
+                category: 'Creative',
+                title: 'ローカルLLMを用いたコード自動レビュープロンプトの検証',
+                text: 'Git Commit Hook時にローカルのOllama (Llama-3) を呼び出し、変更差分のセキュリティチェックを実施する仕組みをテスト。',
+                tagColor: 'border-blue-500/40 text-blue-300'
+            }
+        ];
+
+        // ==========================================
+        // 2. AUDIO SYNTHESIS (Web Audio API - No external file)
+        // ==========================================
+        let audioCtx = null;
+        let sfxEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSfx(type) {
+            if (!sfxEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(400, now + 0.05);
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            } else if (type === 'hover') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                gain.gain.setValueAtTime(0.02, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+                osc.start(now);
+                osc.stop(now + 0.03);
+            } else if (type === 'modal') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.12);
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+                osc.start(now);
+                osc.stop(now + 0.12);
+            }
+        }
+
+        function toggleAudio() {
+            sfxEnabled = !sfxEnabled;
+            const icon = document.getElementById('sfx-icon');
+            const btn = document.getElementById('sfx-toggle');
+            if (sfxEnabled) {
+                icon.className = 'fas fa-volume-up text-cyan-400';
+                btn.querySelector('span').textContent = 'SFX: ON';
+                playSfx('click');
+            } else {
+                icon.className = 'fas fa-volume-mute text-slate-500';
+                btn.querySelector('span').textContent = 'SFX: OFF';
+            }
+        }
+
+        // ==========================================
+        // 3. AMBIENT PARTICLES CANVAS ENGINE
+        // ==========================================
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        let particles = [];
+        const particleCount = Math.min(Math.floor(width / 18), 70);
+
+        let mouse = { x: width / 2, y: height / 2, radius: 140 };
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            initParticles();
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+
+            // Update Custom Cursor Ring Position
+            const cursorRing = document.getElementById('custom-cursor');
+            if (cursorRing) {
+                cursorRing.style.left = `${e.clientX}px`;
+                cursorRing.style.top = `${e.clientY}px`;
+            }
+        });
+
+        // Click Ripple Event
+        window.addEventListener('click', (e) => {
+            for (let i = 0; i < 6; i++) {
+                particles.push(new Particle(e.clientX, e.clientY, true));
+            }
+        });
+
+        class Particle {
+            constructor(x, y, isBurst = false) {
+                this.x = x || Math.random() * width;
+                this.y = y || Math.random() * height;
+                this.radius = isBurst ? Math.random() * 3 + 2 : Math.random() * 2 + 1;
+                this.vx = isBurst ? (Math.random() - 0.5) * 6 : (Math.random() - 0.5) * 0.8;
+                this.vy = isBurst ? (Math.random() - 0.5) * 6 : (Math.random() - 0.5) * 0.8;
+                this.color = isBurst ? '#00f3ff' : (Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(168, 85, 247, ');
+                this.alpha = isBurst ? 1 : Math.random() * 0.5 + 0.2;
+                this.isBurst = isBurst;
+                this.life = isBurst ? 40 : 9999;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.isBurst) {
+                    this.life--;
+                    this.alpha = this.life / 40;
+                } else {
+                    if (this.x < 0 || this.x > width) this.vx *= -1;
+                    if (this.y < 0 || this.y > height) this.vy *= -1;
+
+                    // Mouse Interaction Force
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < mouse.radius) {
+                        let force = (mouse.radius - dist) / mouse.radius;
+                        this.x -= (dx / dist) * force * 2;
+                        this.y -= (dy / dist) * force * 2;
+                    }
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.isBurst ? this.color : `${this.color}${this.alpha})`;
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw connecting constellation lines
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(0, 243, 255, ${0.15 * (1 - dist / 120)})`;
+                        ctx.lineWidth = 0.6;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.update();
+                p.draw();
+                if (p.isBurst && p.life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(animateParticles);
+        }
+
+        // ==========================================
+        // 4. RENDER PROJECTS & 3D TILT CARDS
+        // ==========================================
+        function renderProjects(filter = 'all') {
+            const container = document.getElementById('projects-container');
+            container.innerHTML = '';
+
+            const filtered = filter === 'all' 
+                ? PROJECTS_DATA 
+                : PROJECTS_DATA.filter(p => p.category === filter);
+
+            filtered.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'tilt-card glass-panel rounded-2xl p-6 border border-white/10 flex flex-col justify-between cursor-pointer group';
+                card.onclick = () => openProjectModal(project.id);
+                card.onmouseenter = () => playSfx('hover');
+
+                // Tech tags markup
+                const techList = project.tech.slice(0, 4).map(t => `<span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800/80 border border-slate-700/60 text-slate-300">${t}</span>`).join('');
+
+                card.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 font-bold">${project.categoryLabel}</span>
+                            <span class="text-[11px] font-mono text-emerald-400 flex items-center space-x-1">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span>${project.status}</span>
+                            </span>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors">${project.title}</h3>
+                            <p class="text-xs text-slate-300 mt-2 leading-relaxed line-clamp-3">${project.summary}</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-6 mt-4 border-t border-white/5 space-y-3">
+                        <div class="flex flex-wrap gap-1.5">${techList}</div>
+                        <div class="flex items-center justify-between text-xs font-mono text-cyan-400 pt-1 group-hover:translate-x-1 transition-transform">
+                            <span>Details &amp; Architecture</span>
+                            <i class="fas fa-chevron-right text-[10px]"></i>
+                        </div>
+                    </div>
+                `;
+
+                // 3D Tilt Logic
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    const rotateX = ((y - centerY) / centerY) * -8;
+                    const rotateY = ((x - centerX) / centerX) * 8;
+
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        function filterProjects(cat, btn) {
+            playSfx('click');
+            document.querySelectorAll('#project-filters .filter-btn').forEach(b => {
+                b.className = 'filter-btn px-3.5 py-2 rounded-xl glass-panel text-slate-300 hover:text-white hover:border-cyan-500/40 transition';
+            });
+            btn.className = 'filter-btn active px-3.5 py-2 rounded-xl bg-cyan-500 text-black font-semibold shadow-md transition';
+            renderProjects(cat);
+        }
+
+        // ==========================================
+        // 5. TIMELINE RENDER & LOG CREATOR SIMULATOR
+        // ==========================================
+        function renderTimeline(data = TIMELINE_DATA) {
+            const feed = document.getElementById('timeline-feed');
+            feed.innerHTML = '';
+
+            data.forEach((item, index) => {
+                const node = document.createElement('div');
+                node.className = 'relative group';
+                node.innerHTML = `
+                    <div class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-slate-900 border-2 border-purple-500 group-hover:scale-125 group-hover:border-cyan-400 transition-all"></div>
+                    <div class="glass-panel p-5 rounded-2xl border border-white/10 space-y-2 hover:border-purple-500/40 transition">
+                        <div class="flex items-center justify-between font-mono text-xs">
+                            <span class="text-slate-400">${item.date}</span>
+                            <span class="px-2 py-0.5 rounded border text-[10px] font-bold ${item.tagColor}">${item.category}</span>
+                        </div>
+                        <h4 class="text-base font-bold text-white">${item.title}</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">${item.text}</p>
+                    </div>
+                `;
+                feed.appendChild(node);
+            });
+        }
+
+        function searchTimeline() {
+            const query = document.getElementById('timeline-search').value.toLowerCase();
+            const filtered = TIMELINE_DATA.filter(item => 
+                item.title.toLowerCase().includes(query) || 
+                item.text.toLowerCase().includes(query) ||
+                item.category.toLowerCase().includes(query)
+            );
+            renderTimeline(filtered);
+        }
+
+        function addSimulatedLog(e) {
+            e.preventDefault();
+            playSfx('click');
+
+            const cat = document.getElementById('log-category').value;
+            const title = document.getElementById('log-title').value;
+            const detail = document.getElementById('log-detail').value;
+
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}.${(now.getMonth()+1).toString().padStart(2, '0')}.${now.getDate().toString().padStart(2, '0')}`;
+
+            const newLog = {
+                date: dateStr,
+                category: cat,
+                title: title,
+                text: detail,
+                tagColor: 'border-cyan-500/40 text-cyan-300'
+            };
+
+            TIMELINE_DATA.unshift(newLog);
+            renderTimeline();
+
+            // Reset form
+            document.getElementById('quick-log-form').reset();
+        }
+
+        // ==========================================
+        // 6. SKILL RADAR CHART (CANVAS)
+        // ==========================================
+        function drawRadarChart() {
+            const radarCanvas = document.getElementById('radar-canvas');
+            if (!radarCanvas) return;
+            const rCtx = radarCanvas.getContext('2d');
+
+            const size = 300;
+            radarCanvas.width = size;
+            radarCanvas.height = size;
+
+            const center = size / 2;
+            const radius = 100;
+
+            const skills = [
+                { name: 'Server / Linux', val: 0.92 },
+                { name: 'Docker / K8s', val: 0.88 },
+                { name: 'TypeScript', val: 0.85 },
+                { name: 'React / Next', val: 0.80 },
+                { name: 'Hardware / IoT', val: 0.70 },
+                { name: 'AI / Python', val: 0.75 }
+            ];
+
+            const total = skills.length;
+
+            // Clear
+            rCtx.clearRect(0, 0, size, size);
+
+            // Draw polygon grid rings
+            for (let level = 1; level <= 4; level++) {
+                let r = (radius / 4) * level;
+                rCtx.beginPath();
+                for (let i = 0; i < total; i++) {
+                    let angle = (Math.PI * 2 / total) * i - Math.PI / 2;
+                    let x = center + r * Math.cos(angle);
+                    let y = center + r * Math.sin(angle);
+                    if (i === 0) rCtx.moveTo(x, y);
+                    else rCtx.lineTo(x, y);
+                }
+                rCtx.closePath();
+                rCtx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+                rCtx.stroke();
+            }
+
+            // Draw axis lines & labels
+            rCtx.font = '10px "JetBrains Mono"';
+            rCtx.fillStyle = '#94a3b8';
+            rCtx.textAlign = 'center';
+
+            for (let i = 0; i < total; i++) {
+                let angle = (Math.PI * 2 / total) * i - Math.PI / 2;
+                let x = center + radius * Math.cos(angle);
+                let y = center + radius * Math.sin(angle);
+
+                rCtx.beginPath();
+                rCtx.moveTo(center, center);
+                rCtx.lineTo(x, y);
+                rCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                rCtx.stroke();
+
+                // Label offset
+                let lx = center + (radius + 22) * Math.cos(angle);
+                let ly = center + (radius + 14) * Math.sin(angle) + 4;
+                rCtx.fillText(skills[i].name, lx, ly);
+            }
+
+            // Draw Data Polygon
+            rCtx.beginPath();
+            for (let i = 0; i < total; i++) {
+                let angle = (Math.PI * 2 / total) * i - Math.PI / 2;
+                let r = radius * skills[i].val;
+                let x = center + r * Math.cos(angle);
+                let y = center + r * Math.sin(angle);
+                if (i === 0) rCtx.moveTo(x, y);
+                else rCtx.lineTo(x, y);
+            }
+            rCtx.closePath();
+            rCtx.fillStyle = 'rgba(0, 243, 255, 0.25)';
+            rCtx.fill();
+            rCtx.strokeStyle = '#00f3ff';
+            rCtx.lineWidth = 2;
+            rCtx.stroke();
+
+            // Draw Data Nodes
+            for (let i = 0; i < total; i++) {
+                let angle = (Math.PI * 2 / total) * i - Math.PI / 2;
+                let r = radius * skills[i].val;
+                let x = center + r * Math.cos(angle);
+                let y = center + r * Math.sin(angle);
+
+                rCtx.beginPath();
+                rCtx.arc(x, y, 4, 0, Math.PI * 2);
+                rCtx.fillStyle = '#a855f7';
+                rCtx.fill();
+                rCtx.strokeStyle = '#ffffff';
+                rCtx.lineWidth = 1;
+                rCtx.stroke();
+            }
+        }
+
+        // ==========================================
+        // 7. MODAL CONTROLS & COMMAND PALETTE
+        // ==========================================
+        function openProjectModal(id) {
+            playSfx('modal');
+            const project = PROJECTS_DATA.find(p => p.id === id);
+            if (!project) return;
+
+            document.getElementById('modal-title').textContent = project.title;
+            document.getElementById('modal-category').textContent = project.categoryLabel;
+            document.getElementById('modal-status').textContent = project.status;
+            document.getElementById('modal-description').textContent = project.description;
+
+            // Render Tech Badges
+            const techBox = document.getElementById('modal-tech');
+            techBox.innerHTML = project.tech.map(t => `<span class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-xs font-mono text-cyan-300">${t}</span>`).join('');
+
+            // Render Highlights
+            const list = document.getElementById('modal-highlights');
+            list.innerHTML = project.highlights.map(h => `<li>${h}</li>`).join('');
+
+            const modal = document.getElementById('project-modal');
+            const box = document.getElementById('modal-box');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            box.classList.remove('scale-95');
+            box.classList.add('scale-100');
+        }
+
+        function closeModal() {
+            playSfx('click');
+            const modal = document.getElementById('project-modal');
+            const box = document.getElementById('modal-box');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            box.classList.remove('scale-100');
+            box.classList.add('scale-95');
+        }
+
+        function openCommandPalette() {
+            playSfx('modal');
+            const modal = document.getElementById('command-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            const input = document.getElementById('cmd-input');
+            input.value = '';
+            input.focus();
+            handleCmdSearch();
+        }
+
+        function closeCommandPalette() {
+            const modal = document.getElementById('command-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function handleCmdSearch() {
+            const query = document.getElementById('cmd-input').value.toLowerCase();
+            const resultsBox = document.getElementById('cmd-results');
+            resultsBox.innerHTML = '';
+
+            const matches = PROJECTS_DATA.filter(p => p.title.toLowerCase().includes(query) || p.tech.some(t => t.toLowerCase().includes(query)));
+
+            if (matches.length === 0) {
+                resultsBox.innerHTML = `<div class="p-3 text-slate-500 text-center">一致する項目が見つかりません</div>`;
+                return;
+            }
+
+            matches.forEach(p => {
+                const row = document.createElement('div');
+                row.className = 'p-2.5 rounded-lg hover:bg-slate-800/80 cursor-pointer flex items-center justify-between text-slate-200 transition';
+                row.onclick = () => {
+                    closeCommandPalette();
+                    openProjectModal(p.id);
+                };
+                row.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-cube text-cyan-400"></i>
+                        <span class="font-bold">${p.title}</span>
+                    </div>
+                    <span class="text-[10px] text-slate-400 uppercase bg-slate-900 px-2 py-0.5 rounded border border-slate-700">${p.categoryLabel}</span>
+                `;
+                resultsBox.appendChild(row);
+            });
+        }
+
+        // Global Keydown Handler (Cmd+K / Esc)
+        window.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                openCommandPalette();
+            }
+            if (e.key === 'Escape') {
+                closeModal();
+                closeCommandPalette();
+            }
+        });
+
+        // Copy Email Utility
+        function copyEmail() {
+            playSfx('click');
+            const text = "contact@nexus-lab.dev";
+            const emailSpan = document.getElementById('email-text');
+            
+            // Clipboard fallback logic
+            const tempInput = document.createElement('input');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            emailSpan.textContent = "COPIED TO CLIPBOARD!";
+            setTimeout(() => {
+                emailSpan.textContent = text;
+            }, 2000);
+        }
+
+        // ==========================================
+        // 8. STAT COUNTERS ANIMATION ON SCROLL
+        // ==========================================
+        function animateCounters() {
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                let count = 0;
+                const speed = target / 30;
+
+                const updateCount = () => {
+                    count += speed;
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count);
+                        setTimeout(updateCount, 40);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCount();
+            });
+        }
+
+        // ==========================================
+        // 9. INITIALIZATION
+        // ==========================================
+        window.onload = function() {
+            initParticles();
+            animateParticles();
+            renderProjects('all');
+            renderTimeline();
+            drawRadarChart();
+            animateCounters();
+        };
+    </script>
+</body>
+</html>

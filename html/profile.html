@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile // ARCHITECTURAL NOISE</title>
+    
+    <!-- Tailwind CSS & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#f7f4eb] text-slate-800 min-h-screen pb-28 font-sans antialiased">
+    <!-- 音声再生用 -->
+    <audio id="radio-audio" preload="none"></audio>
+
+    <!-- 画面下部中央に浮遊するコンパクトプレイヤーバー -->
+    <div id="radio-player-bar" class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-2xl h-20 bg-slate-900/90 backdrop-blur-md border border-slate-700/60 text-slate-100 z-50 px-4 flex items-center justify-between rounded-2xl shadow-2xl">
+        <div class="flex items-center gap-2.5 min-w-0 max-w-[45%]">
+            <img id="radio-art" src="/heroImage/tokyo_station.jpg" alt="Artwork" class="w-8 h-8 rounded-lg object-cover border border-slate-700/50 shadow-sm flex-shrink-0">
+            <div class="min-w-0">
+                <div id="radio-title" class="text-xs font-bold text-slate-100 font-mono truncate">ON AIR // Loading...</div>
+                <div id="radio-artist" class="text-[10px] text-slate-400 font-mono truncate">ねるるラジオ</div>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <button id="radio-play-btn" onclick="toggleRadioPlay()" class="w-8 h-8 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition shadow-md shadow-indigo-600/30 group flex-shrink-0">
+                <i id="radio-play-icon" class="fa-solid fa-play text-[10px] group-hover:scale-110 transition-transform ml-0.5"></i>
+            </button>
+            <div class="hidden sm:flex items-center gap-1.5 bg-slate-800/60 px-2 py-0.5 rounded-md border border-slate-700/40">
+                <span id="radio-live-dot" class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
+                <span id="radio-live-text" class="text-[9px] font-mono text-slate-300 tracking-wider uppercase">LIVE</span>
+            </div>
+        </div>
+        <div class="flex items-center justify-end gap-2">
+            <i class="fa-solid fa-volume-high text-slate-400 text-[10px]"></i>
+            <input id="radio-volume" type="range" min="0" max="1" step="0.01" value="0.8" oninput="changeRadioVolume(this.value)" class="w-16 h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+        </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2 font-mono font-bold text-indigo-400 hover:text-indigo-300 transition">
+                <i class="fa-solid fa-user-gear"></i>
+                <span>PROFILE // WORKBENCH</span>
+            </a>
+            <a href="/" class="text-xs font-mono text-slate-400 hover:text-white transition flex items-center gap-1.5">
+                <i class="fa-solid fa-house"></i> MAIN SITE
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-12 space-y-10">
+
+        <!-- Hero Card -->
+        <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 md:p-10 backdrop-blur-md space-y-6">
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
+                <img id="detail-avatar" src="./heroImage/myroom.jpg" alt="Avatar" class="w-32 h-32 rounded-2xl object-cover border-2 border-indigo-500/50 shadow-2xl">
+                <div class="space-y-3 text-center md:text-left flex-grow">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                        <div>
+                            <h1 id="detail-name" class="text-3xl font-bold font-mono text-white">NOJI</h1>
+                            <p id="detail-handle" class="text-l font-mono text-[#79fcf8]">@neruru</p>
+                        </div>
+                        <span id="detail-status" class="inline-block px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-400/30 text-emerald-400 text-xs font-mono">ONLINE // ACTIVE</span>
+                    </div>
+                    <p id="detail-title" class="text-sm font-mono text-slate-300">Systems Architect / Custom OS / Mechanic & Audio DSP</p>
+                    <p id="detail-bio" class="text-slate-400 text-sm leading-relaxed font-sans pt-2">
+                        <!-- JSで挿入 -->
+                    </p>
+                </div>
+            </div>
+
+            <!-- Social Links -->
+            <div id="detail-socials" class="flex flex-wrap gap-3 pt-4 border-t border-slate-800/80">
+                <!-- JSで動的挿入 -->
+            </div>
+        </div>
+
+        <!-- Skills Matrix -->
+        <div class="space-y-6">
+            <h2 class="text-xl font-bold font-mono text-black flex items-center gap-2 border-b border-slate-800 pb-3">
+                <i class="fa-solid fa-layer-group text-indigo-400"></i>
+                <span>SKILLS & TECHNOLOGIES</span>
+            </h2>
+
+            <div id="detail-skills-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- JSで動的挿入 -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Nginx SSI Include -->
+    <script type="application/json" id="data-profile"><!--# include file="config_profile.json" --></script>
+
+    <script src="js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                // SSIで埋め込まれた JSON 要素を取得
+                const el = document.getElementById('data-profile');
+                if (!el) return;
+
+                const data = JSON.parse(el.textContent.trim());
+
+                if (data.name) document.getElementById('detail-name').innerText = data.name;
+                if (data.handle) document.getElementById('detail-handle').innerText = `@${data.handle}`;
+                if (data.title) document.getElementById('detail-title').innerText = data.title;
+                if (data.bio) document.getElementById('detail-bio').innerText = data.bio;
+                if (data.avatar) document.getElementById('detail-avatar').src = data.avatar;
+
+                // SNSリンクの描画
+                const socialsContainer = document.getElementById('detail-socials');
+                if (socialsContainer && data.socials) {
+                    socialsContainer.innerHTML = data.socials.map(s => `
+                        <a href="${s.url}" target="_blank" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/80 hover:bg-indigo-600 border border-slate-700/60 text-xs font-mono text-slate-200 transition">
+                            <i class="${s.icon}"></i>
+                            <span>${s.name}</span>
+                        </a>
+                    `).join('');
+                }
+
+                // スキルグリッドの描画
+                const skillsGrid = document.getElementById('detail-skills-grid');
+                if (skillsGrid && data.skills) {
+                    skillsGrid.innerHTML = data.skills.map(cat => `
+                        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 space-y-3">
+                            <h3 class="text-l font-bold font-mono text-[#79fcf8] drop-shadow-[0_0_8px_rgba(121,252,248,0.5)] uppercase tracking-wider">${cat.category}</h3>
+                            <div class="flex flex-wrap gap-2">
+                                ${cat.items.map(item => `
+                                    <span class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 border border-slate-700/50 text-xs font-mono">${item}</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+            } catch (e) {
+                console.error('[Profile Detail Parse Error]', e);
+            }
+        });
+    </script>
+</body>
+</html>

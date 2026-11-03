@@ -1,0 +1,21 @@
+{
+  "title": "#Architectural*Noise",
+  "statusText": "ONLINE // ALL SYSTEMS NOMINAL",
+  "operator": "ねるる",
+  "favicon": "./favicon.ico",
+  "navLinks": [
+    {
+      "label": "Domains",
+      "href": "#projects"
+    },
+    {
+      "label": "Telemetry",
+      "href": "#telemetry"
+    },
+    {
+      "label": "Audio DSP",
+      "href": "#synth"
+    }
+  ],
+  "searchShortcut": "⌘K"
+}

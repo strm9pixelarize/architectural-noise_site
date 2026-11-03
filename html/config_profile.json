@@ -1,0 +1,39 @@
+{
+  "name": "ねるる｜優",
+  "handle": "strm_pixelarize",
+  "title": "Systems Architect / Custom OS / Mechanic",
+  "status": "ONLINE // ACTIVE",
+  "avatar": "./heroImage/profile.jpg",
+  "bio": "インフラ設計、カスタムROM/AOSP検証、バイクのメカニックカスタマイズ、AI音響・Techno-Pop楽曲制作を軸に活動。複数の技術領域を横断して実験・記録を行う個人ワークベンチ。",
+  "location": "Tokyo, Japan",
+  "skills": [
+    {
+      "category": "Infra & Network",
+      "items": ["Ubuntu Server", "Docker / Portainer", "Yamaha RTX", "Tailscale", "Cloudflare"]
+    },
+    {
+      "category": "OS & Mobile",
+      "items": ["Android AOSP", "Fastboot Partitioning", "Shizuku / Magisk", "Linux Kernel"]
+    },
+    {
+      "category": "Mechanic & Rigging",
+      "items": ["Suzuki GSX-S1000", "Custom Wiring", "Metal & Wood Crafting"]
+    },
+    {
+      "category": "Audio & Creative",
+      "items": ["ACE-Step 1.5", "Suno AI", "Web Audio API", "Lo-Fi / Techno-Pop"]
+    }
+  ],
+  "socials": [
+    {
+      "name": "Radio Station",
+      "icon": "fa-solid fa-radio",
+      "url": "https://radio.enoki.xyz/public/neruru-radio"
+    },
+    {
+      "name": "Blog / Logs",
+      "icon": "fa-solid fa-pen-nib",
+      "url": "./motorcycle.html"
+    }
+  ]
+}

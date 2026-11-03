@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARCHITECTURAL NOISE // WORKBENCH</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans bg-grid-pattern antialiased selection:bg-indigo-500 selection:text-white flex flex-col min-h-screen">
+    <!-- 音声再生用 追加 11-02-0330-->
+    <audio id="radio-audio" preload="none"></audio>
+
+    <!-- 画面下部中央に浮遊するコンパクトプレイヤーバー -->
+    <div id="radio-player-bar" class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-2xl h-20 bg-slate-900/90 backdrop-blur-md border border-slate-700/60 text-slate-100 z-50 px-4 flex items-center justify-between rounded-2xl shadow-2xl">
+        
+        <!-- 左側：曲情報 & アートワーク -->
+        <div class="flex items-center gap-2.5 min-w-0 max-w-[45%]">
+            <img id="radio-art" src="/heroImage/tokyo_station.jpg" alt="Artwork" class="w-8 h-8 rounded-lg object-cover border border-slate-700/50 shadow-sm flex-shrink-0">
+            <div class="min-w-0">
+                <div id="radio-title" class="text-xs font-bold text-slate-100 font-mono truncate">ON AIR // Loading...</div>
+                <div id="radio-artist" class="text-[10px] text-slate-400 font-mono truncate">ねるるラジオ</div>
+            </div>
+        </div>
+
+        <!-- 中央：再生/停止 & LIVEステータス -->
+        <div class="flex items-center gap-3">
+            <button id="radio-play-btn" onclick="toggleRadioPlay()" class="w-8 h-8 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition shadow-md shadow-indigo-600/30 group flex-shrink-0">
+                <i id="radio-play-icon" class="fa-solid fa-play text-[10px] group-hover:scale-110 transition-transform ml-0.5"></i>
+            </button>
+            <div class="hidden sm:flex items-center gap-1.5 bg-slate-800/60 px-2 py-0.5 rounded-md border border-slate-700/40">
+                <span id="radio-live-dot" class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
+                <span id="radio-live-text" class="text-[9px] font-mono text-slate-300 tracking-wider uppercase">LIVE</span>
+            </div>
+        </div>
+
+        <!-- 右側：音量コントロール -->
+        <div class="flex items-center justify-end gap-2">
+            <i class="fa-solid fa-volume-high text-slate-400 text-[10px]"></i>
+            <input id="radio-volume" type="range" min="0" max="1" step="0.01" value="0.8" oninput="changeRadioVolume(this.value)" class="w-16 h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+        </div>
+    </div>
+    
+    <!-- 全画面ローディングオーバーレイ 追加した 11-02-0208 -->
+    <div id="loading-screen" class="fixed inset-0 z-[100] bg-slate-950 flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="relative flex items-center justify-center mb-4">
+            <!-- 外側のぐるぐる回るリング -->
+            <div class="w-16 h-16 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+            <!-- 中央に配置するアイコン（Font Awesome） -->
+            <i class="fa-solid fa-motorcycle text-indigo-400 text-xl absolute"></i>
+        </div>
+        <!-- ローディングテキスト -->
+        <p class="text-xs font-mono text-slate-400 tracking-widest uppercase animate-pulse">Loading System...</p>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 w-full bg-slate-950/60 backdrop-blur-md border-b border-white/10 text-white shadow-lg transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-cube text-sm"></i>
+                </div>
+                <div>
+                    <span id="header-title" class="font-bold tracking-tight text-white font-mono text-sm block">--</span>
+                    <span id="header-status" class="text-[10px] text-slate-300 font-mono tracking-wider block">--</span>
+                </div>
+            </a>
+
+            <nav id="header-nav" class="hidden md:flex items-center gap-1 text-sm font-medium text-slate-200"></nav>
+
+            <div class="flex items-center gap-3">
+                <button onclick="toggleCommandPalette()" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 border border-white/15 text-xs text-slate-200 hover:bg-white/20 hover:text-white transition font-mono">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>Search</span>
+                    <kbd id="header-shortcut" class="px-1.5 py-0.5 rounded bg-white/20 text-[10px] text-white">⌘K</kbd>
+                </button>
+                <div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-mono">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="header-operator">--</span>
+                </div>
+
+                <!-- ハンバーガーメニューボタン -->
+                <button onclick="toggleSideMenu()" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 text-white transition flex items-center justify-center" title="Server Info & Telemetry">
+                    <i class="fa-solid fa-bars text-base"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Side Menu Overlay & Drawer Panel -->
+    <div id="side-menu-overlay" onclick="toggleSideMenu()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden transition-opacity duration-300"></div>
+
+    <aside id="side-menu" class="fixed top-0 right-0 bottom-0 w-full sm:w-[450px] bg-white/95 backdrop-blur-xl border-l border-slate-200 z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-6 overflow-y-auto flex flex-col justify-between shadow-2xl">
+        <div class="space-y-6">
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></div>
+                    <h2 class="text-base font-bold text-slate-900 font-mono">Server Information</h2>
+                </div>
+                <button onclick="toggleSideMenu()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- OS / Kernel / Host 基本情報 -->
+            <div class="space-y-1 font-mono text-xs text-slate-600 bg-slate-100 p-3 rounded-xl border border-slate-200">
+                <div class="flex justify-between"><span class="text-slate-400">OS:</span><span id="info-os-version" class="font-semibold text-slate-800">--</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Kernel:</span><span id="info-kernel-spec">--</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Host:</span><span id="info-host-family">--</span></div>
+            </div>
+
+            <!-- Expandable Metrics List -->
+            <div class="space-y-3 font-mono">
+                <!-- CPU -->
+                <div class="rounded-xl bg-slate-50 border border-slate-200 overflow-hidden">
+                    <button onclick="toggleMetricDetail('cpu-detail')" class="w-full p-3.5 text-left flex items-start justify-between hover:bg-slate-100/80 transition group">
+                        <div class="w-full pr-2">
+                            <div class="marquee-container mb-1">
+                                <span id="info-cpu-model" class="marquee-text text-xs text-indigo-600 font-semibold" title="--">--</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 block">CPU LOAD</span>
+                            <span id="metric-cpu" class="text-xl font-bold text-slate-800 mt-1 block">--</span>
+                        </div>
+                        <i id="cpu-detail-icon" class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 transition-transform duration-200 group-hover:text-slate-600"></i>
+                    </button>
+                    <div id="cpu-detail" class="hidden px-3.5 pb-3.5 pt-2 border-t border-slate-200/80 bg-slate-100/50 text-[11px] space-y-1.5 text-slate-600">
+                        <div class="flex justify-between"><span class="text-slate-400">Cores:</span><span id="detail-cpu-cores">--</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">Base Clock:</span><span id="detail-cpu-freq">--</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">Architecture:</span><span id="detail-cpu-arch">--</span></div>
+                    </div>
+                </div>
+
+                <!-- MEMORY -->
+                <div class="rounded-xl bg-slate-50 border border-slate-200 overflow-hidden">
+                    <button onclick="toggleMetricDetail('mem-detail')" class="w-full p-3.5 text-left flex items-start justify-between hover:bg-slate-100/80 transition group">
+                        <div class="w-full pr-2">
+                            <div class="marquee-container mb-1">
+                                <span id="info-os-spec" class="marquee-text text-xs text-indigo-600 font-semibold" title="--">--</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 block">MEMORY</span>
+                            <span id="metric-ram" class="text-xl font-bold text-indigo-600 mt-1 block">--</span>
+                        </div>
+                        <i id="mem-detail-icon" class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 transition-transform duration-200 group-hover:text-slate-600"></i>
+                    </button>
+                    <div id="mem-detail" class="hidden px-3.5 pb-3.5 pt-2 border-t border-slate-200/80 bg-slate-100/50 text-[11px] space-y-1.5 text-slate-600">
+                        <div class="flex justify-between"><span class="text-slate-400">Total Physical:</span><span id="detail-mem-total">--</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">Swap Used/Total:</span><span id="detail-swap-spec">--</span></div>
+                    </div>
+                </div>
+
+                <!-- NETWORK -->
+                <div class="rounded-xl bg-slate-50 border border-slate-200 overflow-hidden">
+                    <button onclick="toggleMetricDetail('net-detail')" class="w-full p-3.5 text-left flex items-start justify-between hover:bg-slate-100/80 transition group">
+                        <div class="w-full pr-2">
+                            <div class="marquee-container mb-1">
+                                <span id="info-host-spec" class="marquee-text text-xs text-indigo-600 font-semibold" title="--">--</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 block">NETWORK</span>
+                            <span id="metric-net" class="text-xl font-bold text-emerald-600 mt-1 block">--</span>
+                        </div>
+                        <i id="net-detail-icon" class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 transition-transform duration-200 group-hover:text-slate-600"></i>
+                    </button>
+                    <div id="net-detail" class="hidden px-3.5 pb-3.5 pt-2 border-t border-slate-200/80 bg-slate-100/50 text-[11px] space-y-1.5 text-slate-600">
+                        <div class="flex justify-between"><span class="text-slate-400">Interface:</span><span id="detail-net-iface">--</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">Local IPv4:</span><span id="detail-net-ip">--</span></div>
+                    </div>
+                </div>
+
+                <!-- STORAGE -->
+                <div class="rounded-xl bg-slate-50 border border-slate-200 overflow-hidden">
+                    <button onclick="toggleMetricDetail('disk-detail')" class="w-full p-3.5 text-left flex items-start justify-between hover:bg-slate-100/80 transition group">
+                        <div class="w-full pr-2">
+                            <div class="marquee-container mb-1">
+                                <span id="info-gpu-spec" class="marquee-text text-xs text-indigo-600 font-semibold" title="--">--</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 block">STORAGE</span>
+                            <span id="metric-disk" class="text-xl font-bold text-emerald-600 mt-1 block">--</span>
+                        </div>
+                        <i id="disk-detail-icon" class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 transition-transform duration-200 group-hover:text-slate-600"></i>
+                    </button>
+                    <div id="disk-detail" class="hidden px-3.5 pb-3.5 pt-2 border-t border-slate-200/80 bg-slate-100/50 text-[11px] space-y-1.5 text-slate-600">
+                        <div class="flex justify-between"><span class="text-slate-400">Mount Point:</span><span id="detail-disk-mount">--</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">Filesystem:</span><span id="detail-disk-fs">--</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="side-menu-custom-items" class="space-y-3 pt-2"></div>
+        </div>
+
+        <!-- Footer Tag -->
+        <div class="pt-4 border-t border-slate-200 flex items-center justify-between text-xs font-mono text-slate-400">
+            <span>Node Status</span>
+            <span id="footer-node-tag">Local cluster</span>
+        </div>
+    </aside>
+
+    <!-- Hero Section -->
+    <section class="relative w-full h-[480px] sm:h-[560px] overflow-hidden bg-slate-900 border-b border-slate-200">
+        <div id="hero-slides-container" class="absolute inset-0"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-900/60 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent"></div>
+
+        <div class="relative max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+            <div class="max-w-2xl text-left space-y-4">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-slate-200 text-xs font-mono">
+                    <i class="fa-solid fa-code-branch text-emerald-400"></i>
+                    <span>Dynamic Domain Architecture</span>
+                </div>
+                
+                <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white font-sans drop-shadow-md">
+                    Architecting <br>
+                    <span id="typing-text" class="text-indigo-400 font-mono border-b-4 border-indigo-400 pb-1">systems.</span>
+                </h1>
+                
+                <p class="text-slate-300 text-base sm:text-lg leading-relaxed font-normal max-w-xl">
+                    インフラ設計、カスタムROM/AOSP検証、メカニックカスタマイズ、AI音響実験の記録を統合管理するワークベンチ。
+                </p>
+
+                <div class="pt-2 flex items-center gap-4">
+                    <a href="#projects" class="px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition shadow-lg shadow-indigo-600/30 flex items-center gap-2">
+                        <span>Explore Projects</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 space-y-16 flex-grow">
+        <section id="projects" class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold tracking-tight text-slate-900">Domains & Projects</h2>
+                    <p class="text-slate-500 text-sm mt-1">設定ファイル群（JSON）から動的に読み込まれたプロジェクト</p>
+                </div>
+                <div id="category-filters" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- Web Audio Synthesizer Deck -->
+        <section id="synth" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold text-slate-900 font-mono flex items-center gap-2">
+                    <i class="fa-solid fa-wave-square text-indigo-500"></i>
+                    <span>AUDIO DSP SYNTHESIZER</span>
+                </h2>
+                <span class="text-xs font-mono text-slate-400">Web Audio API</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <button id="synth-play-btn" onclick="toggleSynth()" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-mono text-xs font-medium transition flex items-center gap-2">
+                    <i class="fa-solid fa-play"></i>
+                    <span>PLAY DSP WAVE</span>
+                </button>
+                <div class="text-xs font-mono text-slate-500" id="synth-status">Status: Idle</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Navigation -->
+    <footer class="mt-20 border-t border-slate-200 bg-white/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-mono">
+            <div>
+                <span id="footer-copyright">© 2026 ARCHITECTURAL NOISE</span>
+                <span id="footer-tech" class="block text-[10px] text-slate-400 mt-0.5">--</span>
+            </div>
+            <div id="footer-links" class="flex items-center gap-4"></div>
+        </div>
+    </footer>
+
+    <!-- Inspector Modal & Command Palette -->
+    <div id="inspector-modal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-card bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl relative">
+            <button onclick="closeInspector()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <div id="command-palette" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-start justify-center pt-20 p-4">
+        <div class="bg-white border border-slate-200 rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden space-y-4 p-4">
+            <div class="flex items-center gap-3 border-b border-slate-200 pb-3">
+                <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+                <input id="command-input" type="text" oninput="filterCommandProjects(this.value)" placeholder="Search projects or tags..." class="w-full text-sm font-mono focus:outline-none text-slate-800">
+                <kbd class="text-[10px] font-mono px-2 py-0.5 bg-slate-100 rounded text-slate-500">ESC</kbd>
+            </div>
+            <div id="command-results" class="max-h-60 overflow-y-auto space-y-1 font-mono text-xs"></div>
+        </div>
+    </div>
+
+    <!-- Nginx SSI Includes -->
+    <script type="application/json" id="data-main"><!--# include file="config.json" --></script>
+    <script type="application/json" id="data-header"><!--# include file="config_header.json" --></script>
+    <script type="application/json" id="data-footer"><!--# include file="config_footer.json" --></script>
+    <script type="application/json" id="data-server-info"><!--# include file="serverInfo/info.json" --></script>
+    <script type="application/json" id="data-sidemenu-list"><!--# include file="sidemenu-list.json" --></script>
+
+    <script src="js/script.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+{
+  "title": {
+    "userName": "root",
+    "fullUserName": "root",
+    "hostName": "op3060m",
+    "homeDir": "/root/",
+    "exePath": "/usr/bin/fastfetch",
+    "userShell": "/bin/bash"
+  },
+  "separator": null,
+  "os": {
+    "buildID": "",
+    "codename": "resolute",
+    "id": "ubuntu",
+    "idLike": "debian",
+    "name": "Ubuntu",
+    "prettyName": "Ubuntu 26.04.1 LTS (Resolute Raccoon)",
+    "variant": "",
+    "variantID": "",
+    "version": "26.04.1 LTS (Resolute Raccoon)",
+    "versionID": "26.04"
+  },
+  "host": {
+    "family": "OptiPlex",
+    "name": "OptiPlex 3060",
+    "version": "",
+    "sku": "085C",
+    "vendor": "Dell Inc.",
+    "serial": "J6F7MX2",
+    "uuid": "4c4c4544-0036-4610-8037-cac04f4d5832"
+  },
+  "kernel": {
+    "architecture": "x86_64",
+    "name": "Linux",
+    "release": "7.0.0-38-generic",
+    "version": "#38-Ubuntu SMP PREEMPT_DYNAMIC Fri Sep  4 09:10:14 UTC 2026",
+    "pageSize": 4096
+  },
+  "uptime": {
+    "uptime": 307230360,
+    "bootTime": "2026-10-26T13:04:40.337+0900"
+  },
+  "packages": {
+    "all": 1146,
+    "amSystem": 0,
+    "amUser": 0,
+    "apk": 0,
+    "brew": 0,
+    "brewCask": 0,
+    "choco": 0,
+    "dpkg": 1146,
+    "emerge": 0,
+    "eopkg": 0,
+    "flatpakSystem": 0,
+    "flatpakUser": 0,
+    "guixSystem": 0,
+    "guixUser": 0,
+    "guixHome": 0,
+    "hpkgSystem": 0,
+    "hpkgUser": 0,
+    "linglong": 0,
+    "mport": 0,
+    "nixDefault": 0,
+    "nixSystem": 0,
+    "nixUser": 0,
+    "opkg": 0,
+    "pacman": 0,
+    "pacstall": 0,
+    "paludis": 0,
+    "pisi": 0,
+    "pkg": 0,
+    "pkgtool": 0,
+    "pkgsrc": 0,
+    "macports": 0,
+    "rpm": 0,
+    "scoopUser": 0,
+    "scoopGlobal": 0,
+    "snap": 0,
+    "soar": 0,
+    "kiss": 0,
+    "sorcery": 0,
+    "winget": 0,
+    "xbps": 0,
+    "pacmanBranch": ""
+  },
+  "shell": {
+    "exe": "/DATA/AppData/architectural-noise/html/generate_info.py",
+    "exeName": "generate_info.py",
+    "exePath": "/usr/bin/python3.14",
+    "pid": 134058,
+    "ppid": 134057,
+    "processName": "python3",
+    "prettyName": "generate_info.py",
+    "version": "",
+    "tty": 1
+  },
+  "display": null,
+  "de": null,
+  "wm": null,
+  "wmtheme": null,
+  "theme": {
+    "theme1": "",
+    "theme2": "Yaru [GTK3]"
+  },
+  "icons": {
+    "icons1": "",
+    "icons2": "Yaru [GTK3]"
+  },
+  "font": null,
+  "cursor": {
+    "theme": "Adwaita",
+    "size": ""
+  },
+  "terminal": {
+    "processName": "sshd-session",
+    "exe": "sshd-session: strm_pixelarize@pts/0",
+    "exeName": "0",
+    "exePath": "/usr/lib/openssh/sshd-session",
+    "pid": 3330843,
+    "ppid": 3330732,
+    "prettyName": "sshd",
+    "version": "10.2p1",
+    "tty": ""
+  },
+  "terminalfont": null,
+  "cpu": {
+    "cpu": "Intel(R) Core(TM) i3-8100",
+    "vendor": "GenuineIntel",
+    "packages": 1,
+    "cores": {
+      "physical": 4,
+      "logical": 4,
+      "online": 4
+    },
+    "frequency": {
+      "base": 3600,
+      "max": 3600
+    },
+    "coreTypes": [],
+    "temperature": null,
+    "march": "x86_64-v3",
+    "numaNodes": 1
+  },
+  "gpu": [
+    {
+      "index": null,
+      "coreCount": null,
+      "coreUsage": null,
+      "memory": {
+        "dedicated": {
+          "total": null,
+          "used": null
+        },
+        "shared": {
+          "total": null,
+          "used": null
+        },
+        "type": null
+      },
+      "driver": "i915",
+      "name": "UHD Graphics 630",
+      "temperature": null,
+      "type": "Integrated",
+      "vendor": "Intel",
+      "platformApi": "DRM (card1)",
+      "frequency": 1100,
+      "deviceId": 16
+    }
+  ],
+  "memory": {
+    "total": 32929144832,
+    "used": 21657022464
+  },
+  "swap": [
+    {
+      "name": "/swap.img",
+      "used": 588279808,
+      "total": 8589930496
+    }
+  ],
+  "disk": [
+    {
+      "bytes": {
+        "available": 282403434496,
+        "free": 303868309504,
+        "total": 500235124736,
+        "used": 196366815232
+      },
+      "files": {
+        "total": 31064064,
+        "used": 1822196
+      },
+      "filesystem": "ext4",
+      "mountpoint": "/",
+      "mountFrom": "/dev/mapper/ubuntu--vg-ubuntu--lv",
+      "name": "",
+      "volumeType": [
+        "Regular"
+      ],
+      "createTime": "2026-04-16T03:37:12.000+0900"
+    }
+  ],
+  "localip": [
+    {
+      "name": "enp1s0",
+      "defaultRoute": {
+        "ipv4": true
+      },
+      "ipv4": "192.168.108.200/24"
+    }
+  ],
+  "battery": [],
+  "poweradapter": [],
+  "locale": "en_US.UTF-8",
+  "break": null,
+  "colors": null,
+  "updatedAt": "2026-10-30 02:25:10"
+}

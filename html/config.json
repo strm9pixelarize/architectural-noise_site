@@ -1,0 +1,138 @@
+{
+  "site": {
+    "title": "ARCHITECTURAL NOISE",
+    "operator": "NOJI",
+    "statusText": "ONLINE // ALL SYSTEMS NOMINAL",
+    "typingTexts": [
+      "systems.",
+      "networks.",
+      "mobility.",
+      "soundscapes.",
+      "gadgets.",
+      "crafts."
+    ],
+    "heroImages": [
+      "./heroImage/tokyo_station.jpg",
+      "./heroImage/myroom.jpg",
+      "./heroImage/gsx-s1000rqm4.jpg",
+      "./heroImage/nothing_products.jpg"
+    ]
+  },
+  "categories": [
+    {
+      "id": "all",
+      "label": "All Domains",
+      "icon": "fa-layer-group"
+    },
+    {
+      "id": "infra",
+      "label": "Infra & Server",
+      "icon": "fa-server"
+    },
+    {
+      "id": "gadget",
+      "label": "Gadgets & Mobile",
+      "icon": "fa-mobile-screen-button"
+    },
+    {
+      "id": "motor",
+      "label": "Motorcycle",
+      "icon": "fa-motorcycle"
+    },
+    {
+      "id": "audio",
+      "label": "Audio & Sound",
+      "icon": "fa-sliders"
+    }
+  ],
+  "projects": [
+    {
+      "id": "p1",
+      "category": "infra",
+      "title": "Home Server Infrastructure",
+      "subtitle": "Portainer, Nginx Proxy Manager, Cloudflare Tunnels",
+      "status": "VERIFIED",
+      "statusColor": "emerald",
+      "date": "2026.10",
+      "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop",
+      "tags": [
+        "Docker",
+        "Ubuntu",
+        "Portainer",
+        "Tailscale"
+      ],
+      "description": "Portainerを活用したセルフホストインフラストラクチャ。Tailscale Subnet RouterとCloudflare Accessを連携しセキュリティを確保。",
+      "specs": {
+        "Hardware": "Custom Home Server Node",
+        "OS": "Ubuntu Server 24.04 LTS",
+        "Router": "Yamaha RTX1300",
+        "Containers": "Minecraft, Misskey, Dashy, Nginx"
+      },
+      "schematic": "+---------------------------------------+\n| Internet -> Cloudflare Tunnel         |\n|   -> Yamaha RTX1300 (Subnet Router)   |\n|     -> Ubuntu Server (Portainer Node) |\n+---------------------------------------+"
+    },
+    {
+      "id": "p2",
+      "category": "gadget",
+      "title": "Surface Duo 2 & Custom AOSP",
+      "subtitle": "Dual-screen optimization & Fastboot Partition Management",
+      "status": "ACTIVE",
+      "statusColor": "indigo",
+      "date": "2026.08",
+      "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800&auto=format&fit=crop",
+      "tags": [
+        "Android",
+        "Fastboot",
+        "AOSP",
+        "Shizuku"
+      ],
+      "description": "Surface Duo 2におけるカスタムROMおよびFastboot論理パーティションの調整。Shizukuを活用したパーミッション管理自動化。",
+      "specs": {
+        "Device": "Microsoft Surface Duo 2",
+        "Platform": "Snapdragon 888 5G",
+        "Tools": "ADB, Fastboot, Magisk, Shizuku"
+      },
+      "schematic": "+---------------------------------------+\n| Fastboot Interface                    |\n|   -> delete-logical-partition         |\n|   -> resize-logical-partition         |\n+---------------------------------------+"
+    },
+    {
+      "id": "p3",
+      "category": "motorcycle",
+      "title": "ねるるの所有したバイクの整備・旅行手帳",
+      "subtitle": "Component adaptation & Custom Mechanical Rigging",
+      "status": "TESTING",
+      "statusColor": "amber",
+      "date": "2026.11",
+      "image": "./heroImage/gsx_gixxer.jpg",
+      "tags": [
+        "Suzuki",
+        "GSX-S1000",
+        "GIXXER SF 250"
+      ],
+      "description": "過去から未来へ、今までのバイクとこれからのバイクについてのページです。",
+      "page": "./motorcycle.html",
+      "schematic": ""
+    },
+    {
+      "id": "p4",
+      "category": "audio",
+      "title": "AI & Lo-Fi Sound Architecture",
+      "subtitle": "ACE-Step 1.5, Suno AI, Web Audio Synthesizer",
+      "status": "DEPLOYED",
+      "statusColor": "emerald",
+      "date": "2026.09",
+      "image": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=800&auto=format&fit=crop",
+      "tags": [
+        "SunoAI",
+        "Lo-Fi",
+        "WebAudio",
+        "DSP"
+      ],
+      "description": "ACE-Step 1.5やSuno AIを活用したアンビエント/Techno-Pop楽曲生成プロセスとWeb Audio API音源化。",
+      "specs": {
+        "Tools": "ACE-Step 1.5, Suno AI",
+        "Genre": "Lo-Fi Piano, Techno-Pop",
+        "Web Output": "Web Audio API Oscillator"
+      },
+      "schematic": "+---------------------------------------+\n| Music Prompt -> AI Generation Engine  |\n|   -> Post-Processing / Mastering     |\n|     -> Web Audio DSP Player           |\n+---------------------------------------+"
+    }
+  ]
+}
