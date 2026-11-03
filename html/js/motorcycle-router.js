@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const listContainer = document.getElementById('article-list-container');
     const detailContainer = document.getElementById('article-detail-container');
-    const markdownBody = document.getElementById('markdown-body');
 
     // パラメータなし、または top-page の場合は「記事一覧（HTML）」を表示
     if (!articleId || articleId === 'top-page') {
@@ -36,7 +35,7 @@ async function renderArticleList() {
         }
 
         grid.innerHTML = articles.map(art => `
-            <a href="/motorcycle.html?json=${art.id}" class="glass-card rounded-2xl overflow-hidden group transition block border border-slate-800 hover:border-indigo-500/50 bg-slate-900/60">
+            <a href="/motorcycle.html?json=${art.id}" class="glass-card rounded-2xl overflow-hidden group transition block border border-slate-800 hover:border-[#fca73f]/50 bg-slate-900/60">
                 <div class="h-48 bg-slate-800 relative overflow-hidden">
                     <img src="${art.image || '/heroImage/tokyo_station.jpg'}" alt="${art.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                     <div class="absolute top-3 right-3 px-2.5 py-1 rounded-md bg-slate-950/80 backdrop-blur-md text-slate-300 text-[11px] font-mono border border-white/10">
@@ -44,10 +43,10 @@ async function renderArticleList() {
                     </div>
                 </div>
                 <div class="p-5 space-y-3">
-                    <h2 class="text-lg font-bold text-slate-100 group-hover:text-indigo-400 transition line-clamp-1">${art.title}</h2>
+                    <h2 class="text-lg font-bold text-slate-100 group-hover:text-[#fca73f] transition line-clamp-1">${art.title}</h2>
                     <p class="text-slate-400 text-xs line-clamp-2 leading-relaxed">${art.summary}</p>
                     <div class="flex flex-wrap gap-1.5 pt-2">
-                        ${(art.tags || []).map(t => `<span class="px-2 py-0.5 rounded bg-indigo-950/50 text-indigo-300 border border-indigo-800/40 text-[10px] font-mono">#${t}</span>`).join('')}
+                        ${(art.tags || []).map(t => `<span class="px-2 py-0.5 rounded bg-[#fca73f]/10 text-[#fca73f] border border-[#fca73f]/30 text-[10px] font-mono">#${t}</span>`).join('')}
                     </div>
                 </div>
             </a>
@@ -87,10 +86,10 @@ async function renderArticleDetail(rawArticleId) {
         console.error('[Detail Error]', err);
         markdownBody.innerHTML = `
             <div class="bg-slate-900/80 border border-red-500/30 rounded-2xl p-8 text-center my-8">
-                <i class="fa-solid fa-triangle-exclamation text-amber-400 text-3xl mb-3"></i>
+                <i class="fa-solid fa-triangle-exclamation text-[#fca73f] text-3xl mb-3"></i>
                 <h2 class="text-lg font-bold text-slate-200 font-mono">ARTICLE NOT FOUND</h2>
-                <p class="text-slate-400 text-xs mt-2">指定された記事（<code class="text-indigo-300">${articleId}.md</code>）が見つかりませんでした。</p>
-                <a href="/motorcycle.html" class="inline-block mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-mono rounded-lg transition">一覧へ戻る</a>
+                <p class="text-slate-400 text-xs mt-2">指定された記事（<code class="text-[#fca73f]">${articleId}.md</code>）が見つかりませんでした。</p>
+                <a href="/motorcycle.html" class="inline-block mt-4 px-4 py-2 bg-[#fca73f] hover:bg-[#e09230] text-slate-950 font-bold text-xs font-mono rounded-lg transition">一覧へ戻る</a>
             </div>
         `;
     }

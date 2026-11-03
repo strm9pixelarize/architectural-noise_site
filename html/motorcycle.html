@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ねるるのバイク日和 // #Architectural*Noise</title>
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS (Typography プラグインを追加) -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Markdown & Highlight.js -->
@@ -15,17 +15,33 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
     <link rel="stylesheet" href="/css/style.css">
-</head>
-<body class="bg-[#f7f4eb] text-slate-800 min-h-screen pb-28 font-sans antialiased">
 
-    <!-- ヘッダー（既存サイトと統一デザイン） -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: '#fca73f',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#f7f4eb] text-slate-800 min-h-screen pb-28 font-sans antialiased selection:bg-[#fca73f] selection:text-white">
+
+    <!-- ヘッダー -->
     <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-            <a href="/motorcycle.html" class="flex items-center gap-2 font-mono font-bold text-indigo-400 hover:text-indigo-300 transition">
+            <a href="/motorcycle.html" class="flex items-center gap-2 font-mono font-bold text-[#fca73f] hover:text-[#e09230] transition">
                 <i class="fa-solid fa-motorcycle"></i>
                 <span>ねるるのバイク日和</span>
             </a>
-            <a href="/" class="text-xs font-mono text-slate-400 hover:text-white transition">
+            <a href="/" class="text-xs font-mono text-slate-400 hover:text-[#fca73f] transition">
                 <i class="fa-solid fa-house mr-1"></i> MAIN SITE
             </a>
         </div>
@@ -36,8 +52,8 @@
         <!-- 【1】 記事一覧画面（トップページ） -->
         <div id="article-list-container">
             <div class="mb-8 space-y-2">
-                <h1 class="text-2xl font-bold font-mono text-white">Riding & Custom Logs</h1>
-                <p class="text-slate-400 text-xs font-mono">バイク関連の整備記録・ツーリングログ・カスタムまとめ</p>
+                <h1 class="text-2xl font-bold font-mono text-slate-900">Riding & Custom Logs</h1>
+                <p class="text-slate-600 text-xs font-mono">バイク関連の整備記録・ツーリングログ・カスタムまとめ</p>
             </div>
 
             <!-- カード一覧グリッド -->
@@ -50,14 +66,14 @@
         <div id="article-detail-container" class="hidden max-w-3xl mx-auto">
             <!-- 戻るボタン -->
             <div class="mb-6">
-                <a href="/motorcycle.html" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                <a href="/motorcycle.html" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300 hover:bg-slate-800 hover:text-[#fca73f] hover:border-[#fca73f]/40 transition">
                     <i class="fa-solid fa-arrow-left"></i>
                     <span>Back to List</span>
                 </a>
             </div>
 
-            <!-- Markdown本文描画ターゲット -->
-            <article id="markdown-body" class="prose prose-invert prose-indigo max-w-none bg-slate-900/40 p-6 md:p-10 rounded-2xl border border-slate-800/80">
+            <!-- Markdown本文描画ターゲット（text-slate-200 を追加して文字色を明示化） -->
+            <article id="markdown-body" class="prose prose-invert max-w-none bg-slate-900/90 p-6 md:p-10 rounded-2xl border border-slate-800/80 text-slate-200 prose-a:text-[#fca73f] prose-a:no-underline hover:prose-a:underline prose-headings:text-[#fca73f]">
                 <!-- JSでMarkdownがパースされて挿入されます -->
             </article>
         </div>
