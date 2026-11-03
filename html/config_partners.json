@@ -1,0 +1,69 @@
+{
+  "sectionTitle": "PARTNERS & COLLABORATORS",
+  "description": "システム設計・UI検証・コンテンツ制作で協働・サポートしてくれているメンバー",
+  "partners": [
+    {
+      "id": "jikantoki",
+      "name": "ときえのき",
+      "role": "Programmer, Web Engineer",
+      "avatar": "./heroImage/partner_icons/jikantoki.jpg",
+      "bio": "プログラムなら何でもやる現役エンジニア",
+      "status": "COLLABORATOR",
+      "tags": [
+        "Programmer",
+        "Frontend",
+        "Backend"
+      ],
+      "socials": [
+        {
+          "name": "X",
+          "icon": "fa-brands fa-x-twitter",
+          "url": "https://x.com/jikantoki"
+        },
+        {
+          "name": "GitHub",
+          "icon": "fa-brands fa-github",
+          "url": "https://github.com/jikantoki"
+        }
+      ]
+    },
+    {
+      "id": "saisabo10",
+      "name": "サイバーさぼてん",
+      "role": "Generating ideas, Encounter, Communicator",
+      "avatar": "./heroImage/partner_icons/saisabo.jpg",
+      "bio": "関東圏に詳しくて、三度の飯よりエンカが好き",
+      "status": "COLLABORATOR",
+      "tags": [
+        "Encounter",
+        "Communicator"
+      ],
+      "socials": [
+        {
+          "name": "X",
+          "icon": "fa-brands fa-x-twitter",
+          "url": "https://x.com/saisabo10"
+        }
+      ]
+    },
+    {
+      "id": "makimaki",
+      "name": "まきまき",
+      "role": "Network Engineer, Electrician",
+      "avatar": "./heroImage/partner_icons/Makimak369.jpg",
+      "bio": "なかなかできないことを実現させて頂いている恩人",
+      "status": "COLLABORATOR",
+      "tags": [
+        "Engineer",
+        "Electrician"
+      ],
+      "socials": [
+        {
+          "name": "X",
+          "icon": "fa-brands fa-x-twitter",
+          "url": "https://x.com/Makimak369"
+        }
+      ]
+    }
+  ]
+}

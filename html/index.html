@@ -25,7 +25,7 @@
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
-                        brand: '#fca73f', // アクセントカラーの一括定義
+                        brand: '#fca73f',
                     }
                 }
             }
@@ -287,9 +287,29 @@
             </div>
         </section>
 
+        <!-- ★ PARTNERS & COLLABORATORS SECTION（新設） -->
+        <section id="partners-summary" class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-300 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-handshake text-[#fca73f]"></i>
+                        <span>Partners & Collaborators</span>
+                    </h2>
+                    <p class="text-slate-500 text-sm mt-1">ワークベンチの構築やアイデア検証に協力してくれているメンバー</p>
+                </div>
+                <a href="./partner.html" class="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#fca73f] hover:text-[#e09230] transition">
+                    <span>VIEW ALL PARTNERS</span>
+                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
+            </div>
+
+            <!-- カードプレビュー（JSで動的描画） -->
+            <div id="partners-summary-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+        </section>
+
         <!-- Domains & Projects Section -->
         <section id="projects" class="space-y-6">
-            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-4">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-300 pb-4">
                 <div>
                     <h2 class="text-2xl font-bold tracking-tight text-slate-900">Domains & Projects</h2>
                     <p class="text-slate-500 text-sm mt-1">設定ファイル群（JSON）から動的に読み込まれたプロジェクト</p>
@@ -344,6 +364,7 @@
     <script type="application/json" id="data-server-info"><!--# include file="serverInfo/info.json" --></script>
     <script type="application/json" id="data-sidemenu-list"><!--# include file="sidemenu-list.json" --></script>
     <script type="application/json" id="data-profile"><!--# include file="config_profile.json" --></script>
+    <script type="application/json" id="data-partners"><!--# include file="config_partners.json" --></script>
 
     <script src="js/script.js" defer></script>
 </body>

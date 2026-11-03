@@ -4,6 +4,7 @@ let configFooter = null;
 let configServerInfo = null;
 let configSidemenuList = null;
 let configProfile = null;
+let configPartners = null;
 
 let activeCategory = 'all';
 let synthOsc = null;
@@ -58,6 +59,28 @@ function renderProfileSummary() {
     }
 }
 
+// トップページ用パートナー概要描画関数
+function renderPartnersSummary() {
+    const grid = document.getElementById('partners-summary-grid');
+    if (!grid || !configPartners || !configPartners.partners) return;
+
+    // 先頭3件をピックアップして表示
+    const displayItems = configPartners.partners.slice(0, 3);
+
+    grid.innerHTML = displayItems.map(p => `
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 backdrop-blur-md flex items-start gap-4 shadow-lg">
+            <img src="${p.avatar || './heroImage/profile.jpg'}" alt="${p.name}" class="w-14 h-14 rounded-xl object-cover border border-[#fca73f]/50 flex-shrink-0">
+            <div class="space-y-1.5 min-w-0 flex-grow">
+                <div class="flex items-center justify-between gap-2">
+                    <h3 class="text-base font-bold text-white font-mono truncate">${p.name}</h3>
+                    <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#fca73f]/20 text-[#fca73f] border border-[#fca73f]/30">${p.role}</span>
+                </div>
+                <p class="text-slate-400 text-xs line-clamp-2 leading-relaxed">${p.bio}</p>
+            </div>
+        </div>
+    `).join('');
+}
+
 // DOM構築後の初期化処理
 window.addEventListener('DOMContentLoaded', () => {
     function safeParseJSON(elementId, label) {
@@ -84,6 +107,7 @@ window.addEventListener('DOMContentLoaded', () => {
     configServerInfo   = safeParseJSON('data-server-info', 'serverInfo/info.json');
     configSidemenuList = safeParseJSON('data-sidemenu-list', 'sidemenu-list.json');
     configProfile      = safeParseJSON('data-profile', 'config_profile.json');
+    configPartners     = safeParseJSON('data-partners', 'config_partners.json');
 
     if (configHeader) renderHeader();
     if (configFooter) renderFooter();
@@ -91,6 +115,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (configServerInfo) renderServerInfo();
     if (configSidemenuList) renderSidemenuList();
     if (configProfile) renderProfileSummary();
+    if (configPartners) renderPartnersSummary();
 
     hideLoadingScreen();
 });
@@ -154,7 +179,7 @@ function renderSidemenuList() {
                 <a href="${item.url || '#'}" ${targetAttr} onclick="toggleSideMenu()" class="block p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition group">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-[#fca73f]/10 text-[#fca73f] flex items-center justify-center text-xs group-hover:scale-105 transition-transform">
                                 ${renderIcon(item.icon)}
                             </div>
                             <div>
@@ -293,7 +318,7 @@ function renderProjects() {
                     <span>${p.category.toUpperCase()}</span>
                     <span>${p.date}</span>
                 </div>
-                <h3 class="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition">${p.title}</h3>
+                <h3 class="text-base font-bold text-slate-900 group-hover:text-[#fca73f] transition">${p.title}</h3>
                 <p class="text-slate-500 text-xs line-clamp-2">${p.description}</p>
                 <div class="flex flex-wrap gap-1.5 pt-2">
                     ${p.tags.map(t => `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-mono border border-slate-200">${t}</span>`).join('')}
@@ -323,18 +348,18 @@ async function openInspector(id) {
                 if (articles && articles.length > 0) {
                     const latest = articles[0]; // 先頭の最新記事
                     latestArticleHtml = `
-                        <div class="bg-slate-900 border border-indigo-500/40 rounded-xl p-4 font-mono text-xs space-y-2 shadow-inner">
+                        <div class="bg-slate-900 border border-[#fca73f]/40 rounded-xl p-4 font-mono text-xs space-y-2 shadow-inner">
                             <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
-                                <span class="text-indigo-400 font-bold flex items-center gap-1.5">
+                                <span class="text-[#fca73f] font-bold flex items-center gap-1.5">
                                     <i class="fa-solid fa-newspaper text-[10px]"></i>
                                     <span>// LATEST LOG ENTRY</span>
                                 </span>
                                 <span class="text-[10px] text-slate-400">${latest.date}</span>
                             </div>
                             <a href="${p.page}?json=${latest.id}" class="block group pt-1">
-                                <h4 class="text-slate-100 font-bold group-hover:text-indigo-300 transition flex items-center justify-between gap-2">
+                                <h4 class="text-slate-100 font-bold group-hover:text-[#fca73f] transition flex items-center justify-between gap-2">
                                     <span class="truncate">${latest.title}</span>
-                                    <i class="fa-solid fa-arrow-right text-[10px] text-slate-400 group-hover:translate-x-1 group-hover:text-indigo-400 transition-transform flex-shrink-0"></i>
+                                    <i class="fa-solid fa-arrow-right text-[10px] text-slate-400 group-hover:translate-x-1 group-hover:text-[#fca73f] transition-transform flex-shrink-0"></i>
                                 </h4>
                                 ${latest.summary ? `<p class="text-slate-400 text-[11px] mt-1 line-clamp-2 font-sans">${latest.summary}</p>` : ''}
                             </a>
@@ -351,7 +376,7 @@ async function openInspector(id) {
     content.innerHTML = `
         <div class="space-y-4">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-mono text-indigo-600 font-bold">${p.category.toUpperCase()} // ${p.date}</span>
+                <span class="text-xs font-mono text-[#fca73f] font-bold">${p.category.toUpperCase()} // ${p.date}</span>
                 <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-100 text-slate-700 border border-slate-200">${p.status}</span>
             </div>
             <h2 class="text-2xl font-bold text-slate-900">${p.title}</h2>
@@ -365,7 +390,7 @@ async function openInspector(id) {
             ${(p.specs && Object.keys(p.specs).length > 0) ? `
                 <div class="bg-slate-900 text-slate-200 rounded-xl p-4 font-mono text-xs space-y-2">
                     <span class="text-slate-400 block border-b border-slate-800 pb-1">// SPECIFICATIONS</span>
-                    ${Object.entries(p.specs).map(([k, v]) => `<div><span class="text-indigo-400">${k}:</span> ${v}</div>`).join('')}
+                    ${Object.entries(p.specs).map(([k, v]) => `<div><span class="text-[#fca73f]">${k}:</span> ${v}</div>`).join('')}
                 </div>
             ` : ''}
 
@@ -373,7 +398,7 @@ async function openInspector(id) {
 
             ${p.page ? `
                 <div class="pt-2 border-t border-slate-100">
-                    <a href="${p.page}" class="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-[#fca73f] hover:bg-[#fca73f] text-slate-900 font-mono text-xs font-bold transition shadow-lg shadow-indigo-600/30 group">
+                    <a href="${p.page}" class="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-[#fca73f] hover:bg-[#e09230] text-slate-950 font-mono text-xs font-bold transition shadow-lg shadow-[#fca73f]/20 group">
                         <span>OPEN DEDICATED PAGE</span>
                         <i class="fa-solid fa-arrow-up-right-from-square text-[10px] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
                     </a>
@@ -653,7 +678,7 @@ async function updateNowPlaying() {
 // 初期化 & 10秒ごとの自動更新
 document.addEventListener('DOMContentLoaded', () => {
     updateNowPlaying();
-    setInterval(updateNowPlaying, 10000);
+    setInterval(updateNowPlaying, 2000);
 });
 
 window.addEventListener('keydown', (e) => {
