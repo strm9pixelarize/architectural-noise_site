@@ -146,7 +146,7 @@ function renderHeader() {
     }).join('');
 }
 
-// ドロワー（引き出し）の開閉関数
+// ドロワー（引き出し）の開閉関数（メニュー開閉と連動してSSE接続・切断を実行）
 function toggleSideMenu() {
     const menu = document.getElementById('side-menu');
     const overlay = document.getElementById('side-menu-overlay');
@@ -155,6 +155,13 @@ function toggleSideMenu() {
 
     menu.classList.toggle('translate-x-full');
     overlay.classList.toggle('hidden');
+
+    const isOpen = !menu.classList.contains('translate-x-full');
+    if (isOpen) {
+        startTelemetry();
+    } else {
+        stopTelemetry();
+    }
 }
 
 // sidemenu-list.json からカスタムメニュー・SNS群を動的描画
@@ -220,7 +227,6 @@ function renderMainContent() {
     setupTypingEffect(configMain.site.typingTexts);
     renderCategories(configMain.categories);
     renderProjects();
-    startTelemetry();
 }
 
 function setupHeroSlides(images) {
@@ -334,10 +340,8 @@ async function openInspector(id) {
     const p = configMain.projects.find(item => item.id === id);
     if (!p) return;
 
-    // 最新記事情報を取得して格納する変数
     let latestArticleHtml = '';
 
-    // page または category が存在する場合、対応する list.json を取得
     if (p.page) {
         try {
             const categoryDir = p.category === 'motor' ? 'motorcycle' : p.category;
@@ -346,7 +350,7 @@ async function openInspector(id) {
             if (res.ok) {
                 const articles = await res.json();
                 if (articles && articles.length > 0) {
-                    const latest = articles[0]; // 先頭の最新記事
+                    const latest = articles[0];
                     latestArticleHtml = `
                         <div class="bg-slate-900 border border-[#fca73f]/40 rounded-xl p-4 font-mono text-xs space-y-2 shadow-inner">
                             <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
@@ -383,10 +387,8 @@ async function openInspector(id) {
             ${p.subtitle ? `<p class="text-xs font-mono text-slate-500 -mt-2">${p.subtitle}</p>` : ''}
             <p class="text-slate-600 text-sm leading-relaxed">${p.description}</p>
 
-            <!-- 最新記事ブロック（list.json がある場合のみ動的に表示） -->
             ${latestArticleHtml}
 
-            <!-- スペック情報（specs が存在し、項目が1つ以上ある場合のみ表示） -->
             ${(p.specs && Object.keys(p.specs).length > 0) ? `
                 <div class="bg-slate-900 text-slate-200 rounded-xl p-4 font-mono text-xs space-y-2">
                     <span class="text-slate-400 block border-b border-slate-800 pb-1">// SPECIFICATIONS</span>
@@ -407,7 +409,6 @@ async function openInspector(id) {
         </div>
     `;
 
-    // サイドパネルの表示制御
     const overlay = document.getElementById('inspector-overlay');
     const panel = document.getElementById('inspector-modal');
 
@@ -555,8 +556,9 @@ function formatSpeed(bytesPerSec) {
     return formatBytes(bytesPerSec) + '/s';
 }
 
+// SSEテレメトリ接続の開始処理（二重接続防止付き）
 function startTelemetry() {
-    if (telemetrySource) telemetrySource.close();
+    stopTelemetry();
 
     telemetrySource = new EventSource('/api/stream/sys-telemetry');
 
@@ -594,6 +596,18 @@ function startTelemetry() {
             console.warn('[SSE Error]', e);
         }
     };
+
+    telemetrySource.onerror = (e) => {
+        console.warn('[SSE Connection Error]', e);
+    };
+}
+
+// SSEテレメトリ接続の停止処理
+function stopTelemetry() {
+    if (telemetrySource) {
+        telemetrySource.close();
+        telemetrySource = null;
+    }
 }
 
 const RADIO_API_URL = 'https://radio.enoki.xyz/api/nowplaying/neruru-radio';
@@ -611,7 +625,6 @@ function toggleRadioPlay() {
         playIcon.className = 'fa-solid fa-play text-xs ml-0.5';
         isRadioPlaying = false;
     } else {
-        // 最新のライブバッファから再生させるために再ロード
         audio.load();
         audio.play().then(() => {
             playIcon.className = 'fa-solid fa-pause text-xs';
@@ -638,7 +651,6 @@ async function updateNowPlaying() {
 
         const data = await res.json();
 
-        // 1. ストリームURLの設定（初回および更新時）
         const audio = document.getElementById('radio-audio');
         if (audio && data.station && data.station.listen_url) {
             if (audio.src !== data.station.listen_url) {
@@ -646,7 +658,6 @@ async function updateNowPlaying() {
             }
         }
 
-        // 2. 現在再生中の曲情報
         if (data.now_playing && data.now_playing.song) {
             const song = data.now_playing.song;
             
@@ -658,7 +669,6 @@ async function updateNowPlaying() {
             }
         }
 
-        // 3. 配信ステータス（LIVE / DJ放送判定）
         const liveDot = document.getElementById('radio-live-dot');
         const liveText = document.getElementById('radio-live-text');
         
@@ -678,7 +688,7 @@ async function updateNowPlaying() {
 // 初期化 & 10秒ごとの自動更新
 document.addEventListener('DOMContentLoaded', () => {
     updateNowPlaying();
-    setInterval(updateNowPlaying, 2000);
+    setInterval(updateNowPlaying, 10000);
 });
 
 window.addEventListener('keydown', (e) => {
