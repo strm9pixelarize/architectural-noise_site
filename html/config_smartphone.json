@@ -1,0 +1,54 @@
+{
+  "sectionTitle": "SMARTPHONE // LAB & FLEET",
+  "description": "メイン運用機、AOSP/カスタムROM検証機、ハードウェア検証端末の仕様・ログ一覧",
+  "categories": [
+    { "id": "all", "label": "ALL DEVICES", "icon": "fa-solid fa-mobile-screen-button" },
+    { "id": "active", "label": "MAIN & DAILY", "icon": "fa-solid fa-star" },
+    { "id": "lab", "label": "AOSP / LAB", "icon": "fa-solid fa-[#fca73f]sk" },
+    { "id": "archive", "label": "ARCHIVE", "icon": "fa-solid fa-box-archive" }
+  ],
+  "devices": [
+    {
+      "id": "nothing-phone-3",
+      "name": "Nothing Phone (3)",
+      "model": "A065",
+      "category": "active",
+      "status": "DAILY DRIVER",
+      "statusColor": "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
+      "image": "./heroImage/devices/nothing_phone3.jpg",
+      "os": "Nothing OS 3.0 (Android 15)",
+      "soc": "Snapdragon 8s Gen 3",
+      "ramRom": "12GB / 256GB",
+      "tags": ["Daily Use", "Glyph Interface", "Shizuku"],
+      "summary": "メイン運用端末。Shizuku経由でシステムチューニングとアドブロック・自動化を設定済み。",
+      "article": "/articles/smartphone/nothing-phone-3.md",
+      "specs": {
+        "SoC": "Qualcomm Snapdragon 8s Gen 3",
+        "Display": "6.7\" Flexible AMOLED (1-120Hz LTPO)",
+        "Bootloader": "Locked (Stock)",
+        "Root / Framework": "Non-Root / Shizuku Active"
+      }
+    },
+    {
+      "id": "pixel-3-custom",
+      "name": "Google Pixel 3",
+      "model": "G013A",
+      "category": "lab",
+      "status": "AOSP / LAB",
+      "statusColor": "bg-[#fca73f]/10 border-[#fca73f]/30 text-[#fca73f]",
+      "image": "./heroImage/devices/pixel3.jpg",
+      "os": "Custom AOSP (Android 14)",
+      "soc": "Snapdragon 845",
+      "ramRom": "4GB / 64GB",
+      "tags": ["Custom ROM", "Fastboot", "Logical Partitions", "Magisk"],
+      "summary": "Fastbootでの論理パーティションサイズ再構築とカスタムAOSPのビルド検証機。",
+      "article": "/articles/smartphone/pixel-3-aosp.md",
+      "specs": {
+        "SoC": "Qualcomm Snapdragon 845",
+        "Partition": "Dynamic Partitions (Resized)",
+        "Bootloader": "Unlocked",
+        "Root": "Magisk v27.0"
+      }
+    }
+  ]
+}

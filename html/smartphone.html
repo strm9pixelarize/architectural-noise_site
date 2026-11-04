@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smartphone Fleet // ARCHITECTURAL NOISE</title>
+    
+    <!-- Tailwind CSS & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Markdown & Highlight.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: '#fca73f',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#f7f4eb] text-slate-800 min-h-screen pb-28 font-sans antialiased selection:bg-[#fca73f] selection:text-white">
+    <!-- 音声再生用 -->
+    <audio id="radio-audio" preload="none"></audio>
+
+    <!-- 浮遊コンパクトプレイヤーバー -->
+    <div id="radio-player-bar" class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-2xl h-20 bg-[#fca73f]/90 backdrop-blur-md border border-[#fca73f]/50 text-slate-900 z-50 px-4 flex items-center justify-between rounded-2xl shadow-2xl">
+        <div class="flex items-center gap-2.5 min-w-0 max-w-[45%]">
+            <img id="radio-art" src="/heroImage/tokyo_station.jpg" alt="Artwork" class="w-8 h-8 rounded-lg object-cover border border-slate-900/20 shadow-sm flex-shrink-0">
+            <div class="min-w-0">
+                <div id="radio-title" class="text-xs font-bold text-slate-900 font-mono truncate">ON AIR // Loading...</div>
+                <div id="radio-artist" class="text-[10px] text-slate-800/80 font-mono truncate">ねるるラジオ</div>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <button id="radio-play-btn" onclick="toggleRadioPlay()" class="w-8 h-8 rounded-full bg-slate-900 hover:bg-slate-800 text-[#fca73f] flex items-center justify-center transition shadow-md group flex-shrink-0">
+                <i id="radio-play-icon" class="fa-solid fa-play text-[10px] group-hover:scale-110 transition-transform ml-0.5"></i>
+            </button>
+            <div class="hidden sm:flex items-center gap-1.5 bg-[#f7f4eb]/80 px-2 py-0.5 rounded-md border border-slate-900/10">
+                <span id="radio-live-dot" class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
+                <span id="radio-live-text" class="text-[9px] font-mono text-slate-900 font-bold tracking-wider uppercase">LIVE</span>
+            </div>
+        </div>
+        <div class="flex items-center justify-end gap-2">
+            <i class="fa-solid fa-volume-high text-slate-900 text-[10px]"></i>
+            <input id="radio-volume" type="range" min="0" max="1" step="0.01" value="0.8" oninput="changeRadioVolume(this.value)" class="w-16 h-1 bg-[#f7f4eb] rounded-lg appearance-none cursor-pointer accent-slate-900">
+        </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="/smartphone.html" class="flex items-center gap-2 font-mono font-bold text-[#fca73f] hover:text-[#e09230] transition">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+                <span>SMARTPHONE // FLEET</span>
+            </a>
+            <a href="/" class="text-xs font-mono text-slate-400 hover:text-[#fca73f] transition flex items-center gap-1.5">
+                <i class="fa-solid fa-house"></i> MAIN SITE
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-12 space-y-8">
+
+        <!-- Title Section -->
+        <div class="space-y-3 border-b border-slate-300 pb-6">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#fca73f]/10 border border-[#fca73f]/30 text-[#fca73f] text-xs font-mono font-bold">
+                <i class="fa-solid fa-[#fca73f]sk"></i>
+                <span>HARDWARE & CUSTOM OS LAB</span>
+            </div>
+            <h1 class="text-3xl font-bold font-mono text-slate-900">Smartphone Fleet & Logs</h1>
+            <p id="section-desc" class="text-sm font-mono text-slate-600">
+                メイン端末・AOSP/カスタムROM検証機・各種モバイルハードウェアの動作記録
+            </p>
+        </div>
+
+        <!-- Filter Category Buttons -->
+        <div id="device-filters" class="flex flex-wrap gap-2 pt-2">
+            <!-- JSでフィルターボタンが生成されます -->
+        </div>
+
+        <!-- Device Cards Grid -->
+        <div id="device-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- JSで動的にカードが挿入されます -->
+        </div>
+
+    </main>
+
+    <!-- Detail Modal Inspector -->
+    <div id="device-modal-overlay" onclick="closeDeviceModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden transition-opacity duration-300"></div>
+
+    <aside id="device-modal" class="fixed top-0 right-0 bottom-0 w-full sm:w-[600px] bg-[#f7f4eb] border-l border-slate-300 z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-6 overflow-y-auto flex flex-col justify-between shadow-2xl">
+        <div>
+            <div class="flex items-center justify-between border-b border-slate-300 pb-4 mb-6">
+                <div class="flex items-center gap-2 font-mono text-xs text-[#fca73f] font-bold">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>DEVICE_INSPECTOR</span>
+                </div>
+                <button onclick="closeDeviceModal()" class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 font-mono text-xs transition border border-slate-300 flex items-center gap-1.5">
+                    <span>ESC</span>
+                    <i class="fa-solid fa-xmark text-[10px]"></i>
+                </button>
+            </div>
+
+            <div id="modal-device-content" class="space-y-6">
+                <!-- JSで詳細データまたはMarkdownが挿入されます -->
+            </div>
+        </div>
+
+        <div class="pt-6 mt-6 border-t border-slate-300 flex items-center justify-between text-[10px] font-mono text-slate-500">
+            <span>STATUS: INSPECTING</span>
+            <span>ARCHITECTURAL NOISE</span>
+        </div>
+    </aside>
+
+    <!-- Nginx SSI Include -->
+    <script type="application/json" id="data-smartphone"><!--# include file="config_smartphone.json" --></script>
+
+    <script src="js/script.js"></script>
+    <script>
+        let smartphoneData = null;
+        let activeFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const el = document.getElementById('data-smartphone');
+                if (!el) return;
+
+                smartphoneData = JSON.parse(el.textContent.trim());
+
+                if (smartphoneData.description) {
+                    const descEl = document.getElementById('section-desc');
+                    if (descEl) descEl.innerText = smartphoneData.description;
+                }
+
+                renderFilters();
+                renderDevices();
+
+            } catch (e) {
+                console.error('[Smartphone Data Parse Error]', e);
+            }
+        });
+
+        function renderFilters() {
+            const container = document.getElementById('device-filters');
+            if (!container || !smartphoneData.categories) return;
+
+            container.innerHTML = smartphoneData.categories.map(cat => `
+                <button onclick="filterDevices('${cat.id}')" class="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition flex items-center gap-2 ${activeFilter === cat.id ? 'bg-slate-900 text-[#fca73f] shadow-md' : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'}">
+                    <i class="${cat.icon}"></i>
+                    <span>${cat.label}</span>
+                </button>
+            `).join('');
+        }
+
+        function filterDevices(catId) {
+            activeFilter = catId;
+            renderFilters();
+            renderDevices();
+        }
+
+        function renderDevices() {
+            const grid = document.getElementById('device-cards-grid');
+            if (!grid || !smartphoneData.devices) return;
+
+            const filtered = activeFilter === 'all' 
+                ? smartphoneData.devices 
+                : smartphoneData.devices.filter(d => d.category === activeFilter);
+
+            grid.innerHTML = filtered.map(d => `
+                <div onclick="openDeviceModal('${d.id}')" class="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden backdrop-blur-md shadow-xl hover:border-[#fca73f]/50 transition duration-300 cursor-pointer flex flex-col justify-between group">
+                    <div>
+                        <!-- 画像 ＆ ステータスバッジ -->
+                        <div class="h-48 bg-slate-950 relative overflow-hidden">
+                            <img src="${d.image || './heroImage/profile.jpg'}" alt="${d.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <span class="absolute top-3 right-3 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold border backdrop-blur-md ${d.statusColor || 'bg-[#fca73f]/20 border-[#fca73f]/40 text-[#fca73f]'}">
+                                ${d.status}
+                            </span>
+                        </div>
+
+                        <!-- 端末情報 -->
+                        <div class="p-5 space-y-3">
+                            <div>
+                                <div class="text-[10px] font-mono text-[#fca73f] font-bold uppercase tracking-wider">${d.model || ''}</div>
+                                <h2 class="text-lg font-bold font-mono text-white group-hover:text-[#fca73f] transition">${d.name}</h2>
+                            </div>
+
+                            <!-- スペックサマリー -->
+                            <div class="bg-slate-950/60 rounded-xl p-3 border border-slate-800 space-y-1 font-mono text-[11px]">
+                                <div class="flex justify-between"><span class="text-slate-500">OS:</span><span class="text-slate-200 truncate pl-2">${d.os || '--'}</span></div>
+                                <div class="flex justify-between"><span class="text-slate-500">SoC:</span><span class="text-slate-200 truncate pl-2">${d.soc || '--'}</span></div>
+                                <div class="flex justify-between"><span class="text-slate-500">RAM/ROM:</span><span class="text-slate-200 truncate pl-2">${d.ramRom || '--'}</span></div>
+                            </div>
+
+                            <p class="text-slate-400 text-xs line-clamp-2 font-sans pt-1 leading-relaxed">${d.summary || ''}</p>
+                        </div>
+                    </div>
+
+                    <!-- タグ一覧 -->
+                    <div class="p-5 pt-0 flex flex-wrap gap-1.5">
+                        ${(d.tags || []).map(t => `
+                            <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700/60 text-[10px] font-mono">#${t}</span>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function openDeviceModal(deviceId) {
+            const d = smartphoneData.devices.find(item => item.id === deviceId);
+            if (!d) return;
+
+            const content = document.getElementById('modal-device-content');
+            
+            // 基本スペックの表示テンプレート
+            let specsHtml = Object.entries(d.specs || {}).map(([k, v]) => `
+                <div class="flex justify-between py-1 border-b border-slate-300/60 text-xs font-mono">
+                    <span class="text-slate-500">${k}:</span>
+                    <span class="text-slate-900 font-bold">${v}</span>
+                </div>
+            `).join('');
+
+            // Markdown 記事の取得処理
+            let markdownHtml = '';
+            if (d.article) {
+                try {
+                    const res = await fetch(d.article);
+                    if (res.ok) {
+                        const mdText = await res.text();
+                        markdownHtml = `
+                            <div class="pt-4 border-t border-slate-300">
+                                <h3 class="text-xs font-mono font-bold text-[#fca73f] uppercase mb-3">// DETAILED LOG & BENCHMARK</h3>
+                                <article class="prose prose-slate max-w-none text-xs font-sans leading-relaxed bg-white p-4 rounded-xl border border-slate-300">
+                                    ${marked.parse(mdText)}
+                                </article>
+                            </div>
+                        `;
+                    }
+                } catch (e) {
+                    console.warn('[Markdown Fetch Error]', e);
+                }
+            }
+
+            content.innerHTML = `
+                <div class="space-y-5">
+                    <div class="h-48 rounded-2xl overflow-hidden border border-slate-300 shadow-md">
+                        <img src="${d.image || './heroImage/profile.jpg'}" class="w-full h-full object-cover">
+                    </div>
+
+                    <div>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${d.statusColor}">${d.status}</span>
+                        <h2 class="text-2xl font-bold font-mono text-slate-900 mt-1">${d.name}</h2>
+                        <p class="text-xs font-mono text-slate-500">${d.model}</p>
+                    </div>
+
+                    <p class="text-slate-700 text-sm font-sans leading-relaxed">${d.summary || ''}</p>
+
+                    <!-- SPECIFICATIONS -->
+                    <div class="bg-white rounded-2xl p-4 border border-slate-300 space-y-2">
+                        <h3 class="text-xs font-mono font-bold text-[#fca73f] uppercase">// HARDWARE SPECIFICATIONS</h3>
+                        ${specsHtml}
+                    </div>
+
+                    <!-- MARKDOWN LOG -->
+                    ${markdownHtml}
+                </div>
+            `;
+
+            // モーダルのオープン
+            const overlay = document.getElementById('device-modal-overlay');
+            const modal = document.getElementById('device-modal');
+            overlay.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('translate-x-full'), 10);
+        }
+
+        function closeDeviceModal() {
+            const overlay = document.getElementById('device-modal-overlay');
+            const modal = document.getElementById('device-modal');
+            modal.classList.add('translate-x-full');
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+        }
+    </script>
+</body>
+</html>

@@ -27,17 +27,17 @@
     {
       "id": "infra",
       "label": "Infra & Server",
-      "icon": "fa-server"
+      "icon": "./icons/server.svg"
     },
     {
-      "id": "gadget",
-      "label": "Gadgets & Mobile",
-      "icon": "fa-mobile-screen-button"
+      "id": "smartphone",
+      "label": "Smartphone & Mobile",
+      "icon": "./icons/android.svg"
     },
     {
-      "id": "motor",
+      "id": "motorcycle",
       "label": "Motorcycle",
-      "icon": "fa-motorcycle"
+      "icon": "./icons/motorcycle.svg"
     },
     {
       "id": "audio",
@@ -72,12 +72,12 @@
     },
     {
       "id": "p2",
-      "category": "gadget",
-      "title": "Surface Duo 2 & Custom AOSP",
-      "subtitle": "Dual-screen optimization & Fastboot Partition Management",
+      "category": "smartphone",
+      "title": "ねるるが所有したスマートフォンのカスタム・検証手帳",
+      "subtitle": "Smartphones for Custom OS / AOSP / Fastboot Partitioning",
       "status": "ACTIVE",
       "statusColor": "indigo",
-      "date": "2026.08",
+      "date": "2026.11",
       "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800&auto=format&fit=crop",
       "tags": [
         "Android",
@@ -85,12 +85,8 @@
         "AOSP",
         "Shizuku"
       ],
-      "description": "Surface Duo 2におけるカスタムROMおよびFastboot論理パーティションの調整。Shizukuを活用したパーミッション管理自動化。",
-      "specs": {
-        "Device": "Microsoft Surface Duo 2",
-        "Platform": "Snapdragon 888 5G",
-        "Tools": "ADB, Fastboot, Magisk, Shizuku"
-      },
+      "description": "スマートフォンを中心としたカスタムOS/AOSP検証、Fastbootによる論理パーティション管理、デュアルスクリーン最適化の手帳。",
+      "page": "./smartphone.html",
       "schematic": "+---------------------------------------+\n| Fastboot Interface                    |\n|   -> delete-logical-partition         |\n|   -> resize-logical-partition         |\n+---------------------------------------+"
     },
     {
