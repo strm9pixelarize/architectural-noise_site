@@ -1,0 +1,98 @@
+{
+  "sectionTitle": "GADGETS & RIGS // HARDWARE LOG",
+  "description": "サーバーインフラ、オーディオ機材、マイコン・電子工作ボード、自作PCパーツ等の仕様・検証ログ一覧",
+  "categories": [
+    { "id": "all", "label": "ALL GADGETS", "icon": "fa-solid fa-microchip" },
+    { "id": "hardware", "label": "COMPUTING & SERVERS", "icon": "fa-solid fa-server" },
+    { "id": "audio", "label": "AUDIO & DSP", "icon": "fa-solid fa-headphones" },
+    { "id": "mcu", "label": "MCU & ELECTRONICS", "icon": "fa-solid fa-bolt" },
+    { "id": "network", "label": "NETWORK & RIGS", "icon": "fa-solid fa-network-wired" }
+  ],
+  "items": [
+    {
+      "id": "optiplex-3060-micro",
+      "name": "Dell OptiPlex 3060 Micro",
+      "model": "D09U",
+      "category": "hardware",
+      "status": "MAIN HOME SERVER",
+      "statusColor": "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
+      "image": "./heroImage/devices/optiplex3060.jpg",
+      "summary": "Ubuntu Server 26.04 LTS が稼働するメインホームサーバー。Dockerスタックや各種セルフホストサービスを運用中。",
+      "article": "/articles/gadget/optiplex-3060.md",
+      "tags": ["Ubuntu Server", "Docker", "HomeServer"],
+      "specs": {
+        "CPU": {
+          "summary": "Intel Core i3-8100 (4C/4T)",
+          "details": {
+            "Cores / Threads": "4 Cores / 4 Threads",
+            "Base Clock": "3.60 GHz",
+            "Cache": "6 MB Smart Cache",
+            "TDP": "65W"
+          }
+        },
+        "RAM / Storage": {
+          "summary": "32GB DDR4 / 500GB NVMe SSD",
+          "details": {
+            "RAM Capacity": "32GB (16GB x2 SODIMM DDR4-2666)",
+            "Storage": "500GB NVMe M.2 SSD",
+            "Graphics": "Intel UHD Graphics 630"
+          }
+        },
+        "OS Environment": "Ubuntu Server 26.04.1 LTS (Linux 6.8.x)"
+      }
+    },
+    {
+      "id": "yamaha-rtx1300",
+      "name": "Yamaha RTX1300",
+      "model": "RTX1300",
+      "category": "network",
+      "status": "CORE ROUTER",
+      "statusColor": "bg-[#fca73f]/10 border-[#fca73f]/30 text-[#fca73f]",
+      "image": "./heroImage/devices/rtx1300.jpg",
+      "summary": "拠点間VPNおよびVLAN/10Gネットワークを制御するコアギガアクセスVPNルーター。",
+      "article": "/articles/gadget/yamaha-rtx1300.md",
+      "tags": ["Yamaha", "VPN", "10G Network"],
+      "specs": {
+        "Interfaces": {
+          "summary": "10G SFP+ Dual Ports + 1G LAN/WAN",
+          "details": {
+            "10G Ports": "SFP+ x2 (10GBASE-R / 1000BASE-SX/LX)",
+            "1G Ports": "RJ-45 8-port LAN / 2-port WAN"
+          }
+        },
+        "Features": "L2TP/IPsec, IPsec VPN, Tailscale Bridge, VLAN Routing"
+      }
+    },
+    {
+      "id": "arduino-mega-tft",
+      "name": "Arduino Mega 2560 + 2.8\" TFT Shield",
+      "model": "ATmega2560",
+      "category": "mcu",
+      "status": "PROTOTYPE / LAB",
+      "statusColor": "bg-sky-500/10 border-sky-500/30 text-sky-400",
+      "image": "./heroImage/devices/arduino_mega.jpg",
+      "summary": "カスタムハードウェア制御およびセンサー・シリアルテレメトリ表示用のプロトタイピングマイコン構成。",
+      "article": "/articles/gadget/arduino-tft-lab.md",
+      "tags": ["Arduino", "TFT LCD", "Embedded", "SPI"],
+      "specs": {
+        "MCU": {
+          "summary": "ATmega2560 (16MHz, 8-bit AVR)",
+          "details": {
+            "Clock Speed": "16 MHz",
+            "Flash Memory": "256 KB (8 KB used by bootloader)",
+            "SRAM": "8 KB",
+            "EEPROM": "4 KB"
+          }
+        },
+        "Display Shield": {
+          "summary": "2.8 inch TFT LCD Shield (320x240)",
+          "details": {
+            "Controller": "ILI9341 (SPI / 8-bit parallel)",
+            "Touch Screen": "Resistive Touch",
+            "SD Slot": "MicroSD Card Slot onboard"
+          }
+        }
+      }
+    }
+  ]
+}

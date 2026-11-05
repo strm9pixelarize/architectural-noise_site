@@ -37,8 +37,8 @@
     "pageSize": 4096
   },
   "uptime": {
-    "uptime": 6600,
-    "bootTime": "2026-11-05T11:53:38.654+0900"
+    "uptime": 6060,
+    "bootTime": "2026-11-05T17:18:38.955+0900"
   },
   "packages": {
     "all": 1147,
@@ -87,7 +87,7 @@
     "exe": "/DATA/AppData/architectural-noise/html/generate_info.py",
     "exeName": "generate_info.py",
     "exePath": "/usr/bin/python3.14",
-    "pid": 1190,
+    "pid": 1223,
     "ppid": 1,
     "processName": "python3",
     "prettyName": "generate_info.py",
@@ -159,7 +159,7 @@
   ],
   "memory": {
     "total": 32929144832,
-    "used": 865828864
+    "used": 814743552
   },
   "swap": [
     {
@@ -171,14 +171,14 @@
   "disk": [
     {
       "bytes": {
-        "available": 274926419968,
-        "free": 296391294976,
+        "available": 279981682688,
+        "free": 301446557696,
         "total": 500235124736,
-        "used": 203843829760
+        "used": 198788567040
       },
       "files": {
         "total": 31064064,
-        "used": 1882024
+        "used": 1827591
       },
       "filesystem": "ext4",
       "mountpoint": "/",
@@ -196,5 +196,5 @@
   "locale": "en_US.UTF-8",
   "break": null,
   "colors": null,
-  "updatedAt": "2026-11-05 11:53:45"
+  "updatedAt": "2026-11-05 17:18:45"
 }

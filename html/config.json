@@ -25,7 +25,7 @@
       "icon": "./icons/home.svg"
     },
     {
-      "id": "infra",
+      "id": "infrastructure",
       "label": "Infra & Server",
       "icon": "./icons/server.svg"
     },
@@ -35,20 +35,20 @@
       "icon": "./icons/android.svg"
     },
     {
+      "id": "gadget",
+      "label": "Gadget & Electronics",
+      "icon": "fa-sliders"
+    },
+    {
       "id": "motorcycle",
       "label": "Motorcycle",
       "icon": "./icons/motorcycle.svg"
-    },
-    {
-      "id": "audio",
-      "label": "Audio & Sound",
-      "icon": "fa-sliders"
     }
   ],
   "projects": [
     {
-      "id": "p1",
-      "category": "infra",
+      "id": "infrastructure",
+      "category": "infrastructure",
       "title": "Home Server Infrastructure",
       "subtitle": "Portainer, Nginx Proxy Manager, Cloudflare Tunnels",
       "status": "VERIFIED",
@@ -71,7 +71,7 @@
       "schematic": "+---------------------------------------+\n| Internet -> Cloudflare Tunnel         |\n|   -> Yamaha RTX1300 (Subnet Router)   |\n|     -> Ubuntu Server (Portainer Node) |\n+---------------------------------------+"
     },
     {
-      "id": "p2",
+      "id": "smartphone",
       "category": "smartphone",
       "title": "ねるるが所有したスマートフォンのカスタム・検証手帳",
       "subtitle": "Smartphones for Custom OS / AOSP / Fastboot Partitioning",
@@ -90,7 +90,27 @@
       "schematic": "+---------------------------------------+\n| Fastboot Interface                    |\n|   -> delete-logical-partition         |\n|   -> resize-logical-partition         |\n+---------------------------------------+"
     },
     {
-      "id": "p3",
+      "id": "gadget",
+      "category": "gadget",
+      "title": "ねるるが所有しているガジェット達",
+      "subtitle": "Gadget",
+      "status": "ACTIVE",
+      "statusColor": "indigo",
+      "date": "2026.11",
+      "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800&auto=format&fit=crop",
+      "tags": [
+        "Headphones",
+        "Earphones",
+        "Microphone",
+        "Personal Computer",
+        "Smartwatch"
+      ],
+      "description": "サーバーやガジェット、ネットワーク機器など、ねるるが所有しているハードウェアの手帳。",
+      "page": "./gadget.html",
+      "schematic": "+---------------------------------------+\n| Fastboot Interface                    |\n|   -> delete-logical-partition         |\n|   -> resize-logical-partition         |\n+---------------------------------------+"
+    },
+    {
+      "id": "motorcycle",
       "category": "motorcycle",
       "title": "ねるるの所有したバイクの整備・旅行手帳",
       "subtitle": "Component adaptation & Custom Mechanical Rigging",
@@ -106,29 +126,6 @@
       "description": "過去から未来へ、今までのバイクとこれからのバイクについてのページです。",
       "page": "./motorcycle.html",
       "schematic": ""
-    },
-    {
-      "id": "p4",
-      "category": "audio",
-      "title": "AI & Lo-Fi Sound Architecture",
-      "subtitle": "ACE-Step 1.5, Suno AI, Web Audio Synthesizer",
-      "status": "DEPLOYED",
-      "statusColor": "emerald",
-      "date": "2026.09",
-      "image": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=800&auto=format&fit=crop",
-      "tags": [
-        "SunoAI",
-        "Lo-Fi",
-        "WebAudio",
-        "DSP"
-      ],
-      "description": "ACE-Step 1.5やSuno AIを活用したアンビエント/Techno-Pop楽曲生成プロセスとWeb Audio API音源化。",
-      "specs": {
-        "Tools": "ACE-Step 1.5, Suno AI",
-        "Genre": "Lo-Fi Piano, Techno-Pop",
-        "Web Output": "Web Audio API Oscillator"
-      },
-      "schematic": "+---------------------------------------+\n| Music Prompt -> AI Generation Engine  |\n|   -> Post-Processing / Mastering     |\n|     -> Web Audio DSP Player           |\n+---------------------------------------+"
     }
   ]
 }

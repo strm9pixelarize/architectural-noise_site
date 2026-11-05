@@ -51,3 +51,36 @@ html, body {
     0% { transform: translateX(0%); }
     100% { transform: translateX(-100%); }
 }
+
+/* アニメーションハンバーガーボタン (通信0) */
+#menu-btn.active .hamburger-line:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+#menu-btn.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-8px);
+}
+
+#menu-btn.active .hamburger-line:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* ==========================================================================
+   自前アイコンシステム（CSS Mask 方式 / HTTPリクエスト完全0）
+   ========================================================================== */
+
+/* 自前アイコン共通ベース設定 */
+.my-icon {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor; /* Tailwindの text-brand や text-slate-400 などが連動 */
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-position: center;
+    mask-position: center;
+    vertical-align: -0.125em;
+}

@@ -1,0 +1,53 @@
+/* サイト全体の背景を暖かいベージュに設定 */
+html, body {
+    background-color: #f7f4eb !important; /* 温かみのあるナチュラルベージュ */
+    color: #1e293b; /* 文字色をダークカラーにして視認性を確保 */
+}
+
+.bg-grid-pattern {
+    background-size: 32px 32px;
+    background-image: 
+        linear-gradient(to right, rgba(226, 232, 240, 0.6) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(226, 232, 240, 0.6) 1px, transparent 1px);
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.glass-card:hover {
+    border-color: rgba(148, 163, 184, 0.6);
+    box-shadow: 0 12px 24px -10px rgba(15, 23, 42, 0.08);
+}
+
+.hero-slide {
+    transition: opacity 1000ms ease-in-out;
+}
+
+/* 自動スクロール（マーキー）設定 */
+.marquee-container {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.marquee-text {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.animate-marquee {
+    padding-left: 100%;
+    animation: marquee 12s linear infinite;
+}
+
+.animate-marquee:hover {
+    animation-play-state: paused;
+}
+
+@keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-100%); }
+}

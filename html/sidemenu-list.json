@@ -43,7 +43,7 @@
     },
     {
       "id": "nextcloud",
-      "label": "NextCloud - 休止中",
+      "label": "NextCloud",
       "description": "ねるる鯖で動いているねくすとくらうど鯖",
       "icon": "/icons/nextcloud.svg",
       "url": "https://cloud.architectural-n.net",
