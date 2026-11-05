@@ -4,29 +4,108 @@
   "categories": [
     { "id": "all", "label": "ALL DEVICES", "icon": "fa-solid fa-mobile-screen-button" },
     { "id": "active", "label": "MAIN & DAILY", "icon": "fa-solid fa-star" },
-    { "id": "lab", "label": "AOSP / LAB", "icon": "fa-solid fa-[#fca73f]sk" },
+    { "id": "lab", "label": "AOSP / LAB", "icon": "fa-solid fa-flask" },
     { "id": "archive", "label": "ARCHIVE", "icon": "fa-solid fa-box-archive" }
   ],
   "devices": [
     {
-      "id": "nothing-phone-3",
+      "id": "nothing-a024",
       "name": "Nothing Phone (3)",
-      "model": "A065",
+      "model": "A024",
       "category": "active",
       "status": "DAILY DRIVER",
       "statusColor": "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
-      "image": "./heroImage/devices/nothing_phone3.jpg",
-      "os": "Nothing OS 3.0 (Android 15)",
-      "soc": "Snapdragon 8s Gen 3",
+      "image": "./heroImage/devices/nothing-phone-3.jpg",
+      "os": "Nothing OS 5.0 (Android 17)",
+      "soc": "Snapdragon 8s Gen 4",
       "ramRom": "12GB / 256GB",
-      "tags": ["Daily Use", "Glyph Interface", "Shizuku"],
-      "summary": "メイン運用端末。Shizuku経由でシステムチューニングとアドブロック・自動化を設定済み。",
+      "tags": ["Daily Use", "Glyph Interface"],
+      "summary": "メイン運用端末。Nothing Phone特有のGlyph Interfaceを活用した通知・操作が可能。",
       "article": "/articles/smartphone/nothing-phone-3.md",
       "specs": {
-        "SoC": "Qualcomm Snapdragon 8s Gen 3",
-        "Display": "6.7\" Flexible AMOLED (1-120Hz LTPO)",
+        "SoC": {
+          "summary": "Qualcomm Snapdragon 8s Gen 4",
+          "details": {
+            "Process": "4nm TSMC",
+            "CPU Cluster": "Cortex-X4 @ 3.2GHz*1 / Cortex-A720 @ 3.0GHz*3 / Cortex-A720 @ 2.8GHz*2 / Cortex-A720 @ 2.0GHz*2",
+            "GPU": "Adreno 825 GPU",
+            "NPU": "Qualcomm Hexagon NPU"
+          }
+        },
+        "RAM / ROM": {
+          "summary": "12GB LPDDR5X / 256GB UFS 4.0",
+          "details": {
+            "RAM Standard": "LPDDR5X",
+            "Storage Standard": "UFS 4.0",
+            "Expansion": "No SD Card Support"
+          }
+        },
+        "Display": {
+          "summary": "6.67\" Flexible OLED (1-120Hz LTPO)",
+          "details": {
+            "Resolution": "FHD+ Flexible OLED",
+            "Refresh Rate": "1-120Hz LTPO Adaptive",
+            "Touch Sampling": "Up to 240Hz / 480Hz",
+            "Features": "Glyph Matrix LED Integration"
+          }
+        },
+        "Camera": {
+          "summary": "Rear Triple 50MP + Front 50MP Camera System",
+          "details": {
+            "Main Camera": "50 MP, f/1.7, 24mm (wide), 1/1.3\", PDAF, OIS",
+            "Telephoto Camera": "50 MP, f/2.7, (periscope telephoto), 1/2.75\", PDAF, 3x optical zoom. OIS",
+            "Ultrawide Camera": "50 MP, f/2.2, 114˚ (ultrawide), 1/2.76\"",
+            "Features": "LED flash, panorama, HDR",
+            "Video": "4K@30/60fps, 1080p@30/60fps, gyro-EIS, OIS",
+            "Selfie Camera": "50 MP, f/2.2, (wide), 1/2.76\", HDR, 4K@60fps, 1080p@60fps"
+          }
+        },
         "Bootloader": "Locked (Stock)",
-        "Root / Framework": "Non-Root / Shizuku Active"
+        "Root / Framework": "Non-Root"
+      }
+    },
+    {
+      "id": "surface-duo-2",
+      "name": "Surface Duo 2",
+      "model": "zeta",
+      "category": "active",
+      "status": "DAILY DRIVER",
+      "statusColor": "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
+      "image": "./heroImage/devices/surface-duo-2.jpg",
+      "os": "Android 12L",
+      "soc": "Snapdragon 888 5G",
+      "ramRom": "8GB / 256GB",
+      "tags": ["Daily Use", "Foldable Phone"],
+      "summary": "サブ運用端末。Foldable Phoneとしての機能を活用したマルチタスク処理が可能。",
+      "article": "/articles/smartphone/surface-duo-2.md",
+      "specs": {
+        "SoC": {
+          "summary": "Qualcomm Snapdragon 888 5G",
+          "details": {
+            "Process": "5nm Samsung",
+            "CPU": "1x 2.84GHz Kryo 680 + 3x 2.42GHz Kryo 680 + 4x 1.80GHz Kryo 680",
+            "GPU": "Adreno 660",
+            "Modem": "Snapdragon X60 5G Modem-RF System"
+          }
+        },
+        "Display": {
+          "summary": "8.3\" AMOLED 90Hz (Folded: 5.8\")",
+          "details": {
+            "Dual Display": "Dual 5.8\" PixelSense Fusion Displays (1344x1892)",
+            "Expanded Display": "8.3\" PixelSense Fusion Display (2688x1892)",
+            "Glass": "Corning Gorilla Glass Victus",
+            "Stylus": "Surface Slim Pen 2 Support"
+          }
+        },
+        "RAM / ROM": {
+          "summary": "8GB LPDDR5 / 256GB UFS 3.1",
+          "details": {
+            "RAM Standard": "LPDDR5",
+            "Storage Standard": "UFS 3.1"
+          }
+        },
+        "Bootloader": "Locked (Stock)",
+        "Root / Framework": "Non-Root"
       }
     },
     {
@@ -44,10 +123,30 @@
       "summary": "Fastbootでの論理パーティションサイズ再構築とカスタムAOSPのビルド検証機。",
       "article": "/articles/smartphone/pixel-3-aosp.md",
       "specs": {
-        "SoC": "Qualcomm Snapdragon 845",
-        "Partition": "Dynamic Partitions (Resized)",
+        "SoC": {
+          "summary": "Qualcomm Snapdragon 845",
+          "details": {
+            "Process": "10nm LPP",
+            "CPU": "4x 2.8GHz Kryo 385 Gold + 4x 1.7GHz Kryo 385 Silver",
+            "GPU": "Adreno 630"
+          }
+        },
+        "Partition Scheme": {
+          "summary": "Dynamic Partitions (Resized)",
+          "details": {
+            "Layout": "Retrofit Dynamic Partitions (a/b slot)",
+            "System Size": "Resized for Android 14 Treble GSI / Custom AOSP",
+            "Fastboot Command": "fastboot resize-logical-partition"
+          }
+        },
         "Bootloader": "Unlocked",
-        "Root": "Magisk v27.0"
+        "Root / Environment": {
+          "summary": "Magisk v27.0",
+          "details": {
+            "Framework": "Magisk v27.0 + Zygisk Active",
+            "Modules": "Shizuku, Play Integrity Fix, Custom Thermal Config"
+          }
+        }
       }
     }
   ]

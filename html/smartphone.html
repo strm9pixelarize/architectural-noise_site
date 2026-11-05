@@ -232,12 +232,48 @@
             const content = document.getElementById('modal-device-content');
             
             // 基本スペックの表示テンプレート
-            let specsHtml = Object.entries(d.specs || {}).map(([k, v]) => `
-                <div class="flex justify-between py-1 border-b border-slate-300/60 text-xs font-mono">
-                    <span class="text-slate-500">${k}:</span>
-                    <span class="text-slate-900 font-bold">${v}</span>
-                </div>
-            `).join('');
+            // SPECIFICATIONS の動的レンダリング（アコーディオン対応）
+            let specsHtml = Object.entries(d.specs || {}).map(([k, v], idx) => {
+                // 文字列の場合：従来のシンプル表示
+                if (typeof v === 'string') {
+                    return `
+                        <div class="flex justify-between py-2 border-b border-slate-200 text-xs font-mono">
+                            <span class="text-slate-500">${k}:</span>
+                            <span class="text-slate-900 font-bold">${v}</span>
+                        </div>
+                    `;
+                }
+
+                // オブジェクトの場合：クリックで展開するアコーディオン表示
+                if (typeof v === 'object' && v !== null) {
+                    const detailId = `spec-detail-${idx}`;
+                    const detailsList = Object.entries(v.details || {}).map(([subK, subV]) => `
+                        <div class="flex flex-col sm:flex-row sm:justify-between py-1 text-[11px] font-mono text-slate-600 border-b border-slate-100 last:border-none gap-0.5 sm:gap-2">
+                            <span class="text-slate-400 font-medium">• ${subK}:</span>
+                            <span class="text-slate-800 font-semibold text-right">${subV}</span>
+                        </div>
+                    `).join('');
+
+                    return `
+                        <div class="border-b border-slate-200 py-1.5 font-mono text-xs">
+                            <button onclick="toggleSpecDetail('${detailId}')" class="w-full flex items-center justify-between hover:bg-slate-50 p-1.5 rounded-lg transition text-left group">
+                                <div class="flex items-center gap-2 min-w-0 pr-2">
+                                    <i id="${detailId}-icon" class="fa-solid fa-chevron-right text-[10px] text-[#fca73f] transition-transform duration-200 flex-shrink-0"></i>
+                                    <span class="text-slate-500 flex-shrink-0">${k}:</span>
+                                    <span class="text-slate-900 font-bold truncate">${v.summary || ''}</span>
+                                </div>
+                                <span class="text-[10px] font-bold text-[#fca73f] group-hover:underline flex-shrink-0">DETAILS</span>
+                            </button>
+
+                            <!-- アコーディオン展開エリア -->
+                            <div id="${detailId}" class="hidden pl-6 pr-2 py-2 mt-1 bg-slate-50 rounded-xl space-y-0.5 border border-slate-200/80">
+                                ${detailsList}
+                            </div>
+                        </div>
+                    `;
+                }
+                return '';
+            }).join('');
 
             // Markdown 記事の取得処理
             let markdownHtml = '';
@@ -246,14 +282,25 @@
                     const res = await fetch(d.article);
                     if (res.ok) {
                         const mdText = await res.text();
-                        markdownHtml = `
-                            <div class="pt-4 border-t border-slate-300">
-                                <h3 class="text-xs font-mono font-bold text-[#fca73f] uppercase mb-3">// DETAILED LOG & BENCHMARK</h3>
-                                <article class="prose prose-slate max-w-none text-xs font-sans leading-relaxed bg-white p-4 rounded-xl border border-slate-300">
-                                    ${marked.parse(mdText)}
-                                </article>
-                            </div>
-                        `;
+                        
+                        // ★ HTML（404フォールバック等）が返ってきた場合は描画しないガード処理
+                        if (mdText.trim().startsWith('<') || mdText.includes('<!DOCTYPE')) {
+                            console.warn(`[Markdown Warning] ${d.article} が存在しないか、HTMLが返されました。`);
+                            markdownHtml = `
+                                <div class="pt-4 border-t border-slate-300">
+                                    <p class="text-xs font-mono text-slate-400 font-bold">// NO DETAILED LOG YET (${d.article})</p>
+                                </div>
+                            `;
+                        } else {
+                            markdownHtml = `
+                                <div class="pt-4 border-t border-slate-300">
+                                    <h3 class="text-xs font-mono font-bold text-[#fca73f] uppercase mb-3">// DETAILED LOG & BENCHMARK</h3>
+                                    <article class="prose prose-slate max-w-none text-xs font-sans leading-relaxed bg-white p-4 rounded-xl border border-slate-300">
+                                        ${marked.parse(mdText)}
+                                    </article>
+                                </div>
+                            `;
+                        }
                     }
                 } catch (e) {
                     console.warn('[Markdown Fetch Error]', e);
@@ -297,6 +344,18 @@
             const modal = document.getElementById('device-modal');
             modal.classList.add('translate-x-full');
             setTimeout(() => overlay.classList.add('hidden'), 300);
+        }
+
+        // スペック詳細のアコーディオン開閉トグル
+        function toggleSpecDetail(detailId) {
+            const detailEl = document.getElementById(detailId);
+            const iconEl = document.getElementById(`${detailId}-icon`);
+            if (!detailEl) return;
+
+            detailEl.classList.toggle('hidden');
+            if (iconEl) {
+                iconEl.classList.toggle('rotate-90');
+            }
         }
     </script>
 </body>
