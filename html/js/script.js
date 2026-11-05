@@ -14,7 +14,7 @@ let radioIntervalId = null;
  * SVGスプライト（/icons/sprites.svg#id）を参照するアイコン描画関数
  * 巨大なインラインSVG辞書を撤廃し、スプライト参照用 <use> タグを出力
  */
-function renderIcon(iconStr, defaultClass = 'w-3.5 h-3.5 fill-current inline-block flex-shrink-0') {
+function renderIcon(iconStr, defaultClass = 'w-6 h-6 fill-current inline-block flex-shrink-0') {
     if (!iconStr) return '';
 
     // png, jpg, webp などの画像ファイル指定の場合は img タグを返す
@@ -182,7 +182,7 @@ function renderSidemenuList() {
     if (Array.isArray(configSidemenuList.items)) {
         html += configSidemenuList.items.map(item => {
             const isExternal = item.target === '_blank';
-            const rotateClass = isExternal ? '-rotate-45' : '';
+            const rotateClass = '';
             const targetAttr = isExternal ? 'target="_blank" rel="noopener noreferrer"' : '';
 
             return `
@@ -405,8 +405,10 @@ async function openInspector(id) {
             ${p.page ? `
                 <div class="pt-2 border-t border-slate-100">
                     <a href="${p.page}" class="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-[#fca73f] hover:bg-[#e09230] text-slate-950 font-mono text-xs font-bold transition shadow-lg shadow-[#fca73f]/20 group">
-                        <span>OPEN DEDICATED PAGE</span>
-                        <span class="text-[10px] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
+                        <span>別ページに行きます</span>
+                        <span class="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform flex items-center justify-center">
+                            ${renderIcon('up-right-inbox')}
+                        </span>
                     </a>
                 </div>
             ` : ''}
