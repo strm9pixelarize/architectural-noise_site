@@ -19,45 +19,72 @@
       "os": "Nothing OS 5.0 (Android 17)",
       "soc": "Snapdragon 8s Gen 4",
       "ramRom": "12GB / 256GB",
-      "tags": ["Daily Use", "Glyph Interface"],
-      "summary": "メイン運用端末。Nothing Phone特有のGlyph Interfaceを活用した通知・操作が可能。",
+      "tags": ["Daily Use", "Glyph Interface", "5G"],
+      "summary": "メイン運用端末。背面モノクロLED（489 LEDs）によるGlyph Interfaceを活用した通知・タイマー表示が可能。",
       "article": "/articles/smartphone/nothing-phone-3.md",
       "specs": {
         "SoC": {
-          "summary": "Qualcomm Snapdragon 8s Gen 4",
+          "summary": "Qualcomm SM8735 Snapdragon 8s Gen 4 (4 nm)",
           "details": {
-            "Process": "4nm TSMC",
-            "CPU Cluster": "Cortex-X4 @ 3.2GHz*1 / Cortex-A720 @ 3.0GHz*3 / Cortex-A720 @ 2.8GHz*2 / Cortex-A720 @ 2.0GHz*2",
-            "GPU": "Adreno 825 GPU",
-            "NPU": "Qualcomm Hexagon NPU"
+            "Process": "4 nm",
+            "CPU Cluster": "Octa-core (1x3.21 GHz Cortex-X4 & 3x3.0 GHz Cortex-A720 & 2x2.8 GHz Cortex-A720 & 2x2.0 GHz Cortex-A720)",
+            "GPU": "Adreno 825"
           }
         },
         "RAM / ROM": {
-          "summary": "12GB LPDDR5X / 256GB UFS 4.0",
+          "summary": "12GB / 256GB (UFS 4.0)",
           "details": {
-            "RAM Standard": "LPDDR5X",
+            "Options": "256GB 12GB RAM / 512GB 16GB RAM",
             "Storage Standard": "UFS 4.0",
             "Expansion": "No SD Card Support"
           }
         },
         "Display": {
-          "summary": "6.67\" Flexible OLED (1-120Hz LTPO)",
+          "summary": "6.67\" OLED (1260 x 2800 pixels / 120Hz)",
           "details": {
-            "Resolution": "FHD+ Flexible OLED",
-            "Refresh Rate": "1-120Hz LTPO Adaptive",
-            "Touch Sampling": "Up to 240Hz / 480Hz",
-            "Features": "Glyph Matrix LED Integration"
+            "Type": "OLED, 1B colors, 120Hz, 960Hz PWM, HDR10+, 4500 nits (peak)",
+            "Size": "6.67 inches (~88.5% screen-to-body ratio)",
+            "Resolution": "1260 x 2800 pixels, 20:9 ratio (~460 ppi density)",
+            "Protection": "Corning Gorilla Glass 7i"
           }
         },
         "Camera": {
           "summary": "Rear Triple 50MP + Front 50MP Camera System",
           "details": {
             "Main Camera": "50 MP, f/1.7, 24mm (wide), 1/1.3\", PDAF, OIS",
-            "Telephoto Camera": "50 MP, f/2.7, (periscope telephoto), 1/2.75\", PDAF, 3x optical zoom. OIS",
+            "Telephoto Camera": "50 MP, f/2.7 (periscope telephoto), 1/2.75\", PDAF, 3x optical zoom, OIS",
             "Ultrawide Camera": "50 MP, f/2.2, 114˚ (ultrawide), 1/2.76\"",
-            "Features": "LED flash, panorama, HDR",
-            "Video": "4K@30/60fps, 1080p@30/60fps, gyro-EIS, OIS",
-            "Selfie Camera": "50 MP, f/2.2, (wide), 1/2.76\", HDR, 4K@60fps, 1080p@60fps"
+            "Main Video": "4K@30/60fps, 1080p@30/60fps, gyro-EIS, OIS",
+            "Selfie Camera": "50 MP, f/2.2 (wide), 1/2.76\", HDR, Video 4K@60fps, 1080p@60fps"
+          }
+        },
+        "Battery & Charging": {
+          "summary": "Si/C 5150 mAh / 65W Wired / 15W Wireless",
+          "details": {
+            "Capacity": "Si/C 5150 mAh (International) / 5500 mAh (India)",
+            "Charging": "65W wired (PD3.0, PPS, QC4), 15W wireless, 7.5W reverse wired, 5W reverse wireless"
+          }
+        },
+        "Body & Build": {
+          "summary": "Glass Front/Back, Aluminum Frame (IP68)",
+          "details": {
+            "Dimensions": "160.6 x 75.6 x 9 mm",
+            "Weight": "218 g",
+            "Build Glass": "Front: Gorilla Glass 7i / Back: Gorilla Glass Victus",
+            "IP Rating": "IP68 dust tight and water resistant (up to 1.5m for 30 min)",
+            "SIM": "Nano-SIM + Nano-SIM + eSIM (max 2 at a time)",
+            "Glyph Interface": "Monochrome LED display on the back (489 LEDs)"
+          }
+        },
+        "Connectivity & Sensors": {
+          "summary": "Wi-Fi 7, Bluetooth 6.0, Under-display Fingerprint",
+          "details": {
+            "WLAN": "Wi-Fi 802.11 a/b/g/n/ac/6/7, tri-band, Wi-Fi Direct",
+            "Bluetooth": "6.0, A2DP, LE",
+            "Positioning": "GPS (L1+L5), GLONASS, BDS, GALILEO, QZSS, NavIC, SBAS",
+            "NFC": "Yes",
+            "USB": "USB Type-C 2.0, OTG",
+            "Sensors": "Fingerprint (under display, optical), accelerometer, proximity, gyro, compass"
           }
         },
         "Bootloader": "Locked (Stock)",
@@ -72,81 +99,78 @@
       "status": "DAILY DRIVER",
       "statusColor": "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
       "image": "./heroImage/devices/surface-duo-2.jpg",
-      "os": "Android 12L",
+      "os": "Android 11",
       "soc": "Snapdragon 888 5G",
       "ramRom": "8GB / 256GB",
-      "tags": ["Daily Use", "Foldable Phone"],
-      "summary": "サブ運用端末。Foldable Phoneとしての機能を活用したマルチタスク処理が可能。",
+      "tags": ["Daily Use", "Foldable Phone", "Dual Display"],
+      "summary": "サブ運用端末。デュアルAMOLEDディスプレイを活用したマルチタスク処理が可能。",
       "article": "/articles/smartphone/surface-duo-2.md",
       "specs": {
         "SoC": {
-          "summary": "Qualcomm Snapdragon 888 5G",
+          "summary": "Qualcomm SM8350 Snapdragon 888 5G (5 nm)",
           "details": {
-            "Process": "5nm Samsung",
-            "CPU": "1x 2.84GHz Kryo 680 + 3x 2.42GHz Kryo 680 + 4x 1.80GHz Kryo 680",
-            "GPU": "Adreno 660",
-            "Modem": "Snapdragon X60 5G Modem-RF System"
-          }
-        },
-        "Display": {
-          "summary": "8.3\" AMOLED 90Hz (Folded: 5.8\")",
-          "details": {
-            "Dual Display": "Dual 5.8\" PixelSense Fusion Displays (1344x1892)",
-            "Expanded Display": "8.3\" PixelSense Fusion Display (2688x1892)",
-            "Glass": "Corning Gorilla Glass Victus",
-            "Stylus": "Surface Slim Pen 2 Support"
+            "Process": "5 nm",
+            "CPU Cluster": "Octa-core (1x2.84 GHz Cortex-X1 & 3x2.42 GHz Cortex-A78 & 4x1.80 GHz Cortex-A55)",
+            "GPU": "Adreno 660"
           }
         },
         "RAM / ROM": {
-          "summary": "8GB LPDDR5 / 256GB UFS 3.1",
+          "summary": "8GB LPDDR5 / 256GB UFS",
           "details": {
-            "RAM Standard": "LPDDR5",
-            "Storage Standard": "UFS 3.1"
+            "Options": "128GB 8GB RAM / 256GB 8GB RAM / 512GB 8GB RAM",
+            "Storage Standard": "UFS",
+            "Expansion": "No SD Card Support"
+          }
+        },
+        "Display": {
+          "summary": "8.3\" Dual AMOLED 90Hz (Folded: 5.8\")",
+          "details": {
+            "Open Display": "8.3 inches AMOLED (1892 x 2688 pixels), 90Hz, HDR, 800 nits (peak)",
+            "Folded Display": "5.8 inches AMOLED (1344 x 1892 pixels, 4:3)",
+            "Protection": "Corning Gorilla Glass Victus",
+            "Features": "Stylus support (Surface Slim Pen 2)"
+          }
+        },
+        "Camera": {
+          "summary": "Rear Triple 12MP+12MP+16MP + Front 12MP Camera System",
+          "details": {
+            "Main Camera": "12 MP, f/1.7, 27mm (wide), 1.4µm, dual pixel PDAF, OIS",
+            "Telephoto Camera": "12 MP, f/2.4, 51mm (telephoto), 1.0µm, PDAF, OIS, 2x optical zoom",
+            "Ultrawide Camera": "16 MP, f/2.2, 13mm (ultrawide), 1.0µm",
+            "Depth Sensor": "TOF 3D (depth)",
+            "Main Video": "4K@30/60fps, 1080p@30/60/120/240fps, gyro-EIS, HDR",
+            "Selfie Camera": "12 MP, f/2.0, 24mm (wide), 1.0µm, Video 1080p@30fps"
+          }
+        },
+        "Battery & Charging": {
+          "summary": "Li-Po 4449 mAh / 23W Wired",
+          "details": {
+            "Capacity": "4449 mAh",
+            "Charging": "23W wired"
+          }
+        },
+        "Body & Build": {
+          "summary": "Glass Front/Back (Gorilla Glass Victus / Glass)",
+          "details": {
+            "Dimensions": "Unfolded: 184.5 x 145.2 x 5.5 mm / Folded: 145.2 x 92.1 x 11 mm",
+            "Weight": "284 g",
+            "Build Glass": "Front: Gorilla Glass Victus / Back: Gorilla Glass",
+            "SIM": "Nano-SIM + eSIM"
+          }
+        },
+        "Connectivity & Sensors": {
+          "summary": "Wi-Fi 6, Bluetooth 5.1, Side-mounted Fingerprint",
+          "details": {
+            "WLAN": "Wi-Fi 802.11 a/b/g/n/ac/6, dual-band, Wi-Fi Direct",
+            "Bluetooth": "5.1, A2DP, LE, aptX Adaptive",
+            "Positioning": "GPS, GLONASS, GALILEO, QZSS, BDS",
+            "NFC": "Yes",
+            "USB": "USB Type-C 3.2, DisplayPort",
+            "Sensors": "Fingerprint (side-mounted), dual accelerometer, dual gyro, dual proximity, dual compass"
           }
         },
         "Bootloader": "Locked (Stock)",
         "Root / Framework": "Non-Root"
-      }
-    },
-    {
-      "id": "pixel-3-custom",
-      "name": "Google Pixel 3",
-      "model": "G013A",
-      "category": "lab",
-      "status": "AOSP / LAB",
-      "statusColor": "bg-[#fca73f]/10 border-[#fca73f]/30 text-[#fca73f]",
-      "image": "./heroImage/devices/pixel3.jpg",
-      "os": "Custom AOSP (Android 14)",
-      "soc": "Snapdragon 845",
-      "ramRom": "4GB / 64GB",
-      "tags": ["Custom ROM", "Fastboot", "Logical Partitions", "Magisk"],
-      "summary": "Fastbootでの論理パーティションサイズ再構築とカスタムAOSPのビルド検証機。",
-      "article": "/articles/smartphone/pixel-3-aosp.md",
-      "specs": {
-        "SoC": {
-          "summary": "Qualcomm Snapdragon 845",
-          "details": {
-            "Process": "10nm LPP",
-            "CPU": "4x 2.8GHz Kryo 385 Gold + 4x 1.7GHz Kryo 385 Silver",
-            "GPU": "Adreno 630"
-          }
-        },
-        "Partition Scheme": {
-          "summary": "Dynamic Partitions (Resized)",
-          "details": {
-            "Layout": "Retrofit Dynamic Partitions (a/b slot)",
-            "System Size": "Resized for Android 14 Treble GSI / Custom AOSP",
-            "Fastboot Command": "fastboot resize-logical-partition"
-          }
-        },
-        "Bootloader": "Unlocked",
-        "Root / Environment": {
-          "summary": "Magisk v27.0",
-          "details": {
-            "Framework": "Magisk v27.0 + Zygisk Active",
-            "Modules": "Shizuku, Play Integrity Fix, Custom Thermal Config"
-          }
-        }
       }
     }
   ]
