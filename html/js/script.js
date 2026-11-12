@@ -160,6 +160,10 @@ function toggleSideMenu() {
     }
 
     const isOpen = !menu.classList.contains('translate-x-full');
+
+    // 💡 ドロワーオープン時に body のスクロールをロックし、二重スクロールバーを防止
+    document.body.classList.toggle('overflow-hidden', isOpen);
+    
     if (isOpen) {
         startTelemetry();
     } else {

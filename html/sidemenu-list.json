@@ -4,7 +4,7 @@
     {
       "id": "misskey",
       "label": "Misskey",
-      "description": "ねるる鯖で動いているみすきー鯖",
+      "description": "ねるる鯖のみすきー",
       "icon": "/icons/misskey.svg",
       "url": "https://misskey.architectural-n.net",
       "target": "_blank"
@@ -12,15 +12,15 @@
     {
       "id": "mastodon",
       "label": "Mastodon",
-      "description": "ねるる鯖で動いているますとどん鯖",
+      "description": "ねるる鯖のますとどん",
       "icon": "/icons/mastodon.svg",
       "url": "https://mastodon.architectural-n.net",
       "target": "_blank"
     },
     {
       "id": "pixelfed",
-      "label": "Pixelfed - 休止中",
-      "description": "ねるる鯖で動いているますぴくせるふぇっど鯖",
+      "label": "Pixelfed",
+      "description": "ねるる鯖のぴくせるふぇっど",
       "icon": "/icons/pixelfed.svg",
       "url": "https://pixelfed.architectural-n.net",
       "target": "_blank"
@@ -28,7 +28,7 @@
     {
       "id": "Mattermost",
       "label": "Mattermost",
-      "description": "ねるる鯖で動いているまったーもすと鯖",
+      "description": "ねるる鯖のまったーもすと",
       "icon": "/icons/mattermost.svg",
       "url": "https://mattermost.architectural-n.net",
       "target": "_blank"
@@ -36,7 +36,7 @@
     {
       "id": "bookstack",
       "label": "BookStack",
-      "description": "ねるる鯖で動いているぶっくすたっく鯖",
+      "description": "ねるる鯖のぶっくすたっく",
       "icon": "/icons/bookstack.svg",
       "url": "https://wiki.architectural-n.net",
       "target": "_blank"
@@ -44,7 +44,7 @@
     {
       "id": "nextcloud",
       "label": "NextCloud",
-      "description": "ねるる鯖で動いているねくすとくらうど鯖",
+      "description": "ねるる鯖のねくすとくらうど",
       "icon": "/icons/nextcloud.svg",
       "url": "https://cloud.architectural-n.net",
       "target": "_blank"
@@ -52,7 +52,7 @@
     {
       "id": "owncast",
       "label": "OwnCast",
-      "description": "ねるる鯖で動いているすとりーみんぐ鯖",
+      "description": "ねるる鯖のすとりーみんぐさーびす",
       "icon": "/icons/owncast-dark.svg",
       "url": "https://stream.architectural-n.net",
       "target": "_blank"
@@ -60,7 +60,7 @@
     {
       "id": "azuracast",
       "label": "AzuraCast",
-      "description": "ねるる鯖で動いているらじお鯖",
+      "description": "ねるる鯖のらじおすてーしょん",
       "icon": "/icons/azuracast.svg",
       "url": "https://cast.architectural-n.net",
       "target": "_blank"
