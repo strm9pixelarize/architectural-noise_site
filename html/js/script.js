@@ -107,13 +107,13 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    configMain         = safeParseJSON('data-main', 'config.json');
-    configHeader       = safeParseJSON('data-header', 'config_header.json');
-    configFooter       = safeParseJSON('data-footer', 'config_footer.json');
-    configServerInfo   = safeParseJSON('data-server-info', 'serverInfo/info.json');
+    configMain         = safeParseJSON('data-main', '/config/config.json');
+    configHeader       = safeParseJSON('data-header', '/config/config_header.json');
+    configFooter       = safeParseJSON('data-footer', '/config/config_footer.json');
+    configServerInfo   = safeParseJSON('data-server-info', '/serverInfo/info.json');
     configSidemenuList = safeParseJSON('data-sidemenu-list', 'sidemenu-list.json');
-    configProfile      = safeParseJSON('data-profile', 'config_profile.json');
-    configPartners     = safeParseJSON('data-partners', 'config_partners.json');
+    configProfile      = safeParseJSON('data-profile', '/config/config_profile.json');
+    configPartners     = safeParseJSON('data-partners', '/config/config_partners.json');
 
     if (configHeader) renderHeader();
     if (configFooter) renderFooter();
@@ -623,7 +623,7 @@ function stopTelemetry() {
 const RADIO_API_URL = 'https://radio.enoki.xyz/api/nowplaying/neruru-radio';
 let isRadioPlaying = false;
 
-// ラジオ再生 / 停止切り替え（純粋CSS形状変更対応）
+// ラジオ再生 / 停止切り替え
 function toggleRadioPlay() {
     const audio = document.getElementById('radio-audio');
     const playIcon = document.getElementById('radio-play-icon');
@@ -633,7 +633,8 @@ function toggleRadioPlay() {
     if (isRadioPlaying) {
         audio.pause();
         if (playIcon) {
-            playIcon.className = 'inline-block w-2.5 h-2.5 bg-[#fca73f] [clip-path:polygon(0_0,100%_50%,0_100%)] group-hover:scale-110 transition-transform ml-0.5';
+            // sprites.svg#play を参照
+            playIcon.innerHTML = renderIcon('radio-play', 'w-5 h-5 fill-[#fca73f]');
         }
         isRadioPlaying = false;
         stopRadioPolling();
@@ -641,7 +642,8 @@ function toggleRadioPlay() {
         audio.load();
         audio.play().then(() => {
             if (playIcon) {
-                playIcon.className = 'inline-block w-2.5 h-2.5 bg-[#fca73f] [clip-path:polygon(0_0,35%_0,35%_100%,0_100%,65%_0,65%_100%,100%_100%,100%_0)] group-hover:scale-110 transition-transform';
+                // sprites.svg#pause を参照
+                playIcon.innerHTML = renderIcon('radio-stop', 'w-5 h-5 fill-[#fca73f]');
             }
             isRadioPlaying = true;
             startRadioPolling();
@@ -651,11 +653,24 @@ function toggleRadioPlay() {
     }
 }
 
-// 音量コントロール
+// 音量コントロール（割合に応じて sprites.svg のシンボルを切替）
 function changeRadioVolume(val) {
     const audio = document.getElementById('radio-audio');
+    const volumeIcon = document.getElementById('radio-volume-icon');
+    const volumeVal = parseFloat(val);
+
     if (audio) {
-        audio.volume = parseFloat(val);
+        audio.volume = volumeVal;
+    }
+
+    if (volumeIcon) {
+        if (volumeVal === 0) {
+            volumeIcon.innerHTML = renderIcon('volume-low', 'w-6 h-6 fill-slate-900');
+        } else if (volumeVal < 0.5) {
+            volumeIcon.innerHTML = renderIcon('volume', 'w-6 h-6 fill-slate-900');
+        } else {
+            volumeIcon.innerHTML = renderIcon('volume-high', 'w-6 h-6 fill-slate-900');
+        }
     }
 }
 
@@ -718,9 +733,16 @@ function stopRadioPolling() {
     }
 }
 
-// 初回メタデータ取得のみ（自動ポーリングはオフ）
+// 初期アイコン描画設定
 document.addEventListener('DOMContentLoaded', () => {
     updateNowPlaying();
+
+    const playIcon = document.getElementById('radio-play-icon');
+    const volumeIcon = document.getElementById('radio-volume-icon');
+    const volumeInput = document.getElementById('radio-volume');
+
+    if (playIcon) playIcon.innerHTML = renderIcon('radio-play', 'w-5 h-5 fill-[#fca73f]');
+    if (volumeIcon && volumeInput) changeRadioVolume(volumeInput.value);
 });
 
 // ショートカットキー & ESC閉じる処理

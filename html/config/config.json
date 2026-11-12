@@ -9,7 +9,8 @@
       "mobility.",
       "soundscapes.",
       "gadgets.",
-      "crafts."
+      "crafts.",
+      "everything is all."
     ],
     "heroImages": [
       "./heroImage/tokyo_station.jpg",
@@ -32,12 +33,12 @@
     {
       "id": "smartphone",
       "label": "Smartphone & Mobile",
-      "icon": "./icons/android.svg"
+      "icon": "./icons/mobile.svg"
     },
     {
       "id": "gadget",
       "label": "Gadget & Electronics",
-      "icon": "fa-sliders"
+      "icon": "./icons/headphones.svg"
     },
     {
       "id": "motorcycle",
@@ -53,7 +54,7 @@
       "subtitle": "Portainer, Nginx Proxy Manager, Cloudflare Tunnels",
       "status": "VERIFIED",
       "statusColor": "emerald",
-      "date": "2026.10",
+      "date": "2026.11",
       "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop",
       "tags": [
         "Docker",
@@ -68,7 +69,24 @@
         "Router": "Yamaha RTX1300",
         "Containers": "Minecraft, Misskey, Dashy, Nginx"
       },
+      "page": "./infrastructure.html",
       "schematic": "+---------------------------------------+\n| Internet -> Cloudflare Tunnel         |\n|   -> Yamaha RTX1300 (Subnet Router)   |\n|     -> Ubuntu Server (Portainer Node) |\n+---------------------------------------+"
+    },
+    {
+      "id": "initial_infrastructure",
+      "category": "infrastructure",
+      "title": "自宅サーバーの初期構築・検証手帳",
+      "subtitle": "Build your own home server",
+      "status": "VERIFIED",
+      "statusColor": "emerald",
+      "date": "2026.11",
+      "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop",
+      "tags": [
+        "Docker",
+        "Ubuntu",
+        "CasaOS"
+      ],
+      "description": "コマンドをちまちま打つ必要はない。最初のひと手間で「楽に」、「楽しく」、「安全に」自宅サーバーを構築するための手帳。"
     },
     {
       "id": "smartphone",

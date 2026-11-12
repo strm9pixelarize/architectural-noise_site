@@ -32,23 +32,23 @@
   "kernel": {
     "architecture": "x86_64",
     "name": "Linux",
-    "release": "7.0.0-42-generic",
-    "version": "#42-Ubuntu SMP PREEMPT_DYNAMIC Thu Oct 15 08:06:44 UTC 2026",
+    "release": "7.0.0-43-generic",
+    "version": "#43-Ubuntu SMP PREEMPT_DYNAMIC Fri Oct 23 13:25:25 UTC 2026",
     "pageSize": 4096
   },
   "uptime": {
-    "uptime": 6060,
-    "bootTime": "2026-11-05T17:18:38.955+0900"
+    "uptime": 6270,
+    "bootTime": "2026-11-11T21:35:46.986+0900"
   },
   "packages": {
-    "all": 1147,
+    "all": 1148,
     "amSystem": 0,
     "amUser": 0,
     "apk": 0,
     "brew": 0,
     "brewCask": 0,
     "choco": 0,
-    "dpkg": 1147,
+    "dpkg": 1148,
     "emerge": 0,
     "eopkg": 0,
     "flatpakSystem": 0,
@@ -87,7 +87,7 @@
     "exe": "/DATA/AppData/architectural-noise/html/generate_info.py",
     "exeName": "generate_info.py",
     "exePath": "/usr/bin/python3.14",
-    "pid": 1223,
+    "pid": 1196,
     "ppid": 1,
     "processName": "python3",
     "prettyName": "generate_info.py",
@@ -158,8 +158,8 @@
     }
   ],
   "memory": {
-    "total": 32929144832,
-    "used": 814743552
+    "total": 40797646848,
+    "used": 924676096
   },
   "swap": [
     {
@@ -171,14 +171,14 @@
   "disk": [
     {
       "bytes": {
-        "available": 279981682688,
-        "free": 301446557696,
+        "available": 274936610816,
+        "free": 296401485824,
         "total": 500235124736,
-        "used": 198788567040
+        "used": 203833638912
       },
       "files": {
         "total": 31064064,
-        "used": 1827591
+        "used": 2037566
       },
       "filesystem": "ext4",
       "mountpoint": "/",
@@ -190,11 +190,19 @@
       "createTime": "2026-04-16T03:37:12.000+0900"
     }
   ],
-  "localip": [],
+  "localip": [
+    {
+      "name": "enp1s0",
+      "defaultRoute": {
+        "ipv4": true
+      },
+      "ipv4": "192.168.108.200/24"
+    }
+  ],
   "battery": [],
   "poweradapter": [],
   "locale": "en_US.UTF-8",
   "break": null,
   "colors": null,
-  "updatedAt": "2026-11-05 17:18:45"
+  "updatedAt": "2026-11-11 21:35:53"
 }

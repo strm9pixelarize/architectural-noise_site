@@ -52,7 +52,7 @@
         <!-- 中央：再生/停止 & LIVEステータス -->
         <div class="flex items-center gap-3">
             <button id="radio-play-btn" onclick="toggleRadioPlay()" class="w-8 h-8 rounded-full bg-slate-900 hover:bg-slate-800 text-[#fca73f] flex items-center justify-center transition shadow-md group flex-shrink-0" aria-label="Play Radio">
-                <span id="radio-play-icon" class="inline-block w-2.5 h-2.5 bg-[#fca73f] [clip-path:polygon(0_0,100%_50%,0_100%)] group-hover:scale-110 transition-transform ml-0.5"></span>
+                <span id="radio-play-icon" class="flex items-center justify-center"></span>
             </button>
             <div class="hidden sm:flex items-center gap-1.5 bg-[#f7f4eb]/80 px-2 py-0.5 rounded-md border border-slate-900/10">
                 <span id="radio-live-dot" class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
@@ -62,7 +62,7 @@
 
         <!-- 右側：音量コントロール -->
         <div class="flex items-center justify-end gap-2">
-            <svg class="w-4 h-4 fill-slate-900 flex-shrink-0" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+            <span id="radio-volume-icon" class="flex items-center justify-center flex-shrink-0"></span>
             <input id="radio-volume" type="range" min="0" max="1" step="0.01" value="0.8" oninput="changeRadioVolume(this.value)" class="w-16 h-1 bg-[#f7f4eb] rounded-lg appearance-none cursor-pointer accent-slate-900">
         </div>
     </div>
@@ -237,7 +237,7 @@
                 </h1>
                 
                 <p class="text-slate-300 text-base sm:text-lg leading-relaxed font-normal max-w-xl">
-                    インフラ設計、カスタムROM/AOSP検証、メカニックカスタマイズ、AI音響実験の記録を統合管理するワークベンチ。
+                    空間もインフラも全部やる。一般人がやらないことをたくさん。ここが出発点だ。
                 </p>
 
                 <div class="pt-2 flex items-center gap-4">
@@ -256,42 +256,70 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 space-y-16 flex-grow">
 
         <!-- ★ ABOUT / PROFILE SECTION -->
-        <section id="profile-summary" class="glass-card bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 backdrop-blur-md relative overflow-hidden group">
-            <div class="absolute top-0 right-0 w-96 h-96 bg-[#fca73f]/10 rounded-full blur-3xl -z-10 group-hover:bg-[#fca73f]/20 transition duration-700"></div>
-            
-            <div class="flex flex-col md:flex-row items-center md:items-start gap-6 sm:gap-8">
-                <div class="relative flex-shrink-0">
-                    <img id="profile-avatar" src="./heroImage/profile.jpg" alt="Profile Avatar" loading="lazy" decoding="async" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-2 border-[#fca73f]/60 shadow-xl">
-                    <div class="absolute -bottom-2 -right-2 px-2 py-0.5 rounded-full bg-[#fca73f]/20 border border-[#fca73f]/40 text-[#fca73f] text-[10px] font-mono">
-                        ONLINE
-                    </div>
-                </div>
-
-                <div class="flex-grow space-y-3 text-center md:text-left">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div>
-                            <div class="flex items-center justify-center md:justify-start gap-2">
-                                <h2 id="profile-name" class="text-2xl font-bold font-mono text-white">ねるる｜優</h2>
-                                <span id="profile-handle" class="text-xs font-mono text-[#fca73f]">@strm_pixelarize</span>
-                            </div>
-                            <p id="profile-title" class="text-xs font-mono text-slate-400 mt-1">Systems Architect / Custom OS / Mechanic & Audio DSP</p>
-                        </div>
-
-                        <a href="./profile.html" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#fca73f] hover:bg-[#e09230] text-slate-950 font-mono text-xs font-bold transition shadow-lg shadow-[#fca73f]/20 flex-shrink-0">
-                            <span>詳細なプロフィール</span>
-                            <span class="w-4 h-4 flex items-center justify-center">
-                                <svg class="w-4 h-4 fill-current"><use href="/icons/sprites.svg#up-right-inbox"></use></svg>
-                            </span>
-                        </a>
-                    </div>
-
-                    <p id="profile-bio" class="text-slate-300 text-sm leading-relaxed font-sans line-clamp-2">
-                        インフラ設計、カスタムROM/AOSP検証、バイクのメカニックカスタマイズ、AI音響・Techno-Pop楽曲制作を軸に活動。
-                    </p>
-
-                    <div id="profile-skills-preview" class="flex flex-wrap items-center justify-center md:justify-start gap-2 pt-1"></div>
+        <section class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-300 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2 font-mono">
+                        <span class="text-[#fca73f]">✦</span>
+                        <span>Operator & Profile</span>
+                    </h2>
+                    <p class="text-slate-500 text-sm mt-1">このワークベンチの設計・構築・運用を手掛けるオペレーターの概要</p>
                 </div>
             </div>
+
+            <div id="profile-summary" class="glass-card bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 backdrop-blur-md relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-96 h-96 bg-[#fca73f]/10 rounded-full blur-3xl -z-10 group-hover:bg-[#fca73f]/20 transition duration-700"></div>
+
+                <div class="flex flex-col md:flex-row items-center md:items-start gap-6 sm:gap-8">
+                    <div class="relative flex-shrink-0">
+                        <img id="profile-avatar" src="./heroImage/profile.jpg" alt="Profile Avatar" loading="lazy" decoding="async" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-2 border-[#fca73f]/60 shadow-xl">
+                        <div class="absolute -bottom-2 -right-2 px-2 py-0.5 rounded-full bg-[#fca73f]/20 border border-[#fca73f]/40 text-[#fca73f] text-[10px] font-mono">
+                            ONLINE
+                        </div>
+                    </div>
+                    
+                    <div class="flex-grow space-y-3 text-center md:text-left">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div>
+                                <div class="flex items-center justify-center md:justify-start gap-2">
+                                    <h2 id="profile-name" class="text-2xl font-bold font-mono text-white">ねるる｜優</h2>
+                                    <span id="profile-handle" class="text-xs font-mono text-[#fca73f]">@strm_pixelarize</span>
+                                </div>
+                                <p id="profile-title" class="text-xs font-mono text-slate-400 mt-1">Systems Architect / Custom OS / Mechanic & Audio DSP</p>
+                            </div>
+
+                            <a href="./profile.html" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#fca73f] hover:bg-[#e09230] text-slate-950 font-mono text-xs font-bold transition shadow-lg shadow-[#fca73f]/20 flex-shrink-0">
+                                <span>詳細なプロフィール</span>
+                                <span class="w-4 h-4 flex items-center justify-center">
+                                    <svg class="w-4 h-4 fill-current"><use href="/icons/sprites.svg#up-right-inbox"></use></svg>
+                                </span>
+                            </a>
+                        </div>
+
+                        <p id="profile-bio" class="text-slate-300 text-sm leading-relaxed font-sans line-clamp-2">
+                            インフラ設計、カスタムROM/AOSP検証、バイクのメカニックカスタマイズ、電子工作、音楽制作などを行うしがないエンジニア
+                        </p>
+
+                        <div id="profile-skills-preview" class="flex flex-wrap items-center justify-center md:justify-start gap-2 pt-1"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Domains & Projects Section -->
+        <section id="projects" class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-300 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2 font-mono">
+                        <span class="text-[#fca73f]">✦</span>
+                        <span>Domains & Projects</span>
+                    </h2>
+                    <p class="text-slate-500 text-sm mt-1">設定ファイル群（JSON）から動的に読み込まれたプロジェクト</p>
+                </div>
+                <div id="category-filters" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </section>
 
         <!-- ★ PARTNERS & COLLABORATORS SECTION -->
@@ -314,19 +342,6 @@
 
             <!-- カードプレビュー（JSで動的描画） -->
             <div id="partners-summary-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
-        </section>
-
-        <!-- Domains & Projects Section -->
-        <section id="projects" class="space-y-6">
-            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-300 pb-4">
-                <div>
-                    <h2 class="text-2xl font-bold tracking-tight text-slate-900 font-mono">Domains & Projects</h2>
-                    <p class="text-slate-500 text-sm mt-1">設定ファイル群（JSON）から動的に読み込まれたプロジェクト</p>
-                </div>
-                <div id="category-filters" class="flex flex-wrap gap-2"></div>
-            </div>
-
-            <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </section>
     </main>
 
@@ -366,13 +381,13 @@
     </aside>
 
     <!-- Nginx SSI Includes -->
-    <script type="application/json" id="data-main"><!--# include file="config.json" --></script>
-    <script type="application/json" id="data-header"><!--# include file="config_header.json" --></script>
-    <script type="application/json" id="data-footer"><!--# include file="config_footer.json" --></script>
+    <script type="application/json" id="data-main"><!--# include file="config/config.json" --></script>
+    <script type="application/json" id="data-header"><!--# include file="config/config_header.json" --></script>
+    <script type="application/json" id="data-footer"><!--# include file="config/config_footer.json" --></script>
     <script type="application/json" id="data-server-info"><!--# include file="serverInfo/info.json" --></script>
     <script type="application/json" id="data-sidemenu-list"><!--# include file="sidemenu-list.json" --></script>
-    <script type="application/json" id="data-profile"><!--# include file="config_profile.json" --></script>
-    <script type="application/json" id="data-partners"><!--# include file="config_partners.json" --></script>
+    <script type="application/json" id="data-profile"><!--# include file="config/config_profile.json" --></script>
+    <script type="application/json" id="data-partners"><!--# include file="config/config_partners.json" --></script>
 
     <script src="js/script.js" defer></script>
 </body>
