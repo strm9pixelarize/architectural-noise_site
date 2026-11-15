@@ -13,10 +13,10 @@
       "everything is all."
     ],
     "heroImages": [
-      "./heroImage/tokyo_station.jpg",
-      "./heroImage/my-room.jpg",
-      "./heroImage/gsx-s1000rqm4.jpg",
-      "./heroImage/nothing_products.jpg"
+      "./heroImage/tokyo_station.webp",
+      "./heroImage/my-room.webp",
+      "./heroImage/gsx-s1000rqm4.webp",
+      "./heroImage/nothing_products.webp"
     ]
   },
   "categories": [
@@ -140,7 +140,7 @@
       "status": "TESTING",
       "statusColor": "amber",
       "date": "2026.11",
-      "image": "./heroImage/gsx_gixxer.jpg",
+      "image": "./heroImage/gsx_gixxer.webp",
       "tags": [
         "Suzuki",
         "GSX-S1000",
@@ -158,7 +158,7 @@
       "status": "ACTIVE",
       "statusColor": "amber",
       "date": "2026.11",
-      "image": "./heroImage/my-room.jpg",
+      "image": "./heroImage/my-room.webp",
       "tags": [
         "My Room",
         "ReDesign"
