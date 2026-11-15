@@ -221,7 +221,7 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                const res = await fetch('/articles/room_design/list.json');
+                const res = await fetch('/articles/design/list.json');
                 if (!res.ok) return;
 
                 roomArticles = await res.json();
