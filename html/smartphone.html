@@ -95,6 +95,24 @@
             <!-- JSで動的にカードが挿入されます -->
         </div>
 
+        <!-- Articles (room_design style / log-articles.js) -->
+        <section id="log-section" class="space-y-6">
+            <div class="space-y-4">
+                <div class="border-b border-slate-300 pb-4">
+                    <h2 class="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2 font-mono">
+                        <span class="text-[#fca73f]">✦</span>
+                        <span>Device Logs</span>
+                    </h2>
+                    <p class="text-slate-500 text-sm mt-1">モバイル端末の検証・チューニング記録</p>
+                </div>
+
+                <div id="log-filters" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <!-- Articles Grid -->
+            <div id="log-articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
     </main>
 
     <!-- Detail Modal Inspector -->
@@ -128,6 +146,10 @@
     <script type="application/json" id="data-smartphone"><!--# include file="config/config_smartphone.json" --></script>
 
     <script src="js/script.js"></script>
+    <script src="js/log-articles.js"></script>
+    <script>
+        initLogArticles('/articles/smartphone/list.json', '// SMARTPHONE_LOG_READER');
+    </script>
     <script>
         let smartphoneData = null;
         let activeFilter = 'all';
