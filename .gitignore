@@ -8,8 +8,6 @@ html/config/config_infrastructure.json
 
 # === Tailwind CSS ===
 /tailwind
-/tailwind-input.css
-/tailwind.config.js
 
 # === node_module ===
 node_modules/
