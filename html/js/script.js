@@ -566,9 +566,88 @@ function formatSpeed(bytesPerSec) {
     return formatBytes(bytesPerSec) + '/s';
 }
 
+// テレメトリ履歴グラフ（直近60点 = 3秒間隔で約3分）
+const TELEMETRY_HISTORY_MAX = 60;
+const telemetryHistory = { cpu: [], mem: [] };
+
+function pushTelemetryHistory(cpuVal, memVal) {
+    if (typeof cpuVal === 'number' && isFinite(cpuVal)) {
+        telemetryHistory.cpu.push(cpuVal);
+        if (telemetryHistory.cpu.length > TELEMETRY_HISTORY_MAX) telemetryHistory.cpu.shift();
+    }
+    if (typeof memVal === 'number' && isFinite(memVal)) {
+        telemetryHistory.mem.push(memVal);
+        if (telemetryHistory.mem.length > TELEMETRY_HISTORY_MAX) telemetryHistory.mem.shift();
+    }
+    drawTelemetryChart();
+}
+
+function drawTelemetryChart() {
+    const canvas = document.getElementById('telemetry-chart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Retina 対応: 表示サイズに合わせて内部解像度を合わせる
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    if (w === 0 || h === 0) return;
+    if (canvas.width !== Math.round(w * dpr) || canvas.height !== Math.round(h * dpr)) {
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+
+    // グリッド（25%刻み、0〜100%固定）
+    ctx.strokeStyle = 'rgba(100, 116, 139, 0.18)';
+    ctx.lineWidth = 1;
+    for (let i = 1; i <= 3; i++) {
+        const y = (h / 4) * i;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+    }
+
+    const drawSeries = (values, color, fill) => {
+        if (values.length < 2) return;
+        const stepX = w / (TELEMETRY_HISTORY_MAX - 1);
+        const offsetX = w - stepX * (values.length - 1);
+        ctx.beginPath();
+        values.forEach((v, i) => {
+            const x = offsetX + stepX * i;
+            const y = h - (Math.max(0, Math.min(100, v)) / 100) * h;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.8;
+        ctx.stroke();
+        // 面の塗り
+        const lastX = offsetX + stepX * (values.length - 1);
+        ctx.lineTo(lastX, h);
+        ctx.lineTo(offsetX, h);
+        ctx.closePath();
+        ctx.fillStyle = fill;
+        ctx.fill();
+    };
+
+    drawSeries(telemetryHistory.mem, '#0ea5e9', 'rgba(14, 165, 233, 0.10)');
+    drawSeries(telemetryHistory.cpu, '#fca73f', 'rgba(252, 167, 63, 0.15)');
+
+    if (telemetryHistory.cpu.length < 2 && telemetryHistory.mem.length < 2) {
+        ctx.fillStyle = 'rgba(100, 116, 139, 0.7)';
+        ctx.font = '10px "JetBrains Mono", monospace';
+        ctx.fillText('collecting data...', 6, h - 6);
+    }
+}
+
 // SSEテレメトリ接続の開始（重複防止）
 function startTelemetry() {
     stopTelemetry();
+
+    telemetryHistory.cpu.length = 0;
+    telemetryHistory.mem.length = 0;
 
     telemetrySource = new EventSource('/api/stream/sys-telemetry');
 
@@ -601,6 +680,12 @@ function startTelemetry() {
                 const total = formatBytes(disk.size);
                 safeSetText('metric-disk', `${used} / ${total}`);
             }
+
+            const cpuVal = data.cpu?.cpu?.usage;
+            const memVal = data.memory?.memory
+                ? (data.memory.memory.used / data.memory.memory.total) * 100
+                : undefined;
+            pushTelemetryHistory(cpuVal, memVal);
 
         } catch (e) {
             console.warn('[SSE Error]', e);

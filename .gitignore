@@ -1,5 +1,6 @@
 # === 共有シークレットを含むファイル（直書き状態のため丸ごと除外） ===
 conf.d/telemetry_secret.inc
+.env
 
 # === ホスト情報がそのまま出る生成物 ===
 html/serverInfo/info.json

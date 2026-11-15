@@ -118,6 +118,18 @@
                 <div class="flex justify-between"><span class="text-slate-400">Host:</span><span id="info-host-family">--</span></div>
             </div>
 
+            <!-- Live History Chart -->
+            <div class="rounded-xl bg-white/60 border border-slate-200 p-3.5 font-mono">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[11px] text-slate-400 tracking-wider">LIVE HISTORY (3 MIN)</span>
+                    <div class="flex gap-3 text-[10px]">
+                        <span class="text-[#fca73f] font-bold">— CPU</span>
+                        <span class="text-sky-500 font-bold">— MEM</span>
+                    </div>
+                </div>
+                <canvas id="telemetry-chart" class="w-full h-[72px] block"></canvas>
+            </div>
+
             <!-- Expandable Metrics List -->
             <div class="space-y-3 font-mono">
                 <!-- CPU -->
