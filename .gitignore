@@ -4,3 +4,11 @@ conf.d/telemetry_secret.inc
 # === ホスト情報がそのまま出る生成物 ===
 html/serverInfo/info.json
 html/config/config_infrastructure.json
+
+# === Tailwind CSS ===
+/tailwind
+/tailwind-input.css
+/tailwind.config.js
+
+# === node_module ===
+node_modules/
