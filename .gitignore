@@ -1,0 +1,9 @@
+# === 共有シークレットを含むファイル（直書き状態のため丸ごと除外） ===
+conf.d/nginx.conf
+conf.d/telemetry_secret.inc
+html/telemetry_stream.py
+telemetry_stream.py
+
+# === ホスト情報がそのまま出る生成物 ===
+html/serverInfo/info.json
+html/config/config_infrastructure.json
