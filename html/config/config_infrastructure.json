@@ -83,6 +83,113 @@
       ]
     },
     {
+      "id": "photo_backup",
+      "name": "photo_backup",
+      "category": "docker",
+      "type": "Docker Stack (2 containers)",
+      "status": "HEALTHY (2/2)",
+      "statusColor": "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
+      "summary": "",
+      "ports": [
+        "1120/TCP",
+        "21027/UDP",
+        "22000/TCP",
+        "22000/UDP"
+      ],
+      "containers": [
+        {
+          "name": "pixel-relay-manager",
+          "image": "python:3.12-alpine",
+          "status": "RUNNING",
+          "statusColor": "bg-emerald-500/15 border-emerald-500/40 text-emerald-400",
+          "ports": [],
+          "role": ""
+        },
+        {
+          "name": "pixel-relay-syncthing",
+          "image": "syncthing/syncthing:latest",
+          "status": "RUNNING",
+          "statusColor": "bg-emerald-500/15 border-emerald-500/40 text-emerald-400",
+          "ports": [
+            "1120/TCP",
+            "21027/UDP",
+            "22000/TCP",
+            "22000/UDP"
+          ],
+          "role": ""
+        }
+      ],
+      "article": "/articles/infra/photo_backup.md",
+      "tags": [
+        "Docker",
+        "Portainer"
+      ]
+    },
+    {
+      "id": "onlyoffice",
+      "name": "onlyoffice",
+      "category": "docker",
+      "type": "Docker Stack (1 containers)",
+      "status": "HEALTHY (1/1)",
+      "statusColor": "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
+      "summary": "",
+      "ports": [
+        "1110/TCP"
+      ],
+      "containers": [
+        {
+          "name": "onlyoffice-documentserver",
+          "image": "onlyoffice/documentserver:latest",
+          "status": "RUNNING",
+          "statusColor": "bg-emerald-500/15 border-emerald-500/40 text-emerald-400",
+          "ports": [
+            "1110/TCP"
+          ],
+          "role": ""
+        }
+      ],
+      "article": "/articles/infra/onlyoffice.md",
+      "tags": [
+        "Docker",
+        "Portainer"
+      ]
+    },
+    {
+      "id": "adguard-home",
+      "name": "adguard-home",
+      "category": "network",
+      "type": "Docker Stack (1 containers)",
+      "status": "HEALTHY (1/1)",
+      "statusColor": "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
+      "summary": "DNSベースの広告ブロッカー。インターネット上の広告やトラッキングをブロックし、プライバシーを保護します。",
+      "ports": [
+        "53/UDP",
+        "53/TCP",
+        "8040/TCP",
+        "8041/TCP"
+      ],
+      "containers": [
+        {
+          "name": "adguardhome",
+          "image": "adguard/adguardhome:latest",
+          "status": "RUNNING",
+          "statusColor": "bg-emerald-500/15 border-emerald-500/40 text-emerald-400",
+          "ports": [
+            "53/UDP",
+            "53/TCP",
+            "8040/TCP",
+            "8041/TCP"
+          ],
+          "role": "main_web_app"
+        }
+      ],
+      "article": "/articles/infra/adguard-home.md",
+      "tags": [
+        "Docker",
+        "Portainer"
+      ]
+    },
+    {
       "id": "n8n-compose",
       "name": "n8n-compose",
       "category": "docker",
@@ -114,35 +221,6 @@
         }
       ],
       "article": "/articles/infra/n8n-compose.md",
-      "tags": [
-        "Docker",
-        "Portainer"
-      ]
-    },
-    {
-      "id": "onlyoffice",
-      "name": "onlyoffice",
-      "category": "docker",
-      "type": "Docker Stack (1 containers)",
-      "status": "HEALTHY (1/1)",
-      "statusColor": "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
-      "summary": "",
-      "ports": [
-        "1110/TCP"
-      ],
-      "containers": [
-        {
-          "name": "onlyoffice-documentserver",
-          "image": "onlyoffice/documentserver:latest",
-          "status": "RUNNING",
-          "statusColor": "bg-emerald-500/15 border-emerald-500/40 text-emerald-400",
-          "ports": [
-            "1110/TCP"
-          ],
-          "role": ""
-        }
-      ],
-      "article": "/articles/infra/onlyoffice.md",
       "tags": [
         "Docker",
         "Portainer"
@@ -935,41 +1013,6 @@
         }
       ],
       "article": "/articles/infra/npm.md",
-      "tags": [
-        "Docker",
-        "Portainer"
-      ]
-    },
-    {
-      "id": "adguard-home",
-      "name": "adguard-home",
-      "category": "network",
-      "type": "Docker Stack (1 containers)",
-      "status": "HEALTHY (1/1)",
-      "statusColor": "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
-      "summary": "DNSベースの広告ブロッカー。インターネット上の広告やトラッキングをブロックし、プライバシーを保護します。",
-      "ports": [
-        "53/UDP",
-        "53/TCP",
-        "8040/TCP",
-        "8041/TCP"
-      ],
-      "containers": [
-        {
-          "name": "adguardhome",
-          "image": "adguard/adguardhome:latest",
-          "status": "RUNNING",
-          "statusColor": "bg-emerald-500/15 border-emerald-500/40 text-emerald-400",
-          "ports": [
-            "53/UDP",
-            "53/TCP",
-            "8040/TCP",
-            "8041/TCP"
-          ],
-          "role": "main_web_app"
-        }
-      ],
-      "article": "/articles/infra/adguard-home.md",
       "tags": [
         "Docker",
         "Portainer"

@@ -14,7 +14,7 @@
     ],
     "heroImages": [
       "./heroImage/tokyo_station.jpg",
-      "./heroImage/myroom.jpg",
+      "./heroImage/my-room.jpg",
       "./heroImage/gsx-s1000rqm4.jpg",
       "./heroImage/nothing_products.jpg"
     ]
@@ -44,6 +44,11 @@
       "id": "motorcycle",
       "label": "Motorcycle",
       "icon": "./icons/motorcycle.svg"
+    },
+    {
+      "id": "design",
+      "label": "Design & Crafts",
+      "icon": "./icons/design.svg"
     }
   ],
   "projects": [
@@ -143,6 +148,23 @@
       ],
       "description": "過去から未来へ、今までのバイクとこれからのバイクについてのページです。",
       "page": "./motorcycle.html",
+      "schematic": ""
+    },
+    {
+      "id": "room_design",
+      "category": "room_design",
+      "title": "ねるるが施工した自宅の部屋の設計・施工手帳",
+      "subtitle": "Interior Design & Room Renovation",
+      "status": "ACTIVE",
+      "statusColor": "amber",
+      "date": "2026.11",
+      "image": "./heroImage/my-room.jpg",
+      "tags": [
+        "My Room",
+        "ReDesign"
+      ],
+      "description": "過去から未来へ、今までのバイクとこれからのバイクについてのページです。",
+      "page": "./room_design.html",
       "schematic": ""
     }
   ]

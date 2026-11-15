@@ -1,7 +1,7 @@
 {
   "name": "ねるる｜優",
   "handle": "strm_pixelarize",
-  "title": "Systems Architect / Custom OS / Mechanic / Electronics / Audio & Music",
+  "title": "Systems Architect / Server Engineer / Total Designer",
   "status": "ONLINE // ACTIVE",
   "avatar": "./heroImage/profile.jpg",
   "bio": "インフラ設計、カスタムROM/AOSP検証、バイクのメカニックカスタマイズ、電子工作、音楽制作などを行うしがないエンジニア",
@@ -30,6 +30,31 @@
       "name": "Instagram",
       "icon": "/icons/instagram.svg",
       "url": "https://instagram.com/strm_pixelarize"
+    },
+    {
+      "name": "BlueSky",
+      "icon": "/icons/bluesky.svg",
+      "url": "https://bsky.app/profile/architectural-n.net"
+    },
+    {
+      "name": "Misskey",
+      "icon": "/icons/misskey.svg",
+      "url": "https://misskey.architectural-n.net/@strm_pixelarize"
+    },
+    {
+      "name": "Mastodon",
+      "icon": "/icons/mastodon.svg",
+      "url": "https://mastodon.architectural-n.net/@strm_pixelarize"
+    },
+    {
+      "name": "Pixelfed",
+      "icon": "/icons/pixelfed.svg",
+      "url": "https://pixelfed.architectural-n.net/@strm_pixelarize"
+    },
+    {
+      "name": "Discord",
+      "icon": "/icons/discord.svg",
+      "username": "strm_pixelarize"
     }
   ],
   "licenses": [

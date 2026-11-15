@@ -147,17 +147,39 @@
                 if (data.bio) document.getElementById('detail-bio').innerText = data.bio;
                 if (data.avatar) document.getElementById('detail-avatar').src = data.avatar;
 
-                // SNSリンクの描画
+                // SNSリンクの描画（url と username の両対応）
                 const socialsContainer = document.getElementById('detail-socials');
                 if (socialsContainer && data.socials) {
-                    socialsContainer.innerHTML = data.socials.map(s => `
-                        <a href="${s.url}" target="_blank" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-slate-900/90 hover:bg-[#fca73f] hover:text-slate-950 border border-slate-800 text-xs font-mono text-slate-200 font-bold transition shadow-md group">
-                            <div class="w-4 h-4 flex items-center justify-center flex-shrink-0 text-[#fca73f] group-hover:text-slate-950 transition-colors">
-                                ${renderIcon(s.icon)}
-                            </div>
-                            <span>${s.name}</span>
-                        </a>
-                    `).join('');
+                    socialsContainer.innerHTML = data.socials.map(s => {
+                        // パターンA: URLが指定されている場合（通常の外部リンク）
+                        if (s.url) {
+                            return `
+                                <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-slate-900/90 hover:bg-[#fca73f] hover:text-slate-950 border border-slate-800 text-xs font-mono text-slate-200 font-bold transition shadow-md group">
+                                    <div class="w-4 h-4 flex items-center justify-center flex-shrink-0 text-[#fca73f] group-hover:text-slate-950 transition-colors">
+                                        ${renderIcon(s.icon, 'w-4 h-4 fill-current')}
+                                    </div>
+                                    <span>${s.name}</span>
+                                </a>
+                            `;
+                        }
+
+                        // パターンB: usernameのみ指定されている場合（クリックでIDコピー）
+                        if (s.username) {
+                            return `
+                                <button type="button" onclick="copySocialUsername(this, '${s.username}')" title="クリックしてユーザー名をコピー" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-slate-900/90 hover:bg-[#fca73f] hover:text-slate-950 border border-slate-800 text-xs font-mono text-slate-200 font-bold transition shadow-md group cursor-pointer">
+                                    <div class="w-4 h-4 flex items-center justify-center flex-shrink-0 text-[#fca73f] group-hover:text-slate-950 transition-colors">
+                                        ${renderIcon(s.icon, 'w-4 h-4 fill-current')}
+                                    </div>
+                                    <span>${s.name}</span>
+                                    <span class="social-badge px-2 py-0.5 rounded bg-slate-800 group-hover:bg-slate-950/20 text-[#fca73f] group-hover:text-slate-950 text-[10px] transition-colors">
+                                        @${s.username}
+                                    </span>
+                                </button>
+                            `;
+                        }
+
+                        return '';
+                    }).join('');
                 }
 
                 // スキルグリッドの描画
@@ -179,6 +201,25 @@
                 console.error('[Profile Detail Parse Error]', e);
             }
         });
+
+        // ユーザー名をクリップボードにコピーしてフィードバックを表示
+        function copySocialUsername(btn, username) {
+            navigator.clipboard.writeText(username).then(() => {
+                const badge = btn.querySelector('.social-badge');
+                if (!badge) return;
+
+                const originalText = badge.innerText;
+                badge.innerText = 'COPIED!';
+                badge.classList.add('bg-emerald-500', 'text-slate-950');
+
+                setTimeout(() => {
+                    badge.innerText = originalText;
+                    badge.classList.remove('bg-emerald-500', 'text-slate-950');
+                }, 2000);
+            }).catch(err => {
+                console.error('[Clipboard Copy Error]', err);
+            });
+        }
     </script>
 </body>
 </html>
