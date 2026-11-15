@@ -1,5 +1,4 @@
 # === 共有シークレットを含むファイル（直書き状態のため丸ごと除外） ===
-conf.d/nginx.conf
 conf.d/telemetry_secret.inc
 html/telemetry_stream.py
 telemetry_stream.py
