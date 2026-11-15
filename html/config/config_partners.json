@@ -6,7 +6,7 @@
       "id": "jikantoki",
       "name": "ときえのき",
       "role": "Programmer, Web Engineer",
-      "avatar": "./heroImage/partner_icons/jikantoki.jpg",
+      "avatar": "./heroImage/partner_icons/jikantoki.webp",
       "bio": "プログラムなら何でもやる現役エンジニア",
       "status": "COLLABORATOR",
       "tags": [
@@ -31,7 +31,7 @@
       "id": "saisabo10",
       "name": "サイバーさぼてん",
       "role": "Generating ideas, Encounter, Communicator",
-      "avatar": "./heroImage/partner_icons/saisabo.jpg",
+      "avatar": "./heroImage/partner_icons/saisabo.webp",
       "bio": "関東圏に詳しくて、三度の飯よりエンカが好き",
       "status": "COLLABORATOR",
       "tags": [
@@ -50,7 +50,7 @@
       "id": "makimaki",
       "name": "まきまき",
       "role": "Network Engineer, Electrician",
-      "avatar": "./heroImage/partner_icons/Makimak369.jpg",
+      "avatar": "./heroImage/partner_icons/Makimak369.webp",
       "bio": "なかなかできないことを実現させて頂いている恩人",
       "status": "COLLABORATOR",
       "tags": [

@@ -15,7 +15,7 @@
       "category": "active",
       "status": "DAILY DRIVER",
       "statusColor": "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
-      "image": "./heroImage/devices/nothing-phone-3.jpg",
+      "image": "./heroImage/devices/nothing-phone-3.webp",
       "os": "Nothing OS 5.0 (Android 17)",
       "soc": "Snapdragon 8s Gen 4",
       "ramRom": "12GB / 256GB",
