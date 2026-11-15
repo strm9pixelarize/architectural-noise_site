@@ -126,6 +126,24 @@
             </div>
         </div>
 
+        <!-- Timeline Section (ねるる年表) -->
+        <div class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-300 pb-3">
+                <h2 class="text-xl font-bold font-mono text-slate-900 flex items-center gap-2">
+                    <svg class="w-5 h-5 fill-[#fca73f] flex-shrink-0" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                    <span>NERURU CHRONICLE // ねるる年表</span>
+                </h2>
+            </div>
+
+            <!-- カテゴリー絞り込みボタン（JSで自動生成） -->
+            <div id="timeline-filters" class="flex flex-wrap gap-2"></div>
+
+            <!-- 年表本体 -->
+            <div id="detail-timeline" class="relative border-l-2 border-slate-300 ml-3 sm:ml-4 pl-6 sm:pl-8 space-y-6">
+                <!-- JSで動的挿入 -->
+            </div>
+        </div>
+
     </main>
 
     <!-- Nginx SSI Include -->
@@ -197,6 +215,13 @@
                     `).join('');
                 }
 
+                // DOMContentLoaded 内のスキルグリッド描画の後に追記
+                if (Array.isArray(data.timeline)) {
+                    profileTimelineData = data.timeline;
+                    renderTimelineFilters();
+                    renderTimelineItems();
+                }
+
             } catch (e) {
                 console.error('[Profile Detail Parse Error]', e);
             }
@@ -219,6 +244,92 @@
             }).catch(err => {
                 console.error('[Clipboard Copy Error]', err);
             });
+        }
+
+        let profileTimelineData = [];
+        let activeTimelineCategory = 'all';
+
+        // 年表カテゴリーボタンの自動生成
+        function renderTimelineFilters() {
+            const container = document.getElementById('timeline-filters');
+            if (!container) return;
+
+            // timeline 内の category を重複なしで自動抽出
+            const uniqueCategories = [...new Set(
+                profileTimelineData.map(item => item.category).filter(Boolean)
+            )];
+            const categories = ['all', ...uniqueCategories];
+
+            container.innerHTML = '';
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                const isActive = cat === activeTimelineCategory;
+
+                btn.className = `px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
+                    isActive
+                        ? 'bg-slate-900 text-[#fca73f] shadow-md'
+                        : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
+                }`;
+                btn.innerText = cat === 'all' ? 'ALL' : cat;
+
+                btn.onclick = () => {
+                    activeTimelineCategory = cat;
+                    renderTimelineFilters();
+                    renderTimelineItems();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        // 選択中のカテゴリーで絞り込んで年表を描画（urlリンク対応版）
+        function renderTimelineItems() {
+            const timelineContainer = document.getElementById('detail-timeline');
+            if (!timelineContainer) return;
+
+            const filtered = activeTimelineCategory === 'all'
+                ? profileTimelineData
+                : profileTimelineData.filter(item => item.category === activeTimelineCategory);
+
+            timelineContainer.innerHTML = filtered.map(item => {
+                const hasUrl = Boolean(item.url);
+                // http(s)で始まる外部URLの場合のみ別タブで開く
+                const isExternal = hasUrl && /^https?:\/\//.test(item.url);
+                const targetAttr = isExternal ? 'target="_blank" rel="noopener noreferrer"' : '';
+
+                const cardInner = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 font-mono">
+                        <span class="text-xs font-bold text-[#fca73f] tracking-wider">${item.date}</span>
+                        <div class="flex items-center gap-2">
+                            ${item.category ? `<span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700/60 text-[10px]">${item.category}</span>` : ''}
+                            ${hasUrl ? `
+                                <span class="text-slate-400 group-hover:text-[#fca73f] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all flex items-center justify-center">
+                                    ${renderIcon('up-right-inbox', 'w-4 h-4 fill-current')}
+                                </span>
+                            ` : ''}
+                        </div>
+                    </div>
+                    <h3 class="text-base font-bold text-white font-mono ${hasUrl ? 'group-hover:text-[#fca73f] transition-colors' : ''}">
+                        ${item.title}
+                    </h3>
+                    ${item.description ? `<p class="text-slate-400 text-xs leading-relaxed font-sans">${item.description}</p>` : ''}
+                `;
+
+                const cardClass = "block bg-slate-900/90 border border-slate-800 hover:border-[#fca73f]/50 rounded-2xl p-5 backdrop-blur-md shadow-lg transition space-y-2";
+
+                return `
+                    <div class="relative group">
+                        <!-- タイムライン軸上のドットマーカー -->
+                        <span class="absolute -left-[31px] sm:-left-[39px] top-5 w-3.5 h-3.5 rounded-full bg-[#fca73f] border-4 border-[#f7f4eb] shadow group-hover:scale-125 transition-transform"></span>
+                        
+                        <!-- イベントカード（urlの有無で <a> と <div> を自動切替） -->
+                        ${hasUrl
+                            ? `<a href="${item.url}" ${targetAttr} class="${cardClass} cursor-pointer">${cardInner}</a>`
+                            : `<div class="${cardClass}">${cardInner}</div>`
+                        }
+                    </div>
+                `;
+            }).join('');
         }
     </script>
 </body>

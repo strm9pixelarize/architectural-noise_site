@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Design & Spatial Lab // #Architectural*Noise</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Markdown & Highlight.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: '#fca73f',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#f7f4eb] text-slate-800 min-h-screen font-sans bg-grid-pattern antialiased selection:bg-[#fca73f] selection:text-white flex flex-col">
+    <!-- 音声再生用 -->
+    <audio id="radio-audio" preload="none"></audio>
+
+    <!-- 画面下部中央に浮遊するコンパクトプレイヤーバー -->
+    <div id="radio-player-bar" class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-2xl h-20 bg-[#fca73f]/90 backdrop-blur-md border border-[#fca73f]/50 text-slate-900 z-50 px-4 flex items-center justify-between rounded-2xl shadow-2xl">
+        <div class="flex items-center gap-2.5 min-w-0 max-w-[45%]">
+            <img id="radio-art" src="/heroImage/tokyo_station.jpg" alt="Artwork" loading="lazy" decoding="async" class="w-8 h-8 rounded-lg object-cover border border-slate-900/20 shadow-sm flex-shrink-0">
+            <div class="min-w-0">
+                <div id="radio-title" class="text-xs font-bold text-slate-900 font-mono truncate">ON AIR // Loading...</div>
+                <div id="radio-artist" class="text-[10px] text-slate-800/80 font-mono truncate">ねるるラジオ</div>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button id="radio-play-btn" onclick="toggleRadioPlay()" class="w-8 h-8 rounded-full bg-slate-900 hover:bg-slate-800 text-[#fca73f] flex items-center justify-center transition shadow-md group flex-shrink-0" aria-label="Play Radio">
+                <span id="radio-play-icon" class="flex items-center justify-center"></span>
+            </button>
+            <div class="hidden sm:flex items-center gap-1.5 bg-[#f7f4eb]/80 px-2 py-0.5 rounded-md border border-slate-900/10">
+                <span id="radio-live-dot" class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
+                <span id="radio-live-text" class="text-[9px] font-mono text-slate-900 font-bold tracking-wider uppercase">LIVE</span>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2">
+            <span id="radio-volume-icon" class="flex items-center justify-center flex-shrink-0"></span>
+            <input id="radio-volume" type="range" min="0" max="1" step="0.01" value="0.8" oninput="changeRadioVolume(this.value)" class="w-16 h-1 bg-[#f7f4eb] rounded-lg appearance-none cursor-pointer accent-slate-900">
+        </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="/room_design.html" class="flex items-center gap-2.5 font-mono font-bold text-[#fca73f] hover:text-[#e09230] transition group">
+                <div class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-[#fca73f] group-hover:scale-105 transition-transform">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+                </div>
+                <span>ROOM DESIGN // WORKSPACE</span>
+            </a>
+
+            <div class="flex items-center gap-3">
+                <a href="/" class="text-xs font-mono text-slate-300 hover:text-[#fca73f] transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+                    <span>← MAIN SITE</span>
+                </a>
+
+                <button id="menu-btn" onclick="toggleSideMenu()" class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 text-white transition flex flex-col items-center justify-center gap-1 group focus:outline-none" aria-label="Server Info & Telemetry">
+                    <span class="hamburger-line w-4 h-0.5 bg-[#fca73f] rounded-full transition-all duration-300"></span>
+                    <span class="hamburger-line w-4 h-0.5 bg-[#fca73f] rounded-full transition-all duration-300"></span>
+                    <span class="hamburger-line w-4 h-0.5 bg-[#fca73f] rounded-full transition-all duration-300"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Side Menu Overlay & Drawer Panel -->
+    <div id="side-menu-overlay" onclick="toggleSideMenu()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden transition-opacity duration-300"></div>
+
+    <aside id="side-menu" class="fixed top-0 right-0 bottom-0 w-full sm:w-[450px] bg-[#f7f4eb]/95 backdrop-blur-xl border-l border-slate-300/80 z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-6 overflow-y-auto flex flex-col justify-between shadow-2xl">
+        <div class="space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-2.5 h-2.5 rounded-full bg-[#fca73f] animate-ping"></div>
+                    <h2 class="text-base font-bold text-slate-900 font-mono">Server Information</h2>
+                </div>
+                <button onclick="toggleSideMenu()" class="w-8 h-8 rounded-full bg-slate-200/60 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition font-mono font-bold text-xs">✕</button>
+            </div>
+            <div class="space-y-1 font-mono text-xs text-slate-600 bg-white/60 p-3 rounded-xl border border-slate-200">
+                <div class="flex justify-between"><span class="text-slate-400">OS:</span><span id="info-os-version" class="font-semibold text-slate-800">--</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Kernel:</span><span id="info-kernel-spec">--</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Host:</span><span id="info-host-family">--</span></div>
+            </div>
+            <div id="side-menu-custom-items" class="space-y-3 pt-2"></div>
+        </div>
+        <div class="pt-4 border-t border-slate-200 flex items-center justify-between text-xs font-mono text-slate-400">
+            <span>Node Status</span>
+            <span id="footer-node-tag">Local cluster</span>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 flex-grow">
+
+        <!-- Title Section -->
+        <div class="space-y-3 border-b border-slate-300 pb-6">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#fca73f]/10 border border-[#fca73f]/30 text-[#fca73f] text-xs font-mono font-bold">
+                <span class="w-2 h-2 rounded-full bg-[#fca73f]"></span>
+                <span>SPATIAL ARCHITECTURE & WORKSPACE</span>
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-extrabold font-mono text-slate-900">ROOM DESIGN // SPATIAL LAB</h1>
+            <p class="text-sm font-mono text-slate-600 max-w-3xl leading-relaxed">
+                限られた居住スペースの立体活用、デスク・音響・サーバーラックの配線設計、DIY家具および空間チューニングの記録
+            </p>
+        </div>
+
+        <!-- Spatial Zones Overview Card -->
+        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl backdrop-blur-md text-white space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-2 font-mono text-xs text-[#fca73f] font-bold">
+                    <span>// SPATIAL ZONES & RIGGING</span>
+                </div>
+                <div class="flex items-center gap-2 text-[10px] font-mono text-slate-400">
+                    <span class="w-2 h-2 rounded-full bg-[#fca73f]"></span>
+                    <span>TOKYO BASE // 2026</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono">
+                <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-2 hover:border-[#fca73f]/50 transition">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] text-slate-500 uppercase">ZONE 01 // SLEEP & STORAGE</span>
+                        <span class="text-[10px] text-[#fca73f] bg-[#fca73f]/10 px-2 py-0.5 rounded">VERTICAL</span>
+                    </div>
+                    <div class="text-base font-bold text-white">Loft Bed + Integrated Rack</div>
+                    <div class="text-xs text-slate-400">上部就寝＋下部ハンガー収納の立体空間分離</div>
+                </div>
+
+                <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-2 hover:border-[#fca73f]/50 transition">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] text-slate-500 uppercase">ZONE 02 // WORKBENCH</span>
+                        <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">DESK & AUDIO</span>
+                    </div>
+                    <div class="text-base font-bold text-white">Studio & Dev Desk</div>
+                    <div class="text-xs text-slate-400">開発・音響モニター・配線隠蔽マネジメント</div>
+                </div>
+
+                <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-2 hover:border-[#fca73f]/50 transition">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] text-slate-500 uppercase">ZONE 03 // HOME NOC</span>
+                        <span class="text-[10px] text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">SILENT 24/7</span>
+                    </div>
+                    <div class="text-base font-bold text-white">Compact Server Corner</div>
+                    <div class="text-xs text-slate-400">OptiPlex 3060 Micro / RTX1300 静音・排熱配置</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Header & Category Filters -->
+        <div class="space-y-4">
+            <div class="border-b border-slate-300 pb-4">
+                <h2 class="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2 font-mono">
+                    <span class="text-[#fca73f]">✦</span>
+                    <span>Design & Build Logs</span>
+                </h2>
+                <p class="text-slate-500 text-sm mt-1">空間構築・レイアウト変更・DIYの検証ログ一覧</p>
+            </div>
+
+            <div id="room-filters" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- Articles Grid -->
+        <div id="room-articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+    </main>
+
+    <!-- Footer Navigation -->
+    <footer class="mt-auto border-t border-slate-200 bg-white/80 backdrop-blur-md pt-8 pb-28">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-mono">
+            <div>
+                <span>© 2026 ARCHITECTURAL NOISE</span>
+                <span class="block text-[10px] text-slate-400 mt-0.5">Spatial Architecture & Workbench Logs</span>
+            </div>
+            <div id="footer-links" class="flex items-center gap-4"></div>
+        </div>
+    </footer>
+
+    <!-- Article Reader Drawer -->
+    <div id="room-modal-overlay" onclick="closeRoomArticle()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden transition-opacity duration-300"></div>
+
+    <aside id="room-modal" class="fixed top-0 right-0 bottom-0 w-full sm:w-[680px] bg-[#f7f4eb] border-l border-slate-300 z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-6 sm:p-8 overflow-y-auto flex flex-col justify-between shadow-2xl">
+        <div>
+            <div class="flex items-center justify-between border-b border-slate-300 pb-4 mb-6">
+                <div class="flex items-center gap-2 font-mono text-xs text-[#fca73f] font-bold">
+                    <span>// SPATIAL_LOG_READER</span>
+                </div>
+                <button onclick="closeRoomArticle()" class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 font-mono text-xs transition border border-slate-300 flex items-center gap-1.5">
+                    <span>ESC</span>
+                    <span class="text-[10px]">✕</span>
+                </button>
+            </div>
+
+            <div id="modal-room-content" class="space-y-6"></div>
+        </div>
+
+        <div class="pt-6 mt-6 border-t border-slate-300 flex items-center justify-between text-[10px] font-mono text-slate-500">
+            <span>STATUS: READING LOG</span>
+            <span>ARCHITECTURAL NOISE</span>
+        </div>
+    </aside>
+
+    <!-- Nginx SSI Include -->
+    <script type="application/json" id="data-sidemenu-list"><!--# include file="config/sidemenu-list.json" --></script>
+    <script type="application/json" id="data-server-info"><!--# include file="serverInfo/info.json" --></script>
+
+    <script src="js/script.js"></script>
+    <script>
+        let roomArticles = [];
+        let activeRoomCategory = 'all';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/articles/room_design/list.json');
+                if (!res.ok) return;
+
+                roomArticles = await res.json();
+                renderRoomFilters();
+                renderRoomGrid();
+
+                // URLパラメータ ?json=<id> が指定されている場合は自動で記事を開く
+                const params = new URLSearchParams(window.location.search);
+                const targetId = params.get('json');
+                if (targetId) {
+                    openRoomArticle(targetId);
+                }
+            } catch (e) {
+                console.error('[Room Design Load Error]', e);
+            }
+        });
+
+        function renderRoomFilters() {
+            const container = document.getElementById('room-filters');
+            if (!container) return;
+
+            const uniqueCats = [...new Set(roomArticles.map(a => a.category).filter(Boolean))];
+            const categories = ['all', ...uniqueCats];
+
+            container.innerHTML = '';
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                const isActive = cat === activeRoomCategory;
+                btn.className = `px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition whitespace-nowrap ${
+                    isActive
+                        ? 'bg-slate-900 text-[#fca73f] shadow-md'
+                        : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
+                }`;
+                btn.innerText = cat === 'all' ? 'ALL LOGS' : cat;
+                btn.onclick = () => {
+                    activeRoomCategory = cat;
+                    renderRoomFilters();
+                    renderRoomGrid();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderRoomGrid() {
+            const grid = document.getElementById('room-articles-grid');
+            if (!grid) return;
+
+            const filtered = activeRoomCategory === 'all'
+                ? roomArticles
+                : roomArticles.filter(a => a.category === activeRoomCategory);
+
+            grid.innerHTML = filtered.map(item => `
+                <div onclick="openRoomArticle('${item.id}')" class="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden backdrop-blur-md shadow-xl hover:border-[#fca73f]/50 transition duration-300 cursor-pointer flex flex-col justify-between group">
+                    <div>
+                        ${item.thumbnail ? `
+                            <div class="h-44 bg-slate-950 relative overflow-hidden border-b border-slate-800">
+                                <img src="${item.thumbnail}" alt="${item.title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            </div>
+                        ` : ''}
+                        <div class="p-6 space-y-3">
+                            <div class="flex items-center justify-between text-[10px] font-mono">
+                                <span class="px-2 py-0.5 rounded bg-[#fca73f]/15 text-[#fca73f] border border-[#fca73f]/30 font-bold">${item.category || 'SPACE'}</span>
+                                <span class="text-slate-400">${item.date || ''}</span>
+                            </div>
+                            <h3 class="text-lg font-bold font-mono text-white group-hover:text-[#fca73f] transition">${item.title}</h3>
+                            <p class="text-slate-400 text-xs line-clamp-2 font-sans leading-relaxed">${item.summary || ''}</p>
+                        </div>
+                    </div>
+
+                    <div class="px-6 pb-5 pt-3 border-t border-slate-800/80 flex flex-wrap gap-1.5">
+                        ${(item.tags || []).map(t => `
+                            <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700/60 text-[10px] font-mono">#${t}</span>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function openRoomArticle(id) {
+            const item = roomArticles.find(a => a.id === id);
+            if (!item) return;
+
+            const content = document.getElementById('modal-room-content');
+            let bodyHtml = '<p class="text-xs font-mono text-slate-400">Loading markdown...</p>';
+
+            if (item.file) {
+                try {
+                    const res = await fetch(item.file);
+                    if (res.ok) {
+                        const mdText = await res.text();
+                        bodyHtml = `
+                            <article class="prose prose-slate max-w-none text-sm font-sans leading-relaxed bg-white p-5 sm:p-6 rounded-2xl border border-slate-300 shadow-sm space-y-4">
+                                ${marked.parse(mdText)}
+                            </article>
+                        `;
+                    }
+                } catch (e) {
+                    console.warn('[Markdown Fetch Error]', e);
+                }
+            }
+
+            content.innerHTML = `
+                <div class="space-y-5">
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2 font-mono text-xs">
+                            <span class="px-2 py-0.5 rounded bg-slate-900 text-[#fca73f] font-bold">${item.category || 'SPACE'}</span>
+                            <span class="text-slate-500">${item.date || ''}</span>
+                        </div>
+                        <h1 class="text-2xl sm:text-3xl font-bold font-mono text-slate-900">${item.title}</h1>
+                        ${item.summary ? `<p class="text-slate-600 text-sm font-sans leading-relaxed">${item.summary}</p>` : ''}
+                    </div>
+
+                    ${item.thumbnail ? `
+                        <img src="${item.thumbnail}" alt="${item.title}" class="w-full max-h-72 object-cover rounded-2xl border border-slate-300 shadow-md">
+                    ` : ''}
+
+                    ${bodyHtml}
+                </div>
+            `;
+
+            // コードブロックがある場合はハイライト適用
+            content.querySelectorAll('pre code').forEach(block => {
+                if (window.hljs) hljs.highlightElement(block);
+            });
+
+            const overlay = document.getElementById('room-modal-overlay');
+            const modal = document.getElementById('room-modal');
+            overlay.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('translate-x-full'), 10);
+        }
+
+        function closeRoomArticle() {
+            const overlay = document.getElementById('room-modal-overlay');
+            const modal = document.getElementById('room-modal');
+            modal.classList.add('translate-x-full');
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeRoomArticle();
+        });
+    </script>
+</body>
+</html>

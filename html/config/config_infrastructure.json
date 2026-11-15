@@ -93,8 +93,8 @@
       "ports": [
         "1120/TCP",
         "21027/UDP",
-        "22000/TCP",
-        "22000/UDP"
+        "22000/UDP",
+        "22000/TCP"
       ],
       "containers": [
         {
@@ -113,8 +113,8 @@
           "ports": [
             "1120/TCP",
             "21027/UDP",
-            "22000/TCP",
-            "22000/UDP"
+            "22000/UDP",
+            "22000/TCP"
           ],
           "role": ""
         }
@@ -163,8 +163,8 @@
       "statusColor": "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
       "summary": "DNSベースの広告ブロッカー。インターネット上の広告やトラッキングをブロックし、プライバシーを保護します。",
       "ports": [
-        "53/UDP",
         "53/TCP",
+        "53/UDP",
         "8040/TCP",
         "8041/TCP"
       ],
@@ -175,8 +175,8 @@
           "status": "RUNNING",
           "statusColor": "bg-emerald-500/15 border-emerald-500/40 text-emerald-400",
           "ports": [
-            "53/UDP",
             "53/TCP",
+            "53/UDP",
             "8040/TCP",
             "8041/TCP"
           ],

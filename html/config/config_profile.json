@@ -62,5 +62,98 @@
       "name": "普通自動車第一種運転免許",
       "url": "https://creativecommons.org/licenses/by-nc-sa/4.0/"
     }
+  ],
+  "timeline": [
+    {
+      "date": "2026.10~",
+      "category": "INFRA / WEB",
+      "title": "#Architectural*Noise ワークベンチ構築",
+      "description": "Dell OptiPlex 3060 Micro と Portainer Docker Stacks を基盤としたセルフホスト環境・技術ログポータルを公開。",
+      "url": "/infrastructure.html"
+    },
+    {
+      "date": "2026.08",
+      "category": "LIFE / BASE",
+      "title": "拠点を東京へ移転",
+      "description": "新環境にてホームサーバー・ネットワーク基盤の再構築および検証ラボをセットアップ。"
+    },
+    {
+      "date": "2025.06",
+      "category": "DATA / ANALYTICS",
+      "title": "Google Data Analytics Certificate 修了",
+      "description": "R言語やTableauを用いたデータ分析・可視化プロセスを習得。"
+    },
+    {
+      "date": "2024.12",
+      "category": "SECURITY / LINUX",
+      "title": "Google Cybersecurity Certificate 修了",
+      "description": "Linuxシステム管理、Python自動化、SQL、ネットワークセキュリティの基礎体系を修了。"
+    },
+    {
+      "date": "2024.08",
+      "category": "MOTORCYCLE / MECHANIC",
+      "title": "GSX-S1000 2024年式 祝納車",
+      "description": "欲しかった色、好きなデザインであったGSX-S1000の2024年式を新車で購入。納車までの間に、カスタムパーツの選定やメンテナンス計画を立てる。"
+    },
+    {
+      "date": "2024.08",
+      "category": "MOTORCYCLE / MECHANIC",
+      "title": "GSX-S1000を見に行き、購入を決意",
+      "description": "免許交付が終わったすぐに、目をつけていた店に赴き試乗、即決で購入を決意。"
+    },
+    {
+      "date": "2024.07",
+      "category": "MOTORCYCLE / MECHANIC",
+      "title": "大型自動二輪免許取得",
+      "description": "2週間で卒業、卒検一発合格。おそらく過去最速の取得スピード。"
+    },
+    {
+      "date": "2024.07",
+      "category": "MOTORCYCLE / MECHANIC",
+      "title": "大型自動二輪免許を取りに行く。",
+      "description": "ちらちらとGSX-S1000の情報を見ていたら、免許を取ることを決意。"
+    },
+    {
+      "date": "2023.05",
+      "category": "MOTORCYCLE / MECHANIC",
+      "title": "GIXXER SF 250 2021年式を購入。",
+      "description": "免許取ったタイミングで即購入。初めてのバイクであり、初めての自己所有の車両でもある。"
+    },
+    {
+      "date": "2023.04",
+      "category": "MOTORCYCLE / MECHANIC",
+      "title": "普通自動二輪免許取得",
+      "description": "1か月で卒業、卒検一発合格。"
+    },
+    {
+      "date": "2023.04",
+      "category": "MOTORCYCLE / MECHANIC",
+      "title": "普通自動二輪免許を取りに行くことを決意、早めに終わらせるを目標に教習所に通い始める。",
+      "description": "3月末ごろに東京の旅行にて、友達の影響を受けて免許取得を決意。"
+    },
+    {
+      "date": "2022.10",
+      "category": "LIFE / BASE",
+      "title": "株式会社ワールドモバイルにて店舗アルバイトスタッフとして勤務開始",
+      "description": "アキバ店にてお世話になっていたこともあり、働くことを決意。"
+    },
+    {
+      "date": "2022.04",
+      "category": "LIFE / BASE",
+      "title": "しばらくは大阪に戻り、やりたいことを探す方へ舵を切る",
+      "description": "専門学生の頃に勤めていたヤマト運輸の早朝アシストに再度勤務、大阪での生活を再開。"
+    },
+    {
+      "date": "2022.03",
+      "category": "LIFE / BASE",
+      "title": "学生と社会人のギャップに苦しみ、一度退職",
+      "description": "3月ごろから鬱ではないが精神的に不安定な状態が続き、3月末に一度退職。大阪に戻る決意を固める。"
+    },
+    {
+      "date": "2021.04",
+      "category": "LIFE / BASE",
+      "title": "新卒1年目、千葉県市原市にて一人暮らし開始",
+      "description": "愛知県や滋賀県での寮暮らしを経て、千葉県市原市にて一人暮らしを開始。"
+    }
   ]
 }
