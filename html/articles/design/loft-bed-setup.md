@@ -1,3 +1,12 @@
+---
+title: ロフトベッド＋一体型ハンガー収納による立体空間設計
+date: 2026-08-20
+category: LAYOUT & FURNITURE
+summary: 限られた居室面積を最大限に活かすため、就寝エリアを上部に集約し下部を衣類収納・作業導線として確保した空間レイアウト記録。
+thumbnail: /heroImage/my-room.webp
+tags: [LoftBed, Storage, RoomLayout, TokyoBase]
+---
+
 ## 設計コンセプト
 東京の住居環境に合わせて居室スペースの有効床面積を最大化するため、**「高さ方向（Z軸）の空間分離」**をテーマにレイアウトを設計しました。
 

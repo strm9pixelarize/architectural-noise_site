@@ -1,3 +1,12 @@
+---
+title: Nothing Phone (3)の紹介
+date: 2026-08-20
+category: Phone
+summary: 背面LEDから、丸形LEDに変わったNothing Phone (3)の1年目レビュー
+thumbnail: /heroImage/devices/nothing-phone-3.webp
+tags: [Nothing, Phone (3)]
+---
+
 ## Nothing Phone (3) 検証メモ
 
 Nothing OS 3.0環境におけるシステムチューニングと、Shizuku経由の非Root自動化設定の記録。

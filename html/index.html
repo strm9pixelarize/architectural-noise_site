@@ -76,6 +76,11 @@
             <nav id="header-nav" class="hidden md:flex items-center gap-1 text-sm font-medium text-slate-200"></nav>
 
             <div class="flex items-center gap-3">
+                <button type="button" class="fx-toggle hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 border border-white/15 text-xs text-slate-200 hover:bg-white/20 hover:text-white transition font-mono" aria-pressed="true" title="エフェクト ON/OFF">
+                    <span>✦</span>
+                    <span>FX</span>
+                </button>
+
                 <button onclick="toggleCommandPalette()" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 border border-white/15 text-xs text-slate-200 hover:bg-white/20 hover:text-white transition font-mono">
                     <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
                     <span>Search</span>
@@ -386,6 +391,9 @@
     <script type="application/json" id="data-partners"><!--# include file="config/config_partners.json" --></script>
 
     <script src="js/script.js" defer></script>
+
+    <!-- エフェクト用 JS -->
+    <script src="js/effects.js"></script>
 
     <!-- Command Palette -->
     <div id="command-palette" class="fixed inset-0 z-[70] hidden"

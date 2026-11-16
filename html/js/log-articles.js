@@ -139,7 +139,9 @@ async function openLogArticle(id) {
         try {
             const res = await fetch(item.file);
             if (res.ok) {
-                const mdText = await res.text();
+                let mdText = await res.text();
+                // YAMLフロントマター（list.json生成用メタデータ）は表示から除く
+                mdText = mdText.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, '');
                 if (!mdText.trim().startsWith('<') && !mdText.includes('<!DOCTYPE')) {
                     bodyHtml = `
                         <article class="prose prose-slate max-w-none text-sm font-sans leading-relaxed bg-white p-5 sm:p-6 rounded-2xl border border-slate-300 shadow-sm space-y-4">

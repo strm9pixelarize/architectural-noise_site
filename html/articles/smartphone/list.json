@@ -1,12 +1,15 @@
 [
   {
     "id": "nothing-phone-3",
-    "date": "2026.08.20",
+    "date": "2026-08-20",
     "category": "Phone",
     "title": "Nothing Phone (3)の紹介",
     "summary": "背面LEDから、丸形LEDに変わったNothing Phone (3)の1年目レビュー",
     "thumbnail": "/heroImage/devices/nothing-phone-3.webp",
     "file": "/articles/smartphone/nothing-phone-3.md",
-    "tags": ["Nothing", "Phone (3)"]
+    "tags": [
+      "Nothing",
+      "Phone (3)"
+    ]
   }
 ]

@@ -1,12 +1,30 @@
 [
   {
+    "id": "site-improvements",
+    "date": "2026-11-16",
+    "category": "INFRASTRUCTURE",
+    "title": "個人サイト改善ログ — セキュリティ・高速化・機能追加の記録",
+    "summary": "公開リポジトリの棚卸しから、秘密情報の切り分け、画像とCSSの高速化、テレメトリのグラフ化、記事紹介の統一まで。一晩で実施した改善作業のまとめ。",
+    "thumbnail": "/heroImage/pc.webp",
+    "file": "/articles/infrastructure/site-improvements.md",
+    "tags": [
+      "Docker",
+      "nginx",
+      "Tailwind",
+      "Security"
+    ]
+  },
+  {
     "id": "misskey",
-    "date": "2026.08.20",
+    "date": "2026-08-20",
     "category": "SNS",
     "title": "Misskeyのサービス構築",
     "summary": "PortainerとDockerを駆使した、新たなサービス監視の形。",
     "thumbnail": "/heroImage/my-room.webp",
     "file": "/articles/infrastructure/misskey.md",
-    "tags": ["SNS", "Misskey"]
+    "tags": [
+      "SNS",
+      "Misskey"
+    ]
   }
 ]
