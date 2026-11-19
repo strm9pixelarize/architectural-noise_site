@@ -7,7 +7,7 @@
       "name": "ときえのき",
       "role": "Programmer, Web Engineer",
       "avatar": "./heroImage/partner_icons/jikantoki.webp",
-      "bio": "プログラムなら何でもやる現役エンジニア",
+      "bio": "プログラムなら何でもやる現役エンジニア。各サービスについての話し合いをよくする。",
       "status": "COLLABORATOR",
       "tags": [
         "Programmer",
@@ -15,6 +15,11 @@
         "Backend"
       ],
       "socials": [
+        {
+          "name": "WebSite",
+          "icon": "fa-brands fa-x-twitter",
+          "url": "https://enoki.xyz"
+        },
         {
           "name": "X",
           "icon": "fa-brands fa-x-twitter",
