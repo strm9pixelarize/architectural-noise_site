@@ -705,7 +705,7 @@ function stopTelemetry() {
     }
 }
 
-const RADIO_API_URL = 'https://radio.enoki.xyz/api/nowplaying/neruru-radio';
+const RADIO_API_URL = 'https://cast.architectural-n.net/api/nowplaying/nerurus_room_rest';
 let isRadioPlaying = false;
 
 // ラジオ再生 / 停止切り替え
