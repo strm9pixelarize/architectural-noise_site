@@ -77,10 +77,10 @@
                     <span>FX</span>
                 </button>
 
-                <button onclick="toggleCommandPalette()" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 border border-white/15 text-xs text-slate-200 hover:bg-white/20 hover:text-white transition font-mono">
+                <button onclick="toggleCommandPalette()" aria-label="Search" class="command-search-btn flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 border border-white/15 text-xs text-slate-200 hover:bg-white/20 hover:text-white transition font-mono">
                     <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-                    <span>Search</span>
-                    <kbd id="header-shortcut" class="px-1.5 py-0.5 rounded bg-white/20 text-[10px] text-white">⌘K</kbd>
+                    <span class="command-search-text">Search</span>
+                    <kbd id="header-shortcut" class="command-search-text px-1.5 py-0.5 rounded bg-white/20 text-[10px] text-white">⌘K</kbd>
                 </button>
                 <div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#fca73f]/20 border border-[#fca73f]/40 text-[#fca73f] text-xs font-mono">
                     <span class="w-2 h-2 rounded-full bg-[#fca73f] animate-pulse"></span>

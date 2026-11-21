@@ -86,6 +86,24 @@ html, body {
 }
 
 /* ==========================================================================
+   コマンドパレット起動ボタン: スマホでは虫眼鏡アイコンだけ表示する
+   - ビルド済み tailwind.css に sm:inline 等が無いため、表示切替はここで担う
+   - 640px 未満では "Search" 文字と ⌘K を隠し、ボタンはアイコンのみに絞る
+   ========================================================================== */
+.command-search-btn {
+    flex-shrink: 0;
+}
+@media (max-width: 639px) {
+    .command-search-text {
+        display: none !important;
+    }
+    .command-search-btn {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+}
+
+/* ==========================================================================
    隠しテーマ: blue-archive (コマンドパレットで "blue-archive" と入力)
    - style.css は tailwind.css より前に読まれるため、上書きは !important 前提
    - 色の考え方 (v1): 空色〜スカイブルーを基調に、白と濃紺で締める
