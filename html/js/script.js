@@ -45,6 +45,7 @@ let waterScale = null; // GL描画の解像度倍率 (適応制御で下がる�
 let waterFrameCount = 0;
 let waterFrameTimeSum = 0;
 let waterResizeTimer = null;
+let waterMaxHeight = 0; // アドレスバーを除いた最大の高さ (バッファはこの高さで固定する)
 let waterBlobs = [];
 
 const WATER_VERTEX_SHADER = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }';
@@ -158,14 +159,27 @@ function scheduleWaterResize() {
 
 function resizeWaterCanvas() {
     if (!waterCanvas) return;
+    // バッファの高さは「今までで最大の viewport 高さ」で固定する。
+    // アドレスバーの出入りでは innerHeight が上下するが、それでバッファを
+    // 作り直すとクリア+再配置で「最初から再生」に見えるため、幅が変わるか
+    // 高さの最大値が更新されたときだけ作り直す (値は変わらない場合は代入もしない)
+    waterMaxHeight = Math.max(waterMaxHeight, window.innerHeight);
     if (waterMode === 'gl') {
         if (waterScale === null) waterScale = Math.min(window.devicePixelRatio || 1, 1.5);
-        waterCanvas.width = Math.max(2, Math.round(window.innerWidth * waterScale));
-        waterCanvas.height = Math.max(2, Math.round(window.innerHeight * waterScale));
-        if (waterGl) waterGl.viewport(0, 0, waterCanvas.width, waterCanvas.height);
+        const w = Math.max(2, Math.round(window.innerWidth * waterScale));
+        const h = Math.max(2, Math.round(waterMaxHeight * waterScale));
+        if (waterCanvas.width !== w || waterCanvas.height !== h) {
+            waterCanvas.width = w;
+            waterCanvas.height = h;
+            if (waterGl) waterGl.viewport(0, 0, w, h);
+        }
     } else {
-        waterCanvas.width = Math.max(2, Math.round(window.innerWidth * 0.5));
-        waterCanvas.height = Math.max(2, Math.round(window.innerHeight * 0.5));
+        const w = Math.max(2, Math.round(window.innerWidth * 0.5));
+        const h = Math.max(2, Math.round(waterMaxHeight * 0.5));
+        if (waterCanvas.width !== w || waterCanvas.height !== h) {
+            waterCanvas.width = w;
+            waterCanvas.height = h;
+        }
     }
 }
 
