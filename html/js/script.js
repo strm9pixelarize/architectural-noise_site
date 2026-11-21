@@ -600,6 +600,62 @@ function toggleSideMenu() {
     }
 }
 
+// サイドメニューを右スワイプで閉じられるようにする (スマホ向け)
+// メニューは右側ドロワーなので、右へスワイプすると指に追随し、80px 超で閉じる
+function setupSideMenuSwipe() {
+    const menu = document.getElementById('side-menu');
+    if (!menu || menu.dataset.swipeReady) return;
+    menu.dataset.swipeReady = '1';
+
+    let startX = 0, startY = 0, dx = 0, dragging = false;
+    let lastX = 0, lastT = 0, velocity = 0;
+
+    menu.addEventListener('touchstart', (e) => {
+        if (menu.classList.contains('translate-x-full')) return;
+        const t = e.touches[0];
+        startX = t.clientX; startY = t.clientY; dx = 0; dragging = false;
+        lastX = t.clientX; lastT = performance.now(); velocity = 0;
+    }, { passive: true });
+
+    menu.addEventListener('touchmove', (e) => {
+        if (menu.classList.contains('translate-x-full')) return;
+        const t = e.touches[0];
+        const mx = t.clientX - startX;
+        const my = t.clientY - startY;
+        // 横移動が縦移動より大きく、右方向のときだけドラッグとして扱う (縦スクロールは妨げない)
+        if (!dragging && mx > 12 && Math.abs(mx) > Math.abs(my) * 1.2) {
+            dragging = true;
+            menu.style.transition = 'none';
+        }
+        if (dragging) {
+            dx = Math.max(0, mx);
+            menu.style.transform = `translateX(${dx}px)`;
+            const now = performance.now();
+            const dt = now - lastT;
+            if (dt > 0) velocity = (t.clientX - lastX) / dt;
+            lastX = t.clientX; lastT = now;
+        }
+    }, { passive: true });
+
+    const finish = () => {
+        if (!dragging) return;
+        dragging = false;
+        menu.style.transition = '';
+        menu.style.transform = '';
+        // 80px 超のドラッグ、または右向きのフリック (30px 超 + 速度あり) で閉じる
+        if (dx > 80 || (dx > 30 && velocity > 0.35)) toggleSideMenu();
+        dx = 0;
+    };
+    menu.addEventListener('touchend', finish);
+    menu.addEventListener('touchcancel', finish);
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupSideMenuSwipe);
+} else {
+    setupSideMenuSwipe();
+}
+
 // sidemenu-list.json からカスタムメニュー描画
 function renderSidemenuList() {
     if (!configSidemenuList) return;
