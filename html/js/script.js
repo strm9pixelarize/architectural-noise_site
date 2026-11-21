@@ -118,7 +118,7 @@ function initWaterGL(canvas) {
 function makeWaterCanvasElement() {
     const c = document.createElement('canvas');
     c.id = 'theme-water-canvas';
-    c.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;';
+    c.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100lvh;z-index:-1;pointer-events:none;';
     return c;
 }
 
@@ -165,6 +165,9 @@ function resizeWaterCanvas() {
     // 作り直すとクリア+再配置で「最初から再生」に見えるため、幅が変わるか
     // 高さの最大値が更新されたときだけ作り直す (値は変わらない場合は代入もしない)
     waterMaxHeight = Math.max(waterMaxHeight, window.innerHeight);
+    // 要素の箱の高さも最大高さに固定する。追従させるとアドレスバーの出入りごとに
+    // 水面全体が縦に伸縮し「場面が切り替わった」ように見えるため
+    waterCanvas.style.height = waterMaxHeight + 'px';
     if (waterMode === 'gl') {
         if (waterScale === null) waterScale = Math.min(window.devicePixelRatio || 1, 1.5);
         const w = Math.max(2, Math.round(window.innerWidth * waterScale));
