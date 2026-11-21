@@ -284,3 +284,14 @@ body.theme-blue-archive #loading-screen {
 #log-modal.translate-x-full {
     box-shadow: none !important;
 }
+
+/* ===== blue-archive theme: 右下の木の机 (script.js が #theme-desk を生成) ===== */
+#theme-desk {
+    position: fixed;
+    right: -14px;
+    bottom: 6px;
+    width: min(250px, 44vw);
+    z-index: -1;
+    pointer-events: none;
+    transform: rotate(-16deg);
+}
