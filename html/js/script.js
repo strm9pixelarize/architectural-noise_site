@@ -11,10 +11,16 @@ let telemetrySource = null;
 let radioIntervalId = null;
 
 // ===== 隠しテーマ (コマンドパレット) =====
-// パレットで "blue-archive" と入力すると青基調テーマに切り替わる。
+// パレットで "blue-archive" など (下のエイリアス表記ゆれ込み) と入力すると青基調テーマに切り替わる。
 // テーマは localStorage に保存され、script.js を読む全ページで維持される。
 const THEME_STORAGE_KEY = 'an-site-theme';
 const THEME_BLUE_ARCHIVE = 'blue-archive';
+// コマンドの表記ゆれ吸収: 空白・ハイフン・アンダースコアを除去し小文字化してから照合する
+function normalizeThemeCommand(q) {
+    return (q || '').trim().toLowerCase().replace(/[\s\-_]/g, '');
+}
+const THEME_COMMAND_ALIASES = ['bluearchive', 'ブルーアーカイブ', 'ブルアーカイブ', 'ブルアカ', 'ぶるあか'];
+const THEME_RESET_ALIASES = ['reset', 'リセット', 'りせっと', 'default', 'もとに戻す'];
 
 function applySiteTheme(theme) {
     if (!document.body) return;
@@ -876,10 +882,10 @@ function filterCommandProjects(q) {
     if (!results || !configMain) return;
     results.innerHTML = '';
 
-    // 隠しコマンド: "blue-archive" で青基調テーマ、"reset" で解除
-    const normalized = (q || '').trim().toLowerCase();
-    const isSecret = normalized === THEME_BLUE_ARCHIVE;
-    const isReset = normalized === 'reset' && getSiteTheme() === THEME_BLUE_ARCHIVE;
+    // 隠しコマンド: エイリアスのどれかで青基調テーマ、リセット系の単語で解除
+    const normalized = normalizeThemeCommand(q);
+    const isSecret = THEME_COMMAND_ALIASES.includes(normalized);
+    const isReset = THEME_RESET_ALIASES.includes(normalized) && getSiteTheme() === THEME_BLUE_ARCHIVE;
     if (isSecret || isReset) {
         const active = getSiteTheme() === THEME_BLUE_ARCHIVE;
         const item = document.createElement('div');
