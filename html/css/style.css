@@ -180,6 +180,35 @@ body.theme-blue-archive [class*="text-[#fca73f]"] {
 body.theme-blue-archive [class*="border-[#fca73f]"] {
     border-color: #2fb9ff !important;
 }
+/* 透明度付きの背景 (bg-[#fca73f]/10 等) は透明度を保って青へ。
+   これをやらないと /10 の装飾までベタ塗りになり、色が飽和する */
+body.theme-blue-archive [class*="bg-[#fca73f]/10"] {
+    background-color: rgba(47, 185, 255, 0.10) !important;
+}
+body.theme-blue-archive [class*="bg-[#fca73f]/20"] {
+    background-color: rgba(47, 185, 255, 0.20) !important;
+}
+body.theme-blue-archive [class*="bg-[#fca73f]/90"] {
+    background-color: rgba(47, 185, 255, 0.90) !important;
+}
+
+/* --- プロフィールカード: 元は濃色カード＋白文字の設計 ---
+   glass-card の白背景を当てると白文字が読めなくなるため、
+   このカードだけ濃い青のカードとして扱い、文字の前提を守る */
+body.theme-blue-archive #profile-summary {
+    background: linear-gradient(135deg, #082f49 0%, #075985 60%, #0369a1 100%) !important;
+    border-color: rgba(56, 189, 248, 0.55) !important;
+    box-shadow: 0 14px 28px -10px rgba(18, 138, 250, 0.35) !important;
+}
+/* 濃色カード内ではアクセント文字を明るい水色に (通常の #128afa は暗すぎる) */
+body.theme-blue-archive #profile-summary [class*="text-[#fca73f]"] {
+    color: #7dd3fc !important;
+}
+/* ヒーローのタイピング文字も暗い写真の上なので明るい水色に */
+body.theme-blue-archive #typing-text {
+    color: #38bdf8 !important;
+    border-color: #38bdf8 !important;
+}
 
 /* --- カード --- */
 body.theme-blue-archive .glass-card {
