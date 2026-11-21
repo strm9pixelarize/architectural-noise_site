@@ -48,19 +48,26 @@ let waterResizeTimer = null;
 let waterFramesDrawn = 0; // 実描画したフレーム数 (診断用)
 let waterMaxHeight = 0; // アドレスバーを除いた最大の高さ (バッファはこの高さで固定する)
 let themeDesks = [];
+let themeDesksWrap = null;
 // 右下の木の机 (真上視点・椅子なし・天板はまっさら)。水面Canvasの上に重ねる固定レイヤー
 const THEME_DESK_SVG = '<svg viewBox="0 0 300 240" width="100%" aria-hidden="true"><defs><linearGradient id="desk-wood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#cf9550"/><stop offset="0.55" stop-color="#bb7f36"/><stop offset="1" stop-color="#a26a28"/></linearGradient><linearGradient id="desk-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0.22"/><stop offset="0.45" stop-color="#ffffff" stop-opacity="0.03"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><radialGradient id="desk-knot" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#6e4413" stop-opacity="0.85"/><stop offset="0.45" stop-color="#8a5a1d" stop-opacity="0.5"/><stop offset="1" stop-color="#8a5a1d" stop-opacity="0"/></radialGradient><filter id="desk-tex" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.22" numOctaves="3" seed="7" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0.23 0 0 0 0 0.13 0 0 0 0 0.02 0.9 0.9 0.9 0 -0.9"/></filter><filter id="desk-soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6"/></filter><clipPath id="desk-clip"><rect x="40" y="40" width="196" height="128" rx="10"/></clipPath></defs><rect x="52" y="66" width="196" height="128" rx="12" fill="rgba(8,47,73,0.28)" filter="url(#desk-soft)"/><g fill="#ccd1d6" stroke="#8a9199" stroke-width="1.5"><circle cx="44" cy="44" r="6"/><circle cx="232" cy="44" r="6"/><circle cx="44" cy="164" r="6"/><circle cx="232" cy="164" r="6"/></g><rect x="40" y="40" width="196" height="128" rx="10" fill="url(#desk-wood)"/><g clip-path="url(#desk-clip)"><rect x="40" y="40" width="196" height="128" filter="url(#desk-tex)" opacity="0.55"/><ellipse cx="88" cy="98" rx="17" ry="8" fill="url(#desk-knot)"/><ellipse cx="196" cy="66" rx="12" ry="6" fill="url(#desk-knot)" opacity="0.7"/><ellipse cx="150" cy="140" rx="13" ry="6" fill="url(#desk-knot)" opacity="0.55"/><path d="M40 92 C 100 84, 170 100, 236 90" stroke="rgba(255,235,200,0.20)" stroke-width="5" fill="none"/><rect x="40" y="40" width="196" height="128" fill="url(#desk-sheen)"/></g><rect x="40" y="40" width="196" height="128" rx="10" fill="none" stroke="rgba(80,45,8,0.55)" stroke-width="2.5"/><rect x="50" y="50" width="176" height="108" rx="7" fill="none" stroke="rgba(80,45,8,0.22)" stroke-width="2"/></svg>';
 
 function ensureThemeDesks() {
     if (themeDesks.length) return;
+    // 机は 100lvh の固定ラッパーの中に入れる。ラッパーの箱はアドレスバーで
+    // 変形しないので、机の位置が上下に動かなくなる (水面Canvasと同じ対策)
+    const wrap = document.createElement('div');
+    wrap.id = 'theme-desks';
+    wrap.style.display = 'none';
     for (let i = 1; i <= 3; i++) {
         const d = document.createElement('div');
         d.className = 'theme-desk theme-desk-' + i;
         d.innerHTML = THEME_DESK_SVG;
-        d.style.display = 'none';
-        document.body.appendChild(d);
+        wrap.appendChild(d);
         themeDesks.push(d);
     }
+    document.body.appendChild(wrap);
+    themeDesksWrap = wrap;
 }
 let waterBlobs = [];
 
@@ -371,7 +378,7 @@ function startWaterSurface() {
     document.body.classList.add('water-active');
     waterCanvas.style.display = '';
     ensureThemeDesks();
-    themeDesks.forEach(d => { d.style.display = ''; });
+    if (themeDesksWrap) themeDesksWrap.style.display = '';
     setupWaterDebug();
     if (waterRafId === null) {
         waterLastDraw = 0;
@@ -382,7 +389,7 @@ function startWaterSurface() {
 
 function stopWaterSurface() {
     window.__waterMode = 'off';
-    themeDesks.forEach(d => { d.style.display = 'none'; });
+    if (themeDesksWrap) themeDesksWrap.style.display = 'none';
     if (document.body) document.body.classList.remove('water-active');
     if (waterRafId !== null) {
         cancelAnimationFrame(waterRafId);

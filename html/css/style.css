@@ -285,15 +285,24 @@ body.theme-blue-archive #loading-screen {
     box-shadow: none !important;
 }
 
-/* ===== blue-archive theme: 木の机3つ (script.js が .theme-desk を生成) ===== */
-.theme-desk {
+/* ===== blue-archive theme: 木の机3つ (script.js が #theme-desks を生成) ===== */
+/* ラッパーは 100lvh で固定し、アドレスバーの出入りで机が上下しないようにする */
+#theme-desks {
     position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100lvh;
     z-index: -1;
+    pointer-events: none;
+}
+.theme-desk {
+    position: absolute;
     pointer-events: none;
 }
 .theme-desk-1 {
     right: -14px;
-    bottom: 6px;
+    top: calc(100svh - min(206px, 38vw));
     width: min(250px, 44vw);
     transform: rotate(-16deg);
 }
