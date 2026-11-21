@@ -84,3 +84,97 @@ html, body {
     mask-position: center;
     vertical-align: -0.125em;
 }
+
+/* ==========================================================================
+   隠しテーマ: blue-archive (コマンドパレットで "blue-archive" と入力)
+   - style.css は tailwind.css より前に読まれるため、上書きは !important 前提
+   - 色の考え方 (v1): 空色〜スカイブルーを基調に、白と濃紺で締める
+     ベース背景 #eaf6ff / アクセント #2fb9ff・#128afa / 締め色 #0b2a4a
+   ========================================================================== */
+
+/* 切り替えをなめらかに */
+body, .glass-card, header, #side-menu, #radio-player-bar {
+    transition: background-color 0.5s ease, background 0.5s ease,
+                border-color 0.5s ease, box-shadow 0.5s ease, color 0.5s ease;
+}
+
+/* --- 土台 --- */
+html.theme-blue-archive,
+body.theme-blue-archive {
+    background-color: #eaf6ff !important;
+    background-image: linear-gradient(180deg, #eaf6ff 0%, #d9efff 55%, #eaf6ff 100%) !important;
+    color: #102a43 !important;
+}
+
+body.theme-blue-archive .bg-grid-pattern {
+    background-image:
+        linear-gradient(to right, rgba(56, 189, 248, 0.22) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(56, 189, 248, 0.22) 1px, transparent 1px) !important;
+}
+
+body.theme-blue-archive ::selection {
+    background: #128afa !important;
+    color: #ffffff !important;
+}
+
+/* --- 既存のベージュ/オレンジ直書きクラスを青へ読み替える --- */
+/* 背景ベージュ bg-[#f7f4eb] 系 */
+body.theme-blue-archive [class*="bg-[#f7f4eb]"] {
+    background-color: #eaf6ff !important;
+}
+/* アクセント・オレンジの背景 bg-[#fca73f] 系 */
+body.theme-blue-archive [class*="bg-[#fca73f]"] {
+    background-color: #2fb9ff !important;
+}
+/* アクセント・オレンジの文字 text-[#fca73f] 系 */
+body.theme-blue-archive [class*="text-[#fca73f]"] {
+    color: #128afa !important;
+}
+/* アクセント・オレンジの枠 border-[#fca73f] 系 */
+body.theme-blue-archive [class*="border-[#fca73f]"] {
+    border-color: #2fb9ff !important;
+}
+
+/* --- カード --- */
+body.theme-blue-archive .glass-card {
+    background: rgba(255, 255, 255, 0.88) !important;
+    border: 1px solid rgba(125, 211, 252, 0.9) !important;
+    box-shadow: 0 8px 24px -12px rgba(18, 138, 250, 0.25);
+}
+body.theme-blue-archive .glass-card:hover {
+    border-color: rgba(18, 138, 250, 0.65) !important;
+    box-shadow: 0 14px 28px -10px rgba(18, 138, 250, 0.30) !important;
+}
+
+/* --- ヘッダー: 濃紺グラデーション (文字は白のまま読める) --- */
+body.theme-blue-archive header {
+    background: linear-gradient(90deg, rgba(8, 47, 73, 0.92), rgba(2, 132, 199, 0.88)) !important;
+    border-bottom: 1px solid rgba(125, 211, 252, 0.45) !important;
+}
+
+/* --- サイドメニュー --- */
+body.theme-blue-archive #side-menu {
+    background: rgba(240, 249, 255, 0.96) !important;
+    border-left-color: rgba(125, 211, 252, 0.8) !important;
+}
+
+/* --- ラジオプレイヤーバー: スカイブルーのグラデーション --- */
+body.theme-blue-archive #radio-player-bar {
+    background: linear-gradient(90deg, rgba(47, 185, 255, 0.95), rgba(18, 138, 250, 0.95)) !important;
+    border-color: rgba(186, 230, 253, 0.7) !important;
+    color: #ffffff !important;
+}
+
+/* --- コマンドパレット自体も青く --- */
+body.theme-blue-archive #command-palette .relative {
+    background: #f0f9ff !important;
+    border-color: #7dd3fc !important;
+}
+body.theme-blue-archive #command-palette [class*="hover:bg-slate-100"]:hover {
+    background-color: #e0f2fe !important;
+}
+
+/* --- ローディング画面 --- */
+body.theme-blue-archive #loading-screen {
+    background: #082f49 !important;
+}

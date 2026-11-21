@@ -10,6 +10,35 @@ let activeCategory = 'all';
 let telemetrySource = null;
 let radioIntervalId = null;
 
+// ===== 隠しテーマ (コマンドパレット) =====
+// パレットで "blue-archive" と入力すると青基調テーマに切り替わる。
+// テーマは localStorage に保存され、script.js を読む全ページで維持される。
+const THEME_STORAGE_KEY = 'an-site-theme';
+const THEME_BLUE_ARCHIVE = 'blue-archive';
+
+function applySiteTheme(theme) {
+    if (!document.body) return;
+    const isBlueArchive = theme === THEME_BLUE_ARCHIVE;
+    document.body.classList.toggle('theme-blue-archive', isBlueArchive);
+    document.documentElement.classList.toggle('theme-blue-archive', isBlueArchive);
+}
+
+function setSiteTheme(theme) {
+    if (theme) {
+        try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch (e) {}
+    } else {
+        try { localStorage.removeItem(THEME_STORAGE_KEY); } catch (e) {}
+    }
+    applySiteTheme(theme);
+}
+
+function getSiteTheme() {
+    try { return localStorage.getItem(THEME_STORAGE_KEY); } catch (e) { return null; }
+}
+
+// script.js は </body> 直前で読まれるため、この時点で body に即時適用できる
+applySiteTheme(getSiteTheme());
+
 /**
  * SVGスプライト（/icons/sprites.svg#id）を参照するアイコン描画関数
  * 巨大なインラインSVG辞書を撤廃し、スプライト参照用 <use> タグを出力
@@ -463,7 +492,27 @@ function filterCommandProjects(q) {
     if (!results || !configMain) return;
     results.innerHTML = '';
 
-    const filtered = configMain.projects.filter(p => 
+    // 隠しコマンド: "blue-archive" で青基調テーマ、"reset" で解除
+    const normalized = (q || '').trim().toLowerCase();
+    const isSecret = normalized === THEME_BLUE_ARCHIVE;
+    const isReset = normalized === 'reset' && getSiteTheme() === THEME_BLUE_ARCHIVE;
+    if (isSecret || isReset) {
+        const active = getSiteTheme() === THEME_BLUE_ARCHIVE;
+        const item = document.createElement('div');
+        item.id = 'command-secret-theme';
+        item.className = "p-2 hover:bg-sky-100 rounded cursor-pointer flex items-center justify-between";
+        item.onclick = () => {
+            setSiteTheme(active && isSecret ? null : (isReset ? null : THEME_BLUE_ARCHIVE));
+            toggleCommandPalette();
+        };
+        item.innerHTML = isReset || active
+            ? `<span>テーマをリセットする</span><span class="text-sky-500 text-[10px]">THEME</span>`
+            : `<span>??? テーマを変更する</span><span class="text-sky-500 text-[10px]">THEME</span>`;
+        results.appendChild(item);
+        if (isSecret || isReset) return;
+    }
+
+    const filtered = configMain.projects.filter(p =>
         p.title.toLowerCase().includes(q.toLowerCase()) || 
         p.tags.some(t => t.toLowerCase().includes(q.toLowerCase()))
     );
@@ -832,6 +881,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ショートカットキー & ESC閉じる処理
 window.addEventListener('keydown', (e) => {
+    // パレット表示中、隠しコマンド入力時の Enter でテーマ切替
+    if (e.key === 'Enter') {
+        const cmdPalette = document.getElementById('command-palette');
+        const cmdInput = document.getElementById('command-input');
+        if (cmdPalette && cmdInput && !cmdPalette.classList.contains('hidden')) {
+            const v = (cmdInput.value || '').trim().toLowerCase();
+            if (v === THEME_BLUE_ARCHIVE) {
+                e.preventDefault();
+                setSiteTheme(getSiteTheme() === THEME_BLUE_ARCHIVE ? null : THEME_BLUE_ARCHIVE);
+                toggleCommandPalette();
+                return;
+            }
+            if (v === 'reset' && getSiteTheme()) {
+                e.preventDefault();
+                setSiteTheme(null);
+                toggleCommandPalette();
+                return;
+            }
+        }
+    }
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         toggleCommandPalette();
