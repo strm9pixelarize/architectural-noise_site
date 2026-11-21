@@ -168,13 +168,52 @@ function drawWaterSurface(now) {
     const h = waterCanvas.height;
     const t = now / 1000;
 
-    // 水のグラデーション (上が浅く、下にいくほど少し深い青)
+    // 水のグラデーション (GL版に寄せた濃い青: 上が明るく、下が深い)
     const g = waterCtx.createLinearGradient(0, 0, 0, h);
-    g.addColorStop(0, '#e9f8ff');
-    g.addColorStop(0.45, '#d5efff');
-    g.addColorStop(1, '#a9dcff');
+    g.addColorStop(0, '#0e7cc4');
+    g.addColorStop(0.45, '#0369a1');
+    g.addColorStop(1, '#075985');
     waterCtx.fillStyle = g;
     waterCtx.fillRect(0, 0, w, h);
+
+    // 斜めに流れる光の帯 (2方向) で水面のゆらぎを出す
+    waterCtx.save();
+    waterCtx.globalCompositeOperation = 'lighter';
+    for (let set = 0; set < 2; set++) {
+        const angle = set === 0 ? 0.5 : -0.9;
+        const spacing = 130 - set * 45;
+        const speed = 14 + set * 9;
+        waterCtx.save();
+        waterCtx.translate(w / 2, h / 2);
+        waterCtx.rotate(angle);
+        const diag = Math.sqrt(w * w + h * h);
+        const off = (t * speed) % spacing;
+        for (let x = -diag + off; x < diag; x += spacing) {
+            const lg = waterCtx.createLinearGradient(x, 0, x + 46, 0);
+            lg.addColorStop(0, 'rgba(125, 211, 252, 0)');
+            lg.addColorStop(0.5, 'rgba(125, 211, 252, 0.13)');
+            lg.addColorStop(1, 'rgba(125, 211, 252, 0)');
+            waterCtx.fillStyle = lg;
+            waterCtx.fillRect(x, -diag, 46, diag * 2);
+        }
+        waterCtx.restore();
+    }
+    waterCtx.restore();
+
+    // 光だまり: 明るい水色の光が漂いながら明滅する
+    for (const b of waterBlobs) {
+        const bx = (b.x + Math.sin(t * b.drift + b.phase) * 0.03) * w;
+        const by = (b.y + Math.cos(t * b.drift * 0.8 + b.phase) * 0.03) * h;
+        const pulse = 0.5 + 0.5 * Math.sin(t * b.speed * 2 + b.phase);
+        const alpha = 0.08 + pulse * 0.12;
+        const rg = waterCtx.createRadialGradient(bx, by, 0, bx, by, b.r);
+        rg.addColorStop(0, 'rgba(186, 230, 253, ' + alpha + ')');
+        rg.addColorStop(1, 'rgba(186, 230, 253, 0)');
+        waterCtx.fillStyle = rg;
+        waterCtx.beginPath();
+        waterCtx.arc(bx, by, b.r, 0, Math.PI * 2);
+        waterCtx.fill();
+    }
 
     // ゆっくり横に流れる波の帯 (3層)
     for (let layer = 0; layer < 3; layer++) {
@@ -191,22 +230,7 @@ function drawWaterSurface(now) {
         }
         waterCtx.lineTo(w, h);
         waterCtx.closePath();
-        waterCtx.fillStyle = 'rgba(56, 189, 248, ' + (0.05 + layer * 0.02) + ')';
-        waterCtx.fill();
-    }
-
-    // 光だまり (コースティクス風): 柔らかい光が漂いながら明滅する
-    for (const b of waterBlobs) {
-        const bx = (b.x + Math.sin(t * b.drift + b.phase) * 0.03) * w;
-        const by = (b.y + Math.cos(t * b.drift * 0.8 + b.phase) * 0.03) * h;
-        const pulse = 0.5 + 0.5 * Math.sin(t * b.speed * 2 + b.phase);
-        const alpha = 0.04 + pulse * 0.07;
-        const rg = waterCtx.createRadialGradient(bx, by, 0, bx, by, b.r);
-        rg.addColorStop(0, 'rgba(255, 255, 255, ' + alpha + ')');
-        rg.addColorStop(1, 'rgba(255, 255, 255, 0)');
-        waterCtx.fillStyle = rg;
-        waterCtx.beginPath();
-        waterCtx.arc(bx, by, b.r, 0, Math.PI * 2);
+        waterCtx.fillStyle = 'rgba(2, 60, 110, ' + (0.05 + layer * 0.02) + ')';
         waterCtx.fill();
     }
 }
@@ -224,9 +248,14 @@ function waterLoop(now) {
 }
 
 function startWaterSurface() {
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        window.__waterMode = 'reduced-motion';
+        return;
+    }
     ensureWaterCanvas();
     if (!waterCanvas) return;
+    window.__waterMode = waterMode;
+    document.body.classList.add('water-active');
     waterCanvas.style.display = '';
     if (waterRafId === null) {
         waterLastDraw = 0;
@@ -235,6 +264,8 @@ function startWaterSurface() {
 }
 
 function stopWaterSurface() {
+    window.__waterMode = 'off';
+    if (document.body) document.body.classList.remove('water-active');
     if (waterRafId !== null) {
         cancelAnimationFrame(waterRafId);
         waterRafId = null;

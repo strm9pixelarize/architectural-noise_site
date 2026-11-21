@@ -210,6 +210,14 @@ body.theme-blue-archive #typing-text {
     border-color: #38bdf8 !important;
 }
 
+/* 水面 Canvas は z-index:-1 で body 背景より下に描かれるため、
+   水面が動いている間は body の不透明グラデーションを透明にして見せる。
+   (script.js が水面の開始/停止に合わせて .water-active を付け外しする) */
+body.theme-blue-archive.water-active {
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
 /* 水面背景の上で、カード外の見出し (濃色文字) が沈まないように薄い光彩を付ける */
 body.theme-blue-archive h1,
 body.theme-blue-archive h2 {
