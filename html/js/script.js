@@ -760,6 +760,12 @@ function renderAbout() {
     if (titleEl && about.title) titleEl.textContent = about.title;
     const subEl = document.getElementById('about-subtitle');
     if (subEl && about.subtitle) subEl.textContent = about.subtitle;
+    const iconEl = document.getElementById('about-icon');
+    if (iconEl && about.icon) {
+        iconEl.dataset.logoDefault = about.icon;
+        iconEl.dataset.logoBlue = about.iconBlue || '';
+        applySiteTheme(getSiteTheme());
+    }
     const taglineEl = document.getElementById('about-tagline');
     if (taglineEl && about.tagline) taglineEl.textContent = about.tagline;
     const tagsEl = document.getElementById('about-tags');
