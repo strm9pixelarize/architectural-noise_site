@@ -39,6 +39,11 @@ let waterGlUTime = null;
 let waterCtx = null;
 let waterRafId = null;
 let waterLastDraw = 0;
+let waterLastRaw = 0;
+let waterElapsed = 0;
+let waterScale = null; // GL描画の解像度倍率 (適応制御で下がることがある)
+let waterFrameCount = 0;
+let waterFrameTimeSum = 0;
 let waterBlobs = [];
 
 const WATER_VERTEX_SHADER = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }';
@@ -145,9 +150,9 @@ function ensureWaterCanvas() {
 function resizeWaterCanvas() {
     if (!waterCanvas) return;
     if (waterMode === 'gl') {
-        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-        waterCanvas.width = Math.max(2, Math.round(window.innerWidth * dpr));
-        waterCanvas.height = Math.max(2, Math.round(window.innerHeight * dpr));
+        if (waterScale === null) waterScale = Math.min(window.devicePixelRatio || 1, 1.5);
+        waterCanvas.width = Math.max(2, Math.round(window.innerWidth * waterScale));
+        waterCanvas.height = Math.max(2, Math.round(window.innerHeight * waterScale));
         if (waterGl) waterGl.viewport(0, 0, waterCanvas.width, waterCanvas.height);
     } else {
         waterCanvas.width = Math.max(2, Math.round(window.innerWidth * 0.5));
@@ -237,13 +242,34 @@ function drawWaterSurface(now) {
 
 function waterLoop(now) {
     waterRafId = requestAnimationFrame(waterLoop);
-    if (document.hidden) return;
+    if (document.hidden) { waterLastRaw = now; return; }
     if (now - waterLastDraw < 33) return; // 約30fpsに制限
+    // 時間は実時刻ではなくデルタ積算で進める (1回最大50ms)。
+    // フレーム落ちした分だけ未来へジャンプするのを防ぎ、継ぎ目感を消す
+    const delta = waterLastRaw ? Math.min(now - waterLastRaw, 50) : 16;
+    waterLastRaw = now;
+    waterElapsed += delta;
     waterLastDraw = now;
+
+    // 適応解像度: 平均フレーム間隔が重い状態が続いたら一段下げる (GLのみ)
+    if (waterMode === 'gl' && waterScale !== null) {
+        waterFrameCount++;
+        waterFrameTimeSum += delta;
+        if (waterFrameCount >= 90) {
+            const avg = waterFrameTimeSum / waterFrameCount;
+            if (avg > 40 && waterScale > 0.6) {
+                waterScale = Math.max(0.6, waterScale - 0.25);
+                resizeWaterCanvas();
+            }
+            waterFrameCount = 0;
+            waterFrameTimeSum = 0;
+        }
+    }
+
     if (waterMode === 'gl') {
-        drawWaterGL(now);
+        drawWaterGL(waterElapsed);
     } else {
-        drawWaterSurface(now);
+        drawWaterSurface(waterElapsed);
     }
 }
 
@@ -259,6 +285,7 @@ function startWaterSurface() {
     waterCanvas.style.display = '';
     if (waterRafId === null) {
         waterLastDraw = 0;
+        waterLastRaw = 0;
         waterRafId = requestAnimationFrame(waterLoop);
     }
 }
