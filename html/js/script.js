@@ -1099,40 +1099,7 @@ function formatSpeed(bytesPerSec) {
     return formatBytes(bytesPerSec) + '/s';
 }
 
-// テレメトリ表示の平滑化 (指数移動平均): 瞬時値の荒ぶりを抑える
-// alpha が小さいほど穏やか。3秒間隔の配信に対し 0.35 で約2〜3サンプル分の慣性
-const TELEMETRY_SMOOTH_ALPHA = 0.35;
-// 接続直後の最初の数サンプルは瞬時値が極端になりやすいので、累積平均でならす
-const TELEMETRY_WARMUP_SAMPLES = 4;
-const telemetrySmooth = { cpu: null, mem: null, rx: null, tx: null };
-const telemetrySmoothCount = { cpu: 0, mem: 0, rx: 0, tx: 0 };
-function smoothTelemetry(key, raw) {
-    if (typeof raw !== 'number' || !isFinite(raw)) return raw;
-    const prev = telemetrySmooth[key];
-    telemetrySmoothCount[key] += 1;
-    let next;
-    if (prev === null) {
-        next = raw;
-    } else if (telemetrySmoothCount[key] <= TELEMETRY_WARMUP_SAMPLES) {
-        next = prev + (raw - prev) / telemetrySmoothCount[key];
-    } else {
-        next = prev + TELEMETRY_SMOOTH_ALPHA * (raw - prev);
-    }
-    telemetrySmooth[key] = next;
-    return next;
-}
-function resetTelemetrySmooth() {
-    telemetrySmooth.cpu = null;
-    telemetrySmooth.mem = null;
-    telemetrySmooth.rx = null;
-    telemetrySmooth.tx = null;
-    telemetrySmoothCount.cpu = 0;
-    telemetrySmoothCount.mem = 0;
-    telemetrySmoothCount.rx = 0;
-    telemetrySmoothCount.tx = 0;
-}
-
-// テレメトリ履歴グラフ（直近60点 = 3秒間隔で約3分）
+// テレメトリ履歴グラフ（直近60点 = 2秒間隔で約2分）
 const TELEMETRY_HISTORY_MAX = 60;
 const telemetryHistory = { cpu: [], mem: [] };
 
@@ -1212,7 +1179,7 @@ function drawTelemetryChart() {
 function updateTelemetryUI(data) {
     try {
         if (data.cpu?.cpu?.usage !== undefined) {
-            const cpuUsage = smoothTelemetry('cpu', data.cpu.cpu.usage).toFixed(1);
+            const cpuUsage = data.cpu.cpu.usage.toFixed(1);
             safeSetText('metric-cpu', `${cpuUsage}%`);
         }
 
@@ -1225,8 +1192,8 @@ function updateTelemetryUI(data) {
 
         if (data.network?.network) {
             const net = data.network.network;
-            const rx = formatSpeed(smoothTelemetry('rx', net.rx_sec));
-            const tx = formatSpeed(smoothTelemetry('tx', net.tx_sec));
+            const rx = formatSpeed(net.rx_sec);
+            const tx = formatSpeed(net.tx_sec);
             safeSetText('metric-net', `↓${rx} ↑${tx}`);
         }
 
@@ -1237,11 +1204,10 @@ function updateTelemetryUI(data) {
             safeSetText('metric-disk', `${used} / ${total}`);
         }
 
-        const cpuVal = telemetrySmooth.cpu !== null ? telemetrySmooth.cpu : data.cpu?.cpu?.usage;
-        const memRaw = data.memory?.memory
+        const cpuVal = data.cpu?.cpu?.usage;
+        const memVal = data.memory?.memory
             ? (data.memory.memory.used / data.memory.memory.total) * 100
             : undefined;
-        const memVal = memRaw !== undefined ? smoothTelemetry('mem', memRaw) : undefined;
         pushTelemetryHistory(cpuVal, memVal);
 
     } catch (e) {
@@ -1249,14 +1215,12 @@ function updateTelemetryUI(data) {
     }
 }
 
-// テレメトリ取得の開始: 収集係が2秒ごとに書き出す JSON を3秒ごとに読みに行く
+// テレメトリ取得の開始: 収集係が2秒ごとに書き出す JSON を2秒ごとに読みに行く
 function startTelemetry() {
     stopTelemetry();
 
     telemetryHistory.cpu.length = 0;
     telemetryHistory.mem.length = 0;
-    // 平滑化の状態 (telemetrySmooth) はページ内で保持する。開くたびに消すと
-    // ウォームアップし直しになり、開いた直後の表示が荒れるため
 
     const fetchTelemetry = async () => {
         try {
@@ -1268,7 +1232,7 @@ function startTelemetry() {
         }
     };
     fetchTelemetry();
-    telemetryTimer = setInterval(fetchTelemetry, 3000);
+    telemetryTimer = setInterval(fetchTelemetry, 2000);
 }
 
 // テレメトリ取得の停止
