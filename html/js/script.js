@@ -21,7 +21,235 @@ function applySiteTheme(theme) {
     const isBlueArchive = theme === THEME_BLUE_ARCHIVE;
     document.body.classList.toggle('theme-blue-archive', isBlueArchive);
     document.documentElement.classList.toggle('theme-blue-archive', isBlueArchive);
+    updateWaterSurface(isBlueArchive);
 }
+
+// ===== blue-archive テーマ用: 水面 (WebGL コースティクス / Canvas フォールバック) =====
+// テーマONのときだけ画面背面に固定Canvasを敷く。
+// 本命は WebGL のコースティクス (プールの底のような光の網目) で、
+// 解像度は端末の画素密度 (上限1.5倍) まで上げる。
+// WebGL が使えない環境では Canvas 2D の簡易水面に落とす。
+// どちらも約30fpsに制限し、タブが裏に回ったら描画を止める。
+// prefers-reduced-motion では動かさない (style.css の静止グラデーションになる)。
+let waterCanvas = null;
+let waterMode = null; // 'gl' | '2d'
+let waterGl = null;
+let waterGlURes = null;
+let waterGlUTime = null;
+let waterCtx = null;
+let waterRafId = null;
+let waterLastDraw = 0;
+let waterBlobs = [];
+
+const WATER_VERTEX_SHADER = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }';
+const WATER_FRAGMENT_SHADER = [
+    'precision mediump float;',
+    'uniform vec2 u_res; uniform float u_time;',
+    'float caust(vec2 uv, float time){',
+    '  vec2 p = mod(uv * 6.28318, 6.28318) - 250.0;',
+    '  vec2 i = vec2(p);',
+    '  float c = 1.0;',
+    '  float inten = 0.005;',
+    '  for (int n = 0; n < 5; n++) {',
+    '    float t = time * (1.0 - (3.5 / float(n + 1)));',
+    '    i = p + vec2(cos(t - i.x) + sin(t + i.y), sin(t - i.y) + cos(t + i.x));',
+    '    c += 1.0 / length(vec2(p.x / (sin(i.x + t) / inten), p.y / (cos(i.y + t) / inten)));',
+    '  }',
+    '  c /= 5.0; c = 1.17 - pow(c, 1.4);',
+    '  return pow(abs(c), 8.0);',
+    '}',
+    'void main(){',
+    '  vec2 uv = gl_FragCoord.xy / u_res;',
+    '  vec2 cuv = uv * vec2(u_res.x / u_res.y, 1.0) * 1.6;',
+    '  float t = u_time * 0.45;',
+    '  float c1 = caust(cuv, t);',
+    '  float c2 = caust(cuv * 1.7 + 3.1, t * 1.3);',
+    '  vec3 deep = mix(vec3(0.012, 0.30, 0.55), vec3(0.02, 0.45, 0.75), uv.y);',
+    '  vec3 col = deep;',
+    '  col += vec3(0.35, 0.85, 1.0) * c1 * 0.85;',
+    '  col += vec3(0.65, 0.97, 1.0) * c2 * 0.45;',
+    '  col += vec3(1.0) * pow(c1, 3.0) * 0.25;',
+    '  gl_FragColor = vec4(col, 1.0);',
+    '}'
+].join('\n');
+
+function initWaterGL(canvas) {
+    try {
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        if (!gl) return false;
+        const compile = (type, src) => {
+            const s = gl.createShader(type);
+            gl.shaderSource(s, src);
+            gl.compileShader(s);
+            return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null;
+        };
+        const vs = compile(gl.VERTEX_SHADER, WATER_VERTEX_SHADER);
+        const fs = compile(gl.FRAGMENT_SHADER, WATER_FRAGMENT_SHADER);
+        if (!vs || !fs) return false;
+        const prog = gl.createProgram();
+        gl.attachShader(prog, vs);
+        gl.attachShader(prog, fs);
+        gl.linkProgram(prog);
+        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return false;
+        gl.useProgram(prog);
+        const buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+        const loc = gl.getAttribLocation(prog, 'p');
+        gl.enableVertexAttribArray(loc);
+        gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+        waterGlURes = gl.getUniformLocation(prog, 'u_res');
+        waterGlUTime = gl.getUniformLocation(prog, 'u_time');
+        waterGl = gl;
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function makeWaterCanvasElement() {
+    const c = document.createElement('canvas');
+    c.id = 'theme-water-canvas';
+    c.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;';
+    return c;
+}
+
+function ensureWaterCanvas() {
+    if (waterCanvas) return;
+    waterCanvas = makeWaterCanvasElement();
+    document.body.appendChild(waterCanvas);
+    if (initWaterGL(waterCanvas)) {
+        waterMode = 'gl';
+    } else {
+        // WebGL の取得に失敗した Canvas では 2D が取れないため作り直す
+        const fresh = makeWaterCanvasElement();
+        waterCanvas.replaceWith(fresh);
+        waterCanvas = fresh;
+        waterCtx = waterCanvas.getContext('2d');
+        waterMode = '2d';
+        waterBlobs = [];
+        for (let i = 0; i < 16; i++) {
+            waterBlobs.push({
+                x: Math.random(), y: Math.random(),
+                r: 70 + Math.random() * 160,
+                speed: 0.10 + Math.random() * 0.20,
+                phase: Math.random() * Math.PI * 2,
+                drift: 0.02 + Math.random() * 0.04
+            });
+        }
+    }
+    resizeWaterCanvas();
+    window.addEventListener('resize', resizeWaterCanvas);
+}
+
+function resizeWaterCanvas() {
+    if (!waterCanvas) return;
+    if (waterMode === 'gl') {
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+        waterCanvas.width = Math.max(2, Math.round(window.innerWidth * dpr));
+        waterCanvas.height = Math.max(2, Math.round(window.innerHeight * dpr));
+        if (waterGl) waterGl.viewport(0, 0, waterCanvas.width, waterCanvas.height);
+    } else {
+        waterCanvas.width = Math.max(2, Math.round(window.innerWidth * 0.5));
+        waterCanvas.height = Math.max(2, Math.round(window.innerHeight * 0.5));
+    }
+}
+
+function drawWaterGL(now) {
+    if (!waterGl) return;
+    waterGl.uniform2f(waterGlURes, waterCanvas.width, waterCanvas.height);
+    waterGl.uniform1f(waterGlUTime, now / 1000);
+    waterGl.drawArrays(waterGl.TRIANGLE_STRIP, 0, 4);
+}
+
+function drawWaterSurface(now) {
+    if (!waterCtx || !waterCanvas) return;
+    const w = waterCanvas.width;
+    const h = waterCanvas.height;
+    const t = now / 1000;
+
+    // 水のグラデーション (上が浅く、下にいくほど少し深い青)
+    const g = waterCtx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#e9f8ff');
+    g.addColorStop(0.45, '#d5efff');
+    g.addColorStop(1, '#a9dcff');
+    waterCtx.fillStyle = g;
+    waterCtx.fillRect(0, 0, w, h);
+
+    // ゆっくり横に流れる波の帯 (3層)
+    for (let layer = 0; layer < 3; layer++) {
+        const amp = 6 + layer * 5;
+        const len = 0.008 - layer * 0.0018;
+        const speed = 0.25 + layer * 0.12;
+        const yBase = h * (0.25 + layer * 0.28);
+        waterCtx.beginPath();
+        waterCtx.moveTo(0, h);
+        for (let x = 0; x <= w; x += 8) {
+            const y = yBase + Math.sin(x * len + t * speed + layer * 2.1) * amp
+                            + Math.sin(x * len * 2.7 - t * speed * 0.7) * amp * 0.4;
+            waterCtx.lineTo(x, y);
+        }
+        waterCtx.lineTo(w, h);
+        waterCtx.closePath();
+        waterCtx.fillStyle = 'rgba(56, 189, 248, ' + (0.05 + layer * 0.02) + ')';
+        waterCtx.fill();
+    }
+
+    // 光だまり (コースティクス風): 柔らかい光が漂いながら明滅する
+    for (const b of waterBlobs) {
+        const bx = (b.x + Math.sin(t * b.drift + b.phase) * 0.03) * w;
+        const by = (b.y + Math.cos(t * b.drift * 0.8 + b.phase) * 0.03) * h;
+        const pulse = 0.5 + 0.5 * Math.sin(t * b.speed * 2 + b.phase);
+        const alpha = 0.04 + pulse * 0.07;
+        const rg = waterCtx.createRadialGradient(bx, by, 0, bx, by, b.r);
+        rg.addColorStop(0, 'rgba(255, 255, 255, ' + alpha + ')');
+        rg.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        waterCtx.fillStyle = rg;
+        waterCtx.beginPath();
+        waterCtx.arc(bx, by, b.r, 0, Math.PI * 2);
+        waterCtx.fill();
+    }
+}
+
+function waterLoop(now) {
+    waterRafId = requestAnimationFrame(waterLoop);
+    if (document.hidden) return;
+    if (now - waterLastDraw < 33) return; // 約30fpsに制限
+    waterLastDraw = now;
+    if (waterMode === 'gl') {
+        drawWaterGL(now);
+    } else {
+        drawWaterSurface(now);
+    }
+}
+
+function startWaterSurface() {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    ensureWaterCanvas();
+    if (!waterCanvas) return;
+    waterCanvas.style.display = '';
+    if (waterRafId === null) {
+        waterLastDraw = 0;
+        waterRafId = requestAnimationFrame(waterLoop);
+    }
+}
+
+function stopWaterSurface() {
+    if (waterRafId !== null) {
+        cancelAnimationFrame(waterRafId);
+        waterRafId = null;
+    }
+    if (waterCanvas) waterCanvas.style.display = 'none';
+}
+
+function updateWaterSurface(isBlueArchive) {
+    if (isBlueArchive) {
+        startWaterSurface();
+    } else {
+        stopWaterSurface();
+    }
+}
+
 
 function setSiteTheme(theme) {
     if (theme) {

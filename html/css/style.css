@@ -210,6 +210,12 @@ body.theme-blue-archive #typing-text {
     border-color: #38bdf8 !important;
 }
 
+/* 水面背景の上で、カード外の見出し (濃色文字) が沈まないように薄い光彩を付ける */
+body.theme-blue-archive h1,
+body.theme-blue-archive h2 {
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 14px rgba(255, 255, 255, 0.30);
+}
+
 /* --- 記事カード/リーダー (log-articles.js): 濃色カード上のアクセント ---
    カード見出し (group-hover:text-[#fca73f]) やカテゴリチップは
    濃色の上に乗るため、通常の #128afa では沈む。明るい水色にする。
