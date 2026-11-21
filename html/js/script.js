@@ -600,10 +600,19 @@ function toggleSideMenu() {
     }
 }
 
-// サイドメニューを右スワイプで閉じられるようにする (スマホ向け)
-// メニューは右側ドロワーなので、右へスワイプすると指に追随し、80px 超で閉じる
-function setupSideMenuSwipe() {
-    const menu = document.getElementById('side-menu');
+// 右側ドロワーを右スワイプで閉じられるようにする (スマホ向け)
+// 対象は translate-x-full で開閉する右ドロワー全部。ドラッグ中は指に 1:1 追随し、
+// 80px 超のドラッグ、または右向きフリック (30px 超 + 速度あり) で閉じる
+const SWIPE_DRAWERS = [
+    ['side-menu', 'toggleSideMenu'],
+    ['inspector-modal', 'closeInspector'],
+    ['log-modal', 'closeLogArticle'],
+    ['gadget-modal', 'closeGadgetModal'],
+    ['infra-modal', 'closeInfraModal'],
+    ['device-modal', 'closeDeviceModal'],
+];
+
+function addSwipeToClose(menu, closeFnName) {
     if (!menu || menu.dataset.swipeReady) return;
     menu.dataset.swipeReady = '1';
 
@@ -642,18 +651,37 @@ function setupSideMenuSwipe() {
         dragging = false;
         menu.style.transition = '';
         menu.style.transform = '';
-        // 80px 超のドラッグ、または右向きのフリック (30px 超 + 速度あり) で閉じる
-        if (dx > 80 || (dx > 30 && velocity > 0.35)) toggleSideMenu();
+        if (dx > 80 || (dx > 30 && velocity > 0.35)) {
+            const fn = window[closeFnName];
+            if (typeof fn === 'function') fn();
+        }
         dx = 0;
     };
     menu.addEventListener('touchend', finish);
     menu.addEventListener('touchcancel', finish);
 }
 
+function setupDrawerSwipes() {
+    SWIPE_DRAWERS.forEach(([id, fnName]) => {
+        addSwipeToClose(document.getElementById(id), fnName);
+    });
+    // #log-modal は log-articles.js が動的に生成するため、出現したら付け直す
+    if (document.getElementById('log-section') && !document.getElementById('log-modal')) {
+        const obs = new MutationObserver(() => {
+            const modal = document.getElementById('log-modal');
+            if (modal) {
+                addSwipeToClose(modal, 'closeLogArticle');
+                obs.disconnect();
+            }
+        });
+        obs.observe(document.body, { childList: true, subtree: true });
+    }
+}
+
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupSideMenuSwipe);
+    document.addEventListener('DOMContentLoaded', setupDrawerSwipes);
 } else {
-    setupSideMenuSwipe();
+    setupDrawerSwipes();
 }
 
 // sidemenu-list.json からカスタムメニュー描画
