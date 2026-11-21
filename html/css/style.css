@@ -101,6 +101,22 @@ html, body {
         padding-left: 0.5rem;
         padding-right: 0.5rem;
     }
+    /* ヘッダーの横幅対策: オペレーターバッジはスマホでは隠す
+       (情報自体はサイドメニュー側にもある) */
+    .header-operator-badge {
+        display: none !important;
+    }
+    /* ロゴを少し小さくし、ヘッダー内の余白と間隔も詰める */
+    header img {
+        height: 34px !important;
+    }
+    header > div {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+    header > div > div:last-child {
+        gap: 0.5rem !important;
+    }
 }
 
 /* ==========================================================================
