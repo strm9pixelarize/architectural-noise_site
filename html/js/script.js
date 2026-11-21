@@ -72,11 +72,11 @@ const WATER_FRAGMENT_SHADER = [
     '  float t = u_time * 0.45;',
     '  float c1 = caust(cuv, t);',
     '  float c2 = caust(cuv * 1.7 + 3.1, t * 1.3);',
-    '  vec3 deep = mix(vec3(0.30, 0.66, 0.90), vec3(0.42, 0.76, 0.95), gradY);',
+    '  vec3 deep = mix(vec3(0.45, 0.76, 0.94), vec3(0.58, 0.84, 0.97), gradY);',
     '  vec3 col = deep;',
-    '  col += vec3(0.55, 0.92, 1.0) * c1 * 0.32;',
-    '  col += vec3(0.80, 0.98, 1.0) * c2 * 0.18;',
-    '  col += vec3(1.0) * pow(c1, 3.0) * 0.08;',
+    '  col += vec3(0.55, 0.92, 1.0) * c1 * 0.20;',
+    '  col += vec3(0.80, 0.98, 1.0) * c2 * 0.11;',
+    '  col += vec3(1.0) * pow(c1, 3.0) * 0.05;',
     '  gl_FragColor = vec4(col, 1.0);',
     '}'
 ].join('\n');
