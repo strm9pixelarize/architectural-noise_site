@@ -45,6 +45,7 @@ let waterScale = null; // GL描画の解像度倍率 (適応制御で下がる�
 let waterFrameCount = 0;
 let waterFrameTimeSum = 0;
 let waterResizeTimer = null;
+let waterFramesDrawn = 0; // 実描画したフレーム数 (診断用)
 let waterMaxHeight = 0; // アドレスバーを除いた最大の高さ (バッファはこの高さで固定する)
 let waterBlobs = [];
 
@@ -289,11 +290,33 @@ function waterLoop(now) {
         }
     }
 
+    waterFramesDrawn++;
     if (waterMode === 'gl') {
         drawWaterGL(waterElapsed);
     } else {
         drawWaterSurface(waterElapsed);
     }
+}
+
+// 診断オーバーレイ: URL に ?waterdebug=1 を付けたときだけ表示。
+// setInterval で更新するので、rAF が止まっても数字の更新自体は続く。
+// frames が止まれば rAF/描画側の問題、size が変わればバッファ再確保の問題と切り分けられる
+function setupWaterDebug() {
+    if (!/[?&]waterdebug=1/.test(location.search)) return;
+    if (document.getElementById('water-debug')) return;
+    const box = document.createElement('div');
+    box.id = 'water-debug';
+    box.style.cssText = 'position:fixed;top:64px;left:8px;z-index:9999;background:rgba(0,0,0,.78);color:#7dd3fc;font:11px/1.5 monospace;padding:6px 8px;border-radius:6px;pointer-events:none;white-space:pre;';
+    document.body.appendChild(box);
+    setInterval(() => {
+        box.textContent =
+            'mode: ' + waterMode + '\n' +
+            't(s): ' + (waterElapsed / 1000).toFixed(1) + '\n' +
+            'frames: ' + waterFramesDrawn + '\n' +
+            'size: ' + (waterCanvas ? waterCanvas.width + 'x' + waterCanvas.height : '-') + '\n' +
+            'inner: ' + window.innerWidth + 'x' + window.innerHeight + '\n' +
+            'scale: ' + waterScale;
+    }, 200);
 }
 
 function startWaterSurface() {
@@ -306,6 +329,7 @@ function startWaterSurface() {
     window.__waterMode = waterMode;
     document.body.classList.add('water-active');
     waterCanvas.style.display = '';
+    setupWaterDebug();
     if (waterRafId === null) {
         waterLastDraw = 0;
         waterLastRaw = 0;
