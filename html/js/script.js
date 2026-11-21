@@ -1102,11 +1102,22 @@ function formatSpeed(bytesPerSec) {
 // テレメトリ表示の平滑化 (指数移動平均): 瞬時値の荒ぶりを抑える
 // alpha が小さいほど穏やか。3秒間隔の配信に対し 0.35 で約2〜3サンプル分の慣性
 const TELEMETRY_SMOOTH_ALPHA = 0.35;
+// 接続直後の最初の数サンプルは瞬時値が極端になりやすいので、累積平均でならす
+const TELEMETRY_WARMUP_SAMPLES = 4;
 const telemetrySmooth = { cpu: null, mem: null, rx: null, tx: null };
+const telemetrySmoothCount = { cpu: 0, mem: 0, rx: 0, tx: 0 };
 function smoothTelemetry(key, raw) {
     if (typeof raw !== 'number' || !isFinite(raw)) return raw;
     const prev = telemetrySmooth[key];
-    const next = prev === null ? raw : prev + TELEMETRY_SMOOTH_ALPHA * (raw - prev);
+    telemetrySmoothCount[key] += 1;
+    let next;
+    if (prev === null) {
+        next = raw;
+    } else if (telemetrySmoothCount[key] <= TELEMETRY_WARMUP_SAMPLES) {
+        next = prev + (raw - prev) / telemetrySmoothCount[key];
+    } else {
+        next = prev + TELEMETRY_SMOOTH_ALPHA * (raw - prev);
+    }
     telemetrySmooth[key] = next;
     return next;
 }
@@ -1115,6 +1126,10 @@ function resetTelemetrySmooth() {
     telemetrySmooth.mem = null;
     telemetrySmooth.rx = null;
     telemetrySmooth.tx = null;
+    telemetrySmoothCount.cpu = 0;
+    telemetrySmoothCount.mem = 0;
+    telemetrySmoothCount.rx = 0;
+    telemetrySmoothCount.tx = 0;
 }
 
 // テレメトリ履歴グラフ（直近60点 = 3秒間隔で約3分）
@@ -1199,7 +1214,8 @@ function startTelemetry() {
 
     telemetryHistory.cpu.length = 0;
     telemetryHistory.mem.length = 0;
-    resetTelemetrySmooth();
+    // 平滑化の状態 (telemetrySmooth) はページ内で保持する。開くたびに消すと
+    // ウォームアップし直しになり、開いた直後の表示が荒れるため
 
     telemetrySource = new EventSource('/api/stream/sys-telemetry');
 
