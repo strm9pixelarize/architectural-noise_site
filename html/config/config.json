@@ -22,6 +22,8 @@
   "about": {
     "title": "#Architectural*Noise. について",
     "subtitle": "このワークベンチそのものについて",
+    "tagline": "Personal Workbench / Self-Hosted / Always Open",
+    "tags": ["自宅サーバー", "Docker / Portainer", "Webラジオ", "ガジェット", "バイク", "カスタムOS"],
     "paragraphs": [
       "#Architectural*Noise. は、ねるる｜優の個人サイト。自宅サーバーの上で動いている、実験と記録のためのワークベンチです。",
       "ここに置いてあるのは、全部「自分で作って、自分で運用しているもの」。サーバーインフラの構築記録、ガジェットやスマホのあれこれ、バイク、そしてWebラジオ局の運営まで。サイドメニューでは、サーバーの実測テレメトリもそのまま公開しています。",

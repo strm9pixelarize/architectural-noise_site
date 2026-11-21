@@ -267,10 +267,41 @@
 
             <div class="glass-card bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 backdrop-blur-md relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-96 h-96 bg-[#fca73f]/10 rounded-full blur-3xl -z-10 group-hover:bg-[#fca73f]/20 transition duration-700"></div>
-                <div id="about-paragraphs" class="space-y-4 text-slate-300 text-sm sm:text-base leading-relaxed font-sans">
-                    <p>#Architectural*Noise. は、ねるる｜優の個人サイト。自宅サーバーの上で動いている、実験と記録のためのワークベンチです。</p>
-                    <p>ここに置いてあるのは、全部「自分で作って、自分で運用しているもの」。サーバーインフラの構築記録、ガジェットやスマホのあれこれ、バイク、そしてWebラジオ局の運営まで。サイドメニューでは、サーバーの実測テレメトリもそのまま公開しています。</p>
-                    <p>完成品の展示場所ではなく、作って、試して、直して、という過程ごと置いてある場所です。</p>
+
+                <div class="flex flex-col md:flex-row items-center md:items-start gap-6 sm:gap-8">
+                    <div class="relative flex-shrink-0">
+                        <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-[#f7f4eb] border-2 border-[#fca73f]/60 shadow-xl flex items-center justify-center p-2 overflow-hidden">
+                            <img src="logo-architectural-noise.png" data-logo-blue="logo-architectural-noise-blue.png" alt="#Architectural*Noise" class="site-logo w-full h-auto">
+                        </div>
+                        <div class="absolute -bottom-2 -right-2 px-2 py-0.5 rounded-full bg-[#fca73f]/20 border border-[#fca73f]/40 text-[#fca73f] text-[10px] font-mono">
+                            WORKBENCH
+                        </div>
+                    </div>
+
+                    <div class="flex-grow space-y-3 text-center md:text-left">
+                        <div>
+                            <div class="flex items-center justify-center md:justify-start gap-2 flex-wrap">
+                                <h3 class="text-2xl font-bold font-mono text-white">#Architectural*Noise.</h3>
+                                <span class="text-xs font-mono text-[#fca73f]">architectural-n.net</span>
+                            </div>
+                            <p id="about-tagline" class="text-xs font-mono text-slate-400 mt-1">Personal Workbench / Self-Hosted / Always Open</p>
+                        </div>
+
+                        <div id="about-paragraphs" class="space-y-3 text-slate-300 text-sm leading-relaxed font-sans">
+                            <p>#Architectural*Noise. は、ねるる｜優の個人サイト。自宅サーバーの上で動いている、実験と記録のためのワークベンチです。</p>
+                            <p>ここに置いてあるのは、全部「自分で作って、自分で運用しているもの」。サーバーインフラの構築記録、ガジェットやスマホのあれこれ、バイク、そしてWebラジオ局の運営まで。サイドメニューでは、サーバーの実測テレメトリもそのまま公開しています。</p>
+                            <p>完成品の展示場所ではなく、作って、試して、直して、という過程ごと置いてある場所です。</p>
+                        </div>
+
+                        <div id="about-tags" class="flex flex-wrap items-center justify-center md:justify-start gap-2 pt-1">
+                            <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700/60 text-[10px] font-mono">#自宅サーバー</span>
+                            <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700/60 text-[10px] font-mono">#Docker / Portainer</span>
+                            <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700/60 text-[10px] font-mono">#Webラジオ</span>
+                            <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700/60 text-[10px] font-mono">#ガジェット</span>
+                            <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700/60 text-[10px] font-mono">#バイク</span>
+                            <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700/60 text-[10px] font-mono">#カスタムOS</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -409,7 +440,7 @@
     <script type="application/json" id="data-profile"><!--# include file="config/config_profile.json" --></script>
     <script type="application/json" id="data-partners"><!--# include file="config/config_partners.json" --></script>
 
-    <script src="js/script.js?v=20261121-24" defer></script>
+    <script src="js/script.js?v=20261121-25" defer></script>
 
     <!-- エフェクト用 JS -->
     <script src="js/effects.js"></script>

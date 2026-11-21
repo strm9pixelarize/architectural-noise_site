@@ -760,6 +760,14 @@ function renderAbout() {
     if (titleEl && about.title) titleEl.textContent = about.title;
     const subEl = document.getElementById('about-subtitle');
     if (subEl && about.subtitle) subEl.textContent = about.subtitle;
+    const taglineEl = document.getElementById('about-tagline');
+    if (taglineEl && about.tagline) taglineEl.textContent = about.tagline;
+    const tagsEl = document.getElementById('about-tags');
+    if (tagsEl && Array.isArray(about.tags)) {
+        tagsEl.innerHTML = about.tags.map(t =>
+            `<span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700/60 text-[10px] font-mono">#${t}</span>`
+        ).join('');
+    }
     const bodyEl = document.getElementById('about-paragraphs');
     if (bodyEl && Array.isArray(about.paragraphs)) {
         bodyEl.innerHTML = '';
