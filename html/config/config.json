@@ -7,7 +7,7 @@
       "systems.",
       "networks.",
       "mobility.",
-      "soundscapes.",
+      "media.",
       "gadgets.",
       "crafts.",
       "everything is all."
@@ -49,6 +49,11 @@
       "id": "design",
       "label": "Design & Crafts",
       "icon": "./icons/design.svg"
+    },
+    {
+      "id": "music",
+      "label": "Music",
+      "icon": "./icons/music.svg"
     }
   ],
   "projects": [
@@ -165,6 +170,24 @@
       ],
       "description": "過去から未来へ、今までのバイクとこれからのバイクについてのページです。",
       "page": "./room_design.html",
+      "schematic": ""
+    },
+    {
+      "id": "music_creation",
+      "category": "music",
+      "title": "ねるるが経験した音楽制作の手帳",
+      "subtitle": "Music Creation & Talk",
+      "status": "ACTIVE",
+      "statusColor": "amber",
+      "date": "2026.11",
+      "image": "./heroImage/my-room.webp",
+      "tags": [
+        "Music",
+        "Indies Band",
+        "SUNO AI"
+      ],
+      "description": "",
+      "page": "",
       "schematic": ""
     }
   ]

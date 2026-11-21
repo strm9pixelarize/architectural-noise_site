@@ -6,6 +6,7 @@ conf.d/telemetry_secret.inc
 html/serverInfo/info.json
 html/config/config_infrastructure.json
 html/telemetry.json
+html/telemetry.json.tmp
 
 # === Tailwind CSS ===
 /tailwind

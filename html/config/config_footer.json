@@ -3,7 +3,6 @@
   "statusNode": "Node: Local cluster",
   "techStack": "Built with Nginx, Docker & Portainer",
   "socialLinks": [
-    { "label": "GitHub", "url": "https://github.com", "icon": "fa-brands fa-github" },
-    { "label": "System Telemetry", "url": "#telemetry", "icon": "fa-solid fa-chart-line" }
+    { "label": "GitHub", "url": "https://github.com/strm9pixelarize", "icon": "fa-brands fa-github" }
   ]
 }

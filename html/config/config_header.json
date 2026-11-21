@@ -15,6 +15,10 @@
     {
       "label": "Partners",
       "href": "#partners-summary"
+    },
+    {
+      "label": "Blog",
+      "href": "https://blog.architectural-n.net/"
     }
   ],
   "searchShortcut": "⌘K"
