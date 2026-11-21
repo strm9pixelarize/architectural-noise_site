@@ -7,7 +7,7 @@ let configProfile = null;
 let configPartners = null;
 
 let activeCategory = 'all';
-let telemetrySource = null;
+let telemetryTimer = null;
 let radioIntervalId = null;
 
 // ===== 隠しテーマ (コマンドパレット) =====
@@ -1208,7 +1208,48 @@ function drawTelemetryChart() {
     }
 }
 
-// SSEテレメトリ接続の開始（重複防止）
+// テレメトリ受信データの表示反映 (収集係が書く telemetry.json を読む)
+function updateTelemetryUI(data) {
+    try {
+        if (data.cpu?.cpu?.usage !== undefined) {
+            const cpuUsage = smoothTelemetry('cpu', data.cpu.cpu.usage).toFixed(1);
+            safeSetText('metric-cpu', `${cpuUsage}%`);
+        }
+
+        if (data.memory?.memory) {
+            const mem = data.memory.memory;
+            const used = formatBytes(mem.used);
+            const pct = ((mem.used / mem.total) * 100).toFixed(0);
+            safeSetText('metric-ram', `${used} (${pct}%)`);
+        }
+
+        if (data.network?.network) {
+            const net = data.network.network;
+            const rx = formatSpeed(smoothTelemetry('rx', net.rx_sec));
+            const tx = formatSpeed(smoothTelemetry('tx', net.tx_sec));
+            safeSetText('metric-net', `↓${rx} ↑${tx}`);
+        }
+
+        if (data.disk?.drive) {
+            const disk = data.disk.drive;
+            const used = formatBytes(disk.used);
+            const total = formatBytes(disk.size);
+            safeSetText('metric-disk', `${used} / ${total}`);
+        }
+
+        const cpuVal = telemetrySmooth.cpu !== null ? telemetrySmooth.cpu : data.cpu?.cpu?.usage;
+        const memRaw = data.memory?.memory
+            ? (data.memory.memory.used / data.memory.memory.total) * 100
+            : undefined;
+        const memVal = memRaw !== undefined ? smoothTelemetry('mem', memRaw) : undefined;
+        pushTelemetryHistory(cpuVal, memVal);
+
+    } catch (e) {
+        console.warn('[Telemetry Error]', e);
+    }
+}
+
+// テレメトリ取得の開始: 収集係が3秒ごとに書き出す JSON を5秒ごとに読みに行く
 function startTelemetry() {
     stopTelemetry();
 
@@ -1217,60 +1258,24 @@ function startTelemetry() {
     // 平滑化の状態 (telemetrySmooth) はページ内で保持する。開くたびに消すと
     // ウォームアップし直しになり、開いた直後の表示が荒れるため
 
-    telemetrySource = new EventSource('/api/stream/sys-telemetry');
-
-    telemetrySource.onmessage = (event) => {
+    const fetchTelemetry = async () => {
         try {
-            const data = JSON.parse(event.data);
-
-            if (data.cpu?.cpu?.usage !== undefined) {
-                const cpuUsage = smoothTelemetry('cpu', data.cpu.cpu.usage).toFixed(1);
-                safeSetText('metric-cpu', `${cpuUsage}%`);
-            }
-
-            if (data.memory?.memory) {
-                const mem = data.memory.memory;
-                const used = formatBytes(mem.used);
-                const pct = ((mem.used / mem.total) * 100).toFixed(0);
-                safeSetText('metric-ram', `${used} (${pct}%)`);
-            }
-
-            if (data.network?.network) {
-                const net = data.network.network;
-                const rx = formatSpeed(smoothTelemetry('rx', net.rx_sec));
-                const tx = formatSpeed(smoothTelemetry('tx', net.tx_sec));
-                safeSetText('metric-net', `↓${rx} ↑${tx}`);
-            }
-
-            if (data.disk?.drive) {
-                const disk = data.disk.drive;
-                const used = formatBytes(disk.used);
-                const total = formatBytes(disk.size);
-                safeSetText('metric-disk', `${used} / ${total}`);
-            }
-
-            const cpuVal = telemetrySmooth.cpu !== null ? telemetrySmooth.cpu : data.cpu?.cpu?.usage;
-            const memRaw = data.memory?.memory
-                ? (data.memory.memory.used / data.memory.memory.total) * 100
-                : undefined;
-            const memVal = memRaw !== undefined ? smoothTelemetry('mem', memRaw) : undefined;
-            pushTelemetryHistory(cpuVal, memVal);
-
+            const res = await fetch('/telemetry.json', { cache: 'no-store' });
+            if (!res.ok) return;
+            updateTelemetryUI(await res.json());
         } catch (e) {
-            console.warn('[SSE Error]', e);
+            // ファイルがまだ無い・一時的な失敗は無視して次回に任せる
         }
     };
-
-    telemetrySource.onerror = (e) => {
-        console.warn('[SSE Connection Error]', e);
-    };
+    fetchTelemetry();
+    telemetryTimer = setInterval(fetchTelemetry, 5000);
 }
 
-// SSEテレメトリ接続の停止
+// テレメトリ取得の停止
 function stopTelemetry() {
-    if (telemetrySource) {
-        telemetrySource.close();
-        telemetrySource = null;
+    if (telemetryTimer) {
+        clearInterval(telemetryTimer);
+        telemetryTimer = null;
     }
 }
 
