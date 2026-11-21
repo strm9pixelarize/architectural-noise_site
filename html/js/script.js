@@ -44,6 +44,7 @@ let waterElapsed = 0;
 let waterScale = null; // GL描画の解像度倍率 (適応制御で下がることがある)
 let waterFrameCount = 0;
 let waterFrameTimeSum = 0;
+let waterResizeTimer = null;
 let waterBlobs = [];
 
 const WATER_VERTEX_SHADER = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }';
@@ -64,12 +65,12 @@ const WATER_FRAGMENT_SHADER = [
     '  return pow(abs(c), 8.0);',
     '}',
     'void main(){',
-    '  vec2 uv = gl_FragCoord.xy / u_res;',
-    '  vec2 cuv = uv * vec2(u_res.x / u_res.y, 1.0) * 1.35;',
+    '  float gradY = gl_FragCoord.y / u_res.y;',
+    '  vec2 cuv = vec2(gl_FragCoord.x, u_res.y - gl_FragCoord.y) / u_res.x * 1.35;',
     '  float t = u_time * 0.45;',
     '  float c1 = caust(cuv, t);',
     '  float c2 = caust(cuv * 1.7 + 3.1, t * 1.3);',
-    '  vec3 deep = mix(vec3(0.30, 0.66, 0.90), vec3(0.42, 0.76, 0.95), uv.y);',
+    '  vec3 deep = mix(vec3(0.30, 0.66, 0.90), vec3(0.42, 0.76, 0.95), gradY);',
     '  vec3 col = deep;',
     '  col += vec3(0.55, 0.92, 1.0) * c1 * 0.32;',
     '  col += vec3(0.80, 0.98, 1.0) * c2 * 0.18;',
@@ -144,7 +145,15 @@ function ensureWaterCanvas() {
         }
     }
     resizeWaterCanvas();
-    window.addEventListener('resize', resizeWaterCanvas);
+    window.addEventListener('resize', scheduleWaterResize);
+}
+
+// スクロール中のアドレスバー出入りで resize が連発すると、そのたびに
+// 描画バッファが再確保+クリアされて「最初から再生」したように見える。
+// イベントが止んでから1回だけ作り直す (その間はCSS側の伸縮で吸収される)
+function scheduleWaterResize() {
+    if (waterResizeTimer) clearTimeout(waterResizeTimer);
+    waterResizeTimer = setTimeout(resizeWaterCanvas, 250);
 }
 
 function resizeWaterCanvas() {
