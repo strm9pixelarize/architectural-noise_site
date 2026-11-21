@@ -27,6 +27,16 @@ function applySiteTheme(theme) {
     const isBlueArchive = theme === THEME_BLUE_ARCHIVE;
     document.body.classList.toggle('theme-blue-archive', isBlueArchive);
     document.documentElement.classList.toggle('theme-blue-archive', isBlueArchive);
+    // ロゴ画像 (img.site-logo) はテーマに合わせて青版と通常版を切り替える
+    document.querySelectorAll('img.site-logo').forEach(img => {
+        if (!img.dataset.logoDefault) img.dataset.logoDefault = img.getAttribute('src');
+        img.src = (isBlueArchive && img.dataset.logoBlue) ? img.dataset.logoBlue : img.dataset.logoDefault;
+    });
+    // ファビコン (link.site-favicon) もテーマに合わせて切り替える
+    document.querySelectorAll('link.site-favicon').forEach(link => {
+        if (!link.dataset.faviconDefault) link.dataset.faviconDefault = link.getAttribute('href');
+        link.href = (isBlueArchive && link.dataset.faviconBlue) ? link.dataset.faviconBlue : link.dataset.faviconDefault;
+    });
     updateWaterSurface(isBlueArchive);
 }
 
