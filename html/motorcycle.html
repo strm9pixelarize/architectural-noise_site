@@ -1,74 +1,163 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ねるるのバイク日和 // #Architectural*Noise</title>
-    
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Markdown & Highlight.js -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
-    <link rel="stylesheet" href="/css/style.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css?v=20261121-5">
 
     <!-- Tailwind CSS -->
     <link rel="stylesheet" href="css/tailwind.css">
 </head>
-<body class="bg-[#f7f4eb] text-slate-800 min-h-screen pb-28 font-sans antialiased selection:bg-[#fca73f] selection:text-white">
+<body class="bg-[#f7f4eb] text-slate-800 min-h-screen font-sans bg-grid-pattern antialiased selection:bg-[#fca73f] selection:text-white flex flex-col">
+    <!-- 音声再生用 -->
+    <audio id="radio-audio" preload="none"></audio>
 
-    <!-- ヘッダー -->
-    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-            <a href="/motorcycle.html" class="flex items-center gap-2 font-mono font-bold text-[#fca73f] hover:text-[#e09230] transition">
-                <i class="fa-solid fa-motorcycle"></i>
+    <!-- 画面下部中央に浮遊するコンパクトプレイヤーバー -->
+    <div id="radio-player-bar" class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-2xl h-20 bg-[#fca73f]/90 backdrop-blur-md border border-[#fca73f]/50 text-slate-900 z-50 px-4 flex items-center justify-between rounded-2xl shadow-2xl">
+        <div class="flex items-center gap-2.5 min-w-0 max-w-[45%]">
+            <img id="radio-art" src="/heroImage/tokyo_station.webp" alt="Artwork" loading="lazy" decoding="async" class="w-8 h-8 rounded-lg object-cover border border-slate-900/20 shadow-sm flex-shrink-0">
+            <div class="min-w-0">
+                <div id="radio-title" class="text-xs font-bold text-slate-900 font-mono truncate">ON AIR // Loading...</div>
+                <div id="radio-artist" class="text-[10px] text-slate-800/80 font-mono truncate">ねるるラジオ</div>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button id="radio-play-btn" onclick="toggleRadioPlay()" class="w-8 h-8 rounded-full bg-slate-900 hover:bg-slate-800 text-[#fca73f] flex items-center justify-center transition shadow-md group flex-shrink-0" aria-label="Play Radio">
+                <span id="radio-play-icon" class="flex items-center justify-center"></span>
+            </button>
+            <div class="hidden sm:flex items-center gap-1.5 bg-[#f7f4eb]/80 px-2 py-0.5 rounded-md border border-slate-900/10">
+                <span id="radio-live-dot" class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
+                <span id="radio-live-text" class="text-[9px] font-mono text-slate-900 font-bold tracking-wider uppercase">LIVE</span>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2">
+            <span id="radio-volume-icon" class="flex items-center justify-center flex-shrink-0"></span>
+            <input id="radio-volume" type="range" min="0" max="1" step="0.01" value="0.8" oninput="changeRadioVolume(this.value)" class="w-16 h-1 bg-[#f7f4eb] rounded-lg appearance-none cursor-pointer accent-slate-900">
+        </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="/motorcycle.html" class="flex items-center gap-2.5 font-mono font-bold text-[#fca73f] hover:text-[#e09230] transition group">
+                <div class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-[#fca73f] group-hover:scale-105 transition-transform">
+                    <svg class="w-4 h-4 fill-current"><use href="/icons/sprites.svg#motorcycle"></use></svg>
+                </div>
                 <span>ねるるのバイク日和</span>
             </a>
-            <a href="/" class="text-xs font-mono text-slate-400 hover:text-[#fca73f] transition">
-                <i class="fa-solid fa-house mr-1"></i> MAIN SITE
-            </a>
+
+            <div class="flex items-center gap-3">
+                <a href="/" class="text-xs font-mono text-slate-300 hover:text-[#fca73f] transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+                    <span>← MAIN SITE</span>
+                </a>
+
+                <button id="menu-btn" onclick="toggleSideMenu()" class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 text-white transition flex flex-col items-center justify-center gap-1 group focus:outline-none" aria-label="Server Info & Telemetry">
+                    <span class="hamburger-line w-4 h-0.5 bg-[#fca73f] rounded-full transition-all duration-300"></span>
+                    <span class="hamburger-line w-4 h-0.5 bg-[#fca73f] rounded-full transition-all duration-300"></span>
+                    <span class="hamburger-line w-4 h-0.5 bg-[#fca73f] rounded-full transition-all duration-300"></span>
+                </button>
+            </div>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-8">
-        
-        <!-- 【1】 記事一覧画面（トップページ） -->
-        <div id="article-list-container">
-            <div class="mb-8 space-y-2">
-                <h1 class="text-2xl font-bold font-mono text-slate-900">Riding & Custom Logs</h1>
-                <p class="text-slate-600 text-xs font-mono">バイク関連の整備記録・ツーリングログ・カスタムまとめ</p>
-            </div>
+    <!-- Side Menu Overlay & Drawer Panel -->
+    <div id="side-menu-overlay" onclick="toggleSideMenu()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden transition-opacity duration-300"></div>
 
-            <!-- カード一覧グリッド -->
-            <div id="articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- JSで動的にカードが生成されます -->
+    <aside id="side-menu" class="fixed top-0 right-0 bottom-0 w-full sm:w-[450px] bg-[#f7f4eb]/95 backdrop-blur-xl border-l border-slate-300/80 z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-6 overflow-y-auto flex flex-col justify-between shadow-2xl">
+        <div class="space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-2.5 h-2.5 rounded-full bg-[#fca73f] animate-ping"></div>
+                    <h2 class="text-base font-bold text-slate-900 font-mono">Server Information</h2>
+                </div>
+                <button onclick="toggleSideMenu()" class="w-8 h-8 rounded-full bg-slate-200/60 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition font-mono font-bold text-xs">✕</button>
             </div>
+            <div class="space-y-1 font-mono text-xs text-slate-600 bg-white/60 p-3 rounded-xl border border-slate-200">
+                <div class="flex justify-between"><span class="text-slate-400">OS:</span><span id="info-os-version" class="font-semibold text-slate-800">--</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Kernel:</span><span id="info-kernel-spec">--</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Host:</span><span id="info-host-family">--</span></div>
+            </div>
+            <div id="side-menu-custom-items" class="space-y-3 pt-2"></div>
+        </div>
+        <div class="pt-4 border-t border-slate-200 flex items-center justify-between text-xs font-mono text-slate-400">
+            <span>Node Status</span>
+            <span id="footer-node-tag">Local cluster</span>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 flex-grow">
+
+        <!-- Title Section -->
+        <div class="space-y-3 border-b border-slate-300 pb-6">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#fca73f]/10 border border-[#fca73f]/30 text-[#fca73f] text-xs font-mono font-bold">
+                <span class="w-2 h-2 rounded-full bg-[#fca73f]"></span>
+                <span>MOTORCYCLE // RIDING & CUSTOM</span>
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-extrabold font-mono text-slate-900">Riding &amp; Custom Logs</h1>
+            <p class="text-sm font-mono text-slate-600 max-w-3xl leading-relaxed">
+                バイク関連の整備記録・ツーリングログ・カスタムまとめ
+            </p>
         </div>
 
-        <!-- 【2】 個別記事画面（Markdown表示） -->
-        <div id="article-detail-container" class="hidden max-w-3xl mx-auto">
-            <!-- 戻るボタン -->
-            <div class="mb-6">
-                <a href="/motorcycle.html" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300 hover:bg-slate-800 hover:text-[#fca73f] hover:border-[#fca73f]/40 transition">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    <span>Back to List</span>
-                </a>
+        <!-- Section Header & Category Filters -->
+        <section id="log-section" class="contents">
+        <div class="space-y-4">
+            <div class="border-b border-slate-300 pb-4">
+                <h2 class="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2 font-mono">
+                    <span class="text-[#fca73f]">✦</span>
+                    <span>Riding Logs</span>
+                </h2>
+                <p class="text-slate-500 text-sm mt-1">ツーリング・整備・カスタムの記録一覧</p>
             </div>
 
-            <!-- Markdown本文描画ターゲット（text-slate-200 を追加して文字色を明示化） -->
-            <article id="markdown-body" class="prose prose-invert max-w-none bg-slate-900/90 p-6 md:p-10 rounded-2xl border border-slate-800/80 text-slate-200 prose-a:text-[#fca73f] prose-a:no-underline hover:prose-a:underline prose-headings:text-[#fca73f]">
-                <!-- JSでMarkdownがパースされて挿入されます -->
-            </article>
+            <div id="log-filters" class="flex flex-wrap gap-2"></div>
         </div>
+
+        <!-- Articles Grid -->
+        <div id="log-articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
 
     </main>
 
+    <!-- Footer Navigation -->
+    <footer class="mt-auto border-t border-slate-200 bg-white/80 backdrop-blur-md pt-8 pb-28">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-mono">
+            <div>
+                <span>© 2026 ARCHITECTURAL NOISE</span>
+                <span class="block text-[10px] text-slate-400 mt-0.5">Motorcycle Riding & Custom Logs</span>
+            </div>
+            <div id="footer-links" class="flex items-center gap-4"></div>
+        </div>
+    </footer>
+
+
+    <!-- Nginx SSI Include -->
+    <script type="application/json" id="data-sidemenu-list"><!--# include file="config/sidemenu-list.json" --></script>
+    <script type="application/json" id="data-server-info"><!--# include file="serverInfo/info.json" --></script>
+
+    <script src="js/script.js"></script>
+    <script src="js/log-articles.js"></script>
+    <script>
+        initLogArticles('/articles/motorcycle/list.json', '// MOTORCYCLE_LOG_READER');
+    </script>
+
     <!-- エフェクト用 JS -->
     <script src="js/effects.js"></script>
-
-    <script src="/js/motorcycle-router.js"></script>
 </body>
 </html>

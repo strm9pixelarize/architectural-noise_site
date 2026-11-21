@@ -210,6 +210,15 @@ body.theme-blue-archive #typing-text {
     border-color: #38bdf8 !important;
 }
 
+/* --- 記事カード/リーダー (log-articles.js): 濃色カード上のアクセント ---
+   カード見出し (group-hover:text-[#fca73f]) やカテゴリチップは
+   濃色の上に乗るため、通常の #128afa では沈む。明るい水色にする。
+   リーダー内の濃色チップ (bg-slate-900 + text-[#fca73f]) も同様 */
+body.theme-blue-archive #log-articles-grid [class*="text-[#fca73f]"],
+body.theme-blue-archive #modal-log-content [class*="text-[#fca73f]"] {
+    color: #7dd3fc !important;
+}
+
 /* --- カード --- */
 body.theme-blue-archive .glass-card {
     background: rgba(255, 255, 255, 0.88) !important;
