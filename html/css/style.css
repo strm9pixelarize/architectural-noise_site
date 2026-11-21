@@ -199,7 +199,8 @@ body.theme-blue-archive [class*="bg-[#fca73f]/90"] {
 /* --- プロフィールカード: 元は濃色カード＋白文字の設計 ---
    glass-card の白背景を当てると白文字が読めなくなるため、
    このカードだけ濃い青のカードとして扱い、文字の前提を守る */
-body.theme-blue-archive #profile-summary {
+body.theme-blue-archive #profile-summary,
+body.theme-blue-archive #about-card {
     background: linear-gradient(135deg, #082f49 0%, #075985 60%, #0369a1 100%) !important;
     border-color: rgba(56, 189, 248, 0.55) !important;
     box-shadow: 0 14px 28px -10px rgba(18, 138, 250, 0.35) !important;
