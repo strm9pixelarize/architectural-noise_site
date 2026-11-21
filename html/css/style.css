@@ -176,6 +176,10 @@ body.theme-blue-archive [class*="bg-[#fca73f]"] {
 body.theme-blue-archive [class*="text-[#fca73f]"] {
     color: #128afa !important;
 }
+/* アクセント・オレンジの塗り fill-[#fca73f] 系 (ラジオ再生アイコン等、JS が描く SVG) */
+body.theme-blue-archive [class*="fill-[#fca73f]"] {
+    fill: #7dd3fc !important;
+}
 /* アクセント・オレンジの枠 border-[#fca73f] 系 */
 body.theme-blue-archive [class*="border-[#fca73f]"] {
     border-color: #2fb9ff !important;
