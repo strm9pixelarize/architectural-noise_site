@@ -262,3 +262,11 @@ body.theme-blue-archive #command-palette [class*="hover:bg-slate-100"]:hover {
 body.theme-blue-archive #loading-screen {
     background: #082f49 !important;
 }
+
+/* 閉じているドロワー (#side-menu / #log-modal) の影が画面右端に漏れるのを防ぐ。
+   translate-x-full で画面外にあっても shadow-2xl のぼかし (約50px) が
+   右端に薄暗い帯として出てしまうため、閉じている間は影を消す */
+#side-menu.translate-x-full,
+#log-modal.translate-x-full {
+    box-shadow: none !important;
+}
