@@ -1099,6 +1099,24 @@ function formatSpeed(bytesPerSec) {
     return formatBytes(bytesPerSec) + '/s';
 }
 
+// テレメトリ表示の平滑化 (指数移動平均): 瞬時値の荒ぶりを抑える
+// alpha が小さいほど穏やか。3秒間隔の配信に対し 0.35 で約2〜3サンプル分の慣性
+const TELEMETRY_SMOOTH_ALPHA = 0.35;
+const telemetrySmooth = { cpu: null, mem: null, rx: null, tx: null };
+function smoothTelemetry(key, raw) {
+    if (typeof raw !== 'number' || !isFinite(raw)) return raw;
+    const prev = telemetrySmooth[key];
+    const next = prev === null ? raw : prev + TELEMETRY_SMOOTH_ALPHA * (raw - prev);
+    telemetrySmooth[key] = next;
+    return next;
+}
+function resetTelemetrySmooth() {
+    telemetrySmooth.cpu = null;
+    telemetrySmooth.mem = null;
+    telemetrySmooth.rx = null;
+    telemetrySmooth.tx = null;
+}
+
 // テレメトリ履歴グラフ（直近60点 = 3秒間隔で約3分）
 const TELEMETRY_HISTORY_MAX = 60;
 const telemetryHistory = { cpu: [], mem: [] };
@@ -1181,6 +1199,7 @@ function startTelemetry() {
 
     telemetryHistory.cpu.length = 0;
     telemetryHistory.mem.length = 0;
+    resetTelemetrySmooth();
 
     telemetrySource = new EventSource('/api/stream/sys-telemetry');
 
@@ -1189,7 +1208,7 @@ function startTelemetry() {
             const data = JSON.parse(event.data);
 
             if (data.cpu?.cpu?.usage !== undefined) {
-                const cpuUsage = data.cpu.cpu.usage.toFixed(1);
+                const cpuUsage = smoothTelemetry('cpu', data.cpu.cpu.usage).toFixed(1);
                 safeSetText('metric-cpu', `${cpuUsage}%`);
             }
 
@@ -1202,8 +1221,8 @@ function startTelemetry() {
 
             if (data.network?.network) {
                 const net = data.network.network;
-                const rx = formatSpeed(net.rx_sec);
-                const tx = formatSpeed(net.tx_sec);
+                const rx = formatSpeed(smoothTelemetry('rx', net.rx_sec));
+                const tx = formatSpeed(smoothTelemetry('tx', net.tx_sec));
                 safeSetText('metric-net', `↓${rx} ↑${tx}`);
             }
 
@@ -1214,10 +1233,11 @@ function startTelemetry() {
                 safeSetText('metric-disk', `${used} / ${total}`);
             }
 
-            const cpuVal = data.cpu?.cpu?.usage;
-            const memVal = data.memory?.memory
+            const cpuVal = telemetrySmooth.cpu !== null ? telemetrySmooth.cpu : data.cpu?.cpu?.usage;
+            const memRaw = data.memory?.memory
                 ? (data.memory.memory.used / data.memory.memory.total) * 100
                 : undefined;
+            const memVal = memRaw !== undefined ? smoothTelemetry('mem', memRaw) : undefined;
             pushTelemetryHistory(cpuVal, memVal);
 
         } catch (e) {
