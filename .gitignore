@@ -5,6 +5,7 @@ conf.d/telemetry_secret.inc
 # === ホスト情報がそのまま出る生成物 ===
 html/serverInfo/info.json
 html/config/config_infrastructure.json
+html/telemetry.json
 
 # === Tailwind CSS ===
 /tailwind
