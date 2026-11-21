@@ -745,10 +745,30 @@ function renderFooter() {
 // メインコンテンツ描画
 function renderMainContent() {
     if (!configMain) return;
+    renderAbout();
     setupHeroSlides(configMain.site.heroImages);
     setupTypingEffect(configMain.site.typingTexts);
     renderCategories(configMain.categories);
     renderProjects();
+}
+
+// 「#Architectural*Noise. について」セクションの描画 (config.json の about から)
+function renderAbout() {
+    const about = configMain && configMain.about;
+    if (!about) return;
+    const titleEl = document.getElementById('about-title');
+    if (titleEl && about.title) titleEl.textContent = about.title;
+    const subEl = document.getElementById('about-subtitle');
+    if (subEl && about.subtitle) subEl.textContent = about.subtitle;
+    const bodyEl = document.getElementById('about-paragraphs');
+    if (bodyEl && Array.isArray(about.paragraphs)) {
+        bodyEl.innerHTML = '';
+        about.paragraphs.forEach(text => {
+            const p = document.createElement('p');
+            p.textContent = text;
+            bodyEl.appendChild(p);
+        });
+    }
 }
 
 function setupHeroSlides(images) {
