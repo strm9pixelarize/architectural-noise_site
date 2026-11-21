@@ -126,10 +126,22 @@ html, body {
      ベース背景 #eaf6ff / アクセント #2fb9ff・#128afa / 締め色 #0b2a4a
    ========================================================================== */
 
-/* 切り替えをなめらかに */
-body, .glass-card, header, #side-menu, #radio-player-bar {
+/* 切り替えをなめらかに
+   注意: #side-menu は Tailwind の transition-transform でスライドするため、
+   ここで transition を一括指定すると ID セレクタが勝って transform の
+   アニメーションが消える。そのため対象から外し、専用ルールで足すこと */
+body, .glass-card, header {
     transition: background-color 0.5s ease, background 0.5s ease,
                 border-color 0.5s ease, box-shadow 0.5s ease, color 0.5s ease;
+}
+#side-menu {
+    transition: transform 300ms ease-in-out,
+                background-color 0.5s ease, border-color 0.5s ease !important;
+}
+#radio-player-bar {
+    transition-property: background-color, background, border-color, box-shadow, color;
+    transition-duration: 0.5s;
+    transition-timing-function: ease;
 }
 
 /* --- 土台 --- */
