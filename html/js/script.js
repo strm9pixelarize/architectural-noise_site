@@ -1249,7 +1249,7 @@ function updateTelemetryUI(data) {
     }
 }
 
-// テレメトリ取得の開始: 収集係が3秒ごとに書き出す JSON を5秒ごとに読みに行く
+// テレメトリ取得の開始: 収集係が2秒ごとに書き出す JSON を3秒ごとに読みに行く
 function startTelemetry() {
     stopTelemetry();
 
@@ -1268,7 +1268,7 @@ function startTelemetry() {
         }
     };
     fetchTelemetry();
-    telemetryTimer = setInterval(fetchTelemetry, 5000);
+    telemetryTimer = setInterval(fetchTelemetry, 3000);
 }
 
 // テレメトリ取得の停止

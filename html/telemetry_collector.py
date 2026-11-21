@@ -1,12 +1,12 @@
 # telemetry_collector.py
-# ホストの /proc を直接読んで、3秒ごとに telemetry.json を書き出す収集係。
+# ホストの /proc を直接読んで、2秒ごとに telemetry.json を書き出す収集係。
 # 旧 telemetry_stream.py (SSE + Homepage API ポーリング) の置き換え。
 #
 # 前提 (Portainer Stack 側):
 #   - ホストの /proc を /host/proc に読み取り専用でマウントする
 #   - nginx が配信する html フォルダを /out にマウントする (ここへ JSON を書く)
 # CPU使用率とネットワーク速度は前回サンプルとの差分から自前で計算するので、
-# 測定窓が常に一定 (3秒) になり、値が荒れない。
+# 測定窓が常に一定 (2秒) になり、値が荒れない。
 import json
 import os
 import shutil
@@ -15,7 +15,7 @@ import time
 PROC = os.environ.get("TELEMETRY_PROC", "/host/proc")
 OUT_PATH = os.environ.get("TELEMETRY_OUT", "/out/telemetry.json")
 DISK_PATH = os.environ.get("TELEMETRY_DISK_PATH", "/out")
-INTERVAL = 3
+INTERVAL = 2
 
 
 def read_cpu_times():
