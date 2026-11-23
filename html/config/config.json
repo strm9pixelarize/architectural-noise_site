@@ -193,15 +193,16 @@
       "status": "ACTIVE",
       "statusColor": "amber",
       "date": "2026.11",
-      "image": "./heroImage/my-room.webp",
+      "image": "./heroImage/afterlight.webp",
       "tags": [
-        "Music",
-        "Indies Band",
-        "SUNO AI"
+        "SUNO AI",
+        "After#Light",
+        "AI Vocal",
+        "AzuraCast"
       ],
-      "description": "",
-      "page": "",
-      "schematic": ""
+      "description": "AI作曲サービスSUNOで楽曲を制作するプロジェクト「After#Light」の記録。1stアルバム『スタートボタン』全12曲とシングル『再起動の朝』を公式サイトでフリー公開し、個人ラジオ「ねるるの日常」でもオンエアしている。",
+      "page": "https://after-light.architectural-n.net/",
+      "schematic": "+---------------------------------------+\n| SUNO (Compose / Lyrics)               |\n|   -> After#Light: Asahi / Akari       |\n|     -> Official Site / AzuraCast      |\n+---------------------------------------+"
     }
   ]
 }
