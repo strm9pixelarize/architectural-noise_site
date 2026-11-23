@@ -4,6 +4,10 @@ html, body {
     color: #1e293b; /* 文字色をダークカラーにして視認性を確保 */
 }
 
+/* スクロールバー非表示 (スクロール自体は可能) */
+html { scrollbar-width: none; }
+html::-webkit-scrollbar { display: none; }
+
 .bg-grid-pattern {
     background-size: 32px 32px;
     background-image: 
