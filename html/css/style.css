@@ -335,8 +335,6 @@ body.theme-blue-archive #loading-screen {
 /* ヒーローのタイピング文字を固定する (長い語でも折り返さず、見出しの高さが
    変わらないので下の要素が上下に揺れない) */
 #typing-text { white-space: nowrap; }
-@media (max-width: 720px) { #typing-text { font-size: .8em; line-height: 1.25; } }
-@media (max-width: 400px) { #typing-text { font-size: .72em; } }
 
 /* モバイルのヒーロー: 明るいスライドでも見出しが読めるよう暗幕を足す (PCは不変) */
 .hero-mobile-shade { position: absolute; inset: 0; background: rgba(2, 6, 23, .42); display: none; }
