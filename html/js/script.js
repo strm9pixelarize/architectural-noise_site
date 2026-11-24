@@ -466,15 +466,29 @@ function renderIcon(iconStr, defaultClass = 'w-6 h-6 fill-current inline-block f
 }
 
 // ローディング画面を消す処理
+// 最低3秒は表示する。初期化がそれより長くかかる環境では、終わるまで表示し続ける。
+// どうしても終わらない場合の保険として、10秒で強制的に消す。
+const LOADING_MIN_MS = 3000;
+const LOADING_MAX_MS = 10000;
+let loadingScreenHidden = false;
+
 function hideLoadingScreen() {
+    if (loadingScreenHidden) return;
     const loader = document.getElementById('loading-screen');
     if (!loader) return;
-    
-    loader.classList.add('opacity-0', 'pointer-events-none');
+    loadingScreenHidden = true;
+
+    const wait = Math.max(0, LOADING_MIN_MS - performance.now());
     setTimeout(() => {
-        loader.classList.add('hidden');
-    }, 500);
+        loader.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => {
+            loader.classList.add('hidden');
+        }, 500);
+    }, wait);
 }
+
+// 保険: 初期化が詰まってもローディング画面で止まり続けないようにする
+setTimeout(hideLoadingScreen, LOADING_MAX_MS);
 
 // プロフィール概要描画処理
 function renderProfileSummary() {
