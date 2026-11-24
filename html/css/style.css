@@ -336,3 +336,7 @@ body.theme-blue-archive #loading-screen {
    変わらないので下の要素が上下に揺れない) */
 #typing-text { display: inline-block; white-space: nowrap; height: 1.1em; }
 @media (max-width: 720px) { #typing-text { font-size: .8em; } }
+
+/* モバイルのヒーロー: 明るいスライドでも見出しが読めるよう暗幕を足す (PCは不変) */
+.hero-mobile-shade { position: absolute; inset: 0; background: rgba(2, 6, 23, .42); display: none; }
+@media (max-width: 639px) { .hero-mobile-shade { display: block; } }
