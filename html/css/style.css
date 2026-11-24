@@ -331,3 +331,8 @@ body.theme-blue-archive #loading-screen {
     width: min(175px, 32vw);
     transform: rotate(-31deg);
 }
+
+/* ヒーローのタイピング文字を固定する (長い語でも折り返さず、見出しの高さが
+   変わらないので下の要素が上下に揺れない) */
+#typing-text { display: inline-block; white-space: nowrap; height: 1.1em; }
+@media (max-width: 720px) { #typing-text { font-size: .8em; } }
