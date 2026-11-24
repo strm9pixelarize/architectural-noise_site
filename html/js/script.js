@@ -468,7 +468,7 @@ function renderIcon(iconStr, defaultClass = 'w-6 h-6 fill-current inline-block f
 // ローディング画面を消す処理
 // 最低3秒は表示する。初期化がそれより長くかかる環境では、終わるまで表示し続ける。
 // どうしても終わらない場合の保険として、10秒で強制的に消す。
-const LOADING_MIN_MS = 3000;
+const LOADING_MIN_MS = 1500;
 const LOADING_MAX_MS = 10000;
 let loadingScreenHidden = false;
 
