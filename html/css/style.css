@@ -8,6 +8,10 @@ html, body {
 html { scrollbar-width: none; }
 html::-webkit-scrollbar { display: none; }
 
+/* ドロワーやパネル内など、要素内スクロールのバーも非表示 */
+.overflow-auto, .overflow-y-auto, .overflow-x-auto { scrollbar-width: none; }
+.overflow-auto::-webkit-scrollbar, .overflow-y-auto::-webkit-scrollbar, .overflow-x-auto::-webkit-scrollbar { display: none; }
+
 .bg-grid-pattern {
     background-size: 32px 32px;
     background-image: 
