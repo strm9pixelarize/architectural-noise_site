@@ -203,6 +203,32 @@
       "description": "AI作曲サービスSUNOで楽曲を制作するプロジェクト「After#Light」の記録。1stアルバム『スタートボタン』全12曲とシングル『再起動の朝』を公式サイトでフリー公開し、個人ラジオ「ねるるの日常」でもオンエアしている。",
       "page": "https://after-light.architectural-n.net/",
       "schematic": "+---------------------------------------+\n| SUNO (Compose / Lyrics)               |\n|   -> After#Light: Asahi / Akari       |\n|     -> Official Site / AzuraCast      |\n+---------------------------------------+"
+    },
+    {
+      "id": "led_signage",
+      "category": "gadget",
+      "title": "LEDサイネージ復活計画",
+      "subtitle": "Colorlight 5A-75B + HUB75 Panels, driven via Raspberry Pi / FPP",
+      "status": "VERIFIED",
+      "statusColor": "emerald",
+      "date": "2026.11",
+      "image": "./heroImage/led-signage.jpg",
+      "tags": [
+        "LED Matrix",
+        "Raspberry Pi",
+        "FPP",
+        "DDP",
+        "Docker"
+      ],
+      "description": "64×32のHUB75パネル4枚（128×64）を、自宅サーバーから制御できるようにした計画。ColorlightのプロトコルはIPではなくL2生フレームでルーターを越えられないため、受信カードの隣にRaspberry Pi（FPP）を「翻訳係」として常駐させ、サーバー側のDockerコンテナが描画したWebページをDDPで送り込んでいる。",
+      "specs": {
+        "Panel": "HUB75 64x32 x4 (128x64)",
+        "Receiver": "Colorlight 5A-75B",
+        "Translator": "Raspberry Pi 3 Model A+ / FPP 9.5.3",
+        "Pipeline": "Chromium (Docker) -> DDP -> FPP -> Panels"
+      },
+      "page": "",
+      "schematic": "+---------------------------------------+\n| Server: Chromium renders matrix.html  |\n|   -> DDP (IP) -> Raspberry Pi / FPP   |\n|     -> L2 frames -> 5A-75B -> Panels  |\n+---------------------------------------+"
     }
   ]
 }
