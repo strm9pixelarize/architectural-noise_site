@@ -826,14 +826,15 @@ function setupTypingEffect(texts) {
     let isDeleting = false;
     const target = document.getElementById('typing-text');
     if (!target) return;
+    const PREFIX = '#'; // 固定文字: 文字が空にならず、行が潰れない
 
     function type() {
         const currentText = texts[textIdx];
         if (isDeleting) {
-            target.innerText = currentText.substring(0, charIdx - 1);
+            target.innerText = PREFIX + currentText.substring(0, charIdx - 1);
             charIdx--;
         } else {
-            target.innerText = currentText.substring(0, charIdx + 1);
+            target.innerText = PREFIX + currentText.substring(0, charIdx + 1);
             charIdx++;
         }
 
