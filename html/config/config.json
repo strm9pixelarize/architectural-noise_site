@@ -228,7 +228,25 @@
         "Pipeline": "Chromium (Docker) -> DDP -> FPP -> Panels"
       },
       "page": "",
-      "schematic": "+---------------------------------------+\n| Server: Chromium renders matrix.html  |\n|   -> DDP (IP) -> Raspberry Pi / FPP   |\n|     -> L2 frames -> 5A-75B -> Panels  |\n+---------------------------------------+"
+      "schematic": "+---------------------------------------+\n| Server: Chromium renders matrix.html  |\n|   -> DDP (IP) -> Raspberry Pi / FPP   |\n|     -> L2 frames -> 5A-75B -> Panels  |\n+---------------------------------------+",
+      "links": [
+        {
+          "label": "ブログ（1）計画と FPP 立ち上げの夜",
+          "url": "https://blog.architectural-n.net/posts/led-signage-revival-part1.html"
+        },
+        {
+          "label": "ブログ（2）初めて光った",
+          "url": "https://blog.architectural-n.net/posts/led-signage-revival-part2.html"
+        },
+        {
+          "label": "ブログ（3）制御係と画質の沼",
+          "url": "https://blog.architectural-n.net/posts/led-signage-revival-part3.html"
+        },
+        {
+          "label": "ブログ（4）フォント戦争",
+          "url": "https://blog.architectural-n.net/posts/led-signage-revival-part4.html"
+        }
+      ]
     }
   ]
 }

@@ -968,6 +968,18 @@ async function openInspector(id) {
 
             ${p.schematic ? `<pre class="bg-slate-950 text-emerald-400 p-4 rounded-xl font-mono text-xs overflow-x-auto">${p.schematic}</pre>` : ''}
 
+            ${(p.links && p.links.length > 0) ? `
+                <div class="space-y-2">
+                    <span class="text-xs font-mono text-slate-400 block">// LINKS</span>
+                    ${p.links.map(l => `
+                        <a href="${l.url}" target="_blank" rel="noopener" class="flex items-center justify-between gap-2 w-full py-2.5 px-4 rounded-xl border border-slate-200 hover:border-[#fca73f] text-slate-700 hover:text-[#fca73f] font-mono text-xs font-bold transition group">
+                            <span>${l.label}</span>
+                            <span class="text-slate-400 group-hover:text-[#fca73f] group-hover:translate-x-0.5 transition">→</span>
+                        </a>
+                    `).join('')}
+                </div>
+            ` : ''}
+
             ${p.page ? `
                 <div class="pt-2 border-t border-slate-100">
                     <a href="${p.page}" class="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-[#fca73f] hover:bg-[#e09230] text-slate-950 font-mono text-xs font-bold transition shadow-lg shadow-[#fca73f]/20 group">
