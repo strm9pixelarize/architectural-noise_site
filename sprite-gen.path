@@ -1,0 +1,9 @@
+[Unit]
+Description=Watch the SVG icon source folder of architectural-noise site
+
+[Path]
+PathChanged=/DATA/AppData/architectural-noise/html/icons/svgs
+Unit=sprite-gen.service
+
+[Install]
+WantedBy=multi-user.target

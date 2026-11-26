@@ -1,0 +1,8 @@
+[Unit]
+Description=Regenerate SVG sprite (sprites.svg) for architectural-noise site
+After=local-fs.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/DATA/AppData/architectural-noise/html/icons
+ExecStart=/usr/bin/python3 /DATA/AppData/architectural-noise/html/icons/generate_sprite.py
